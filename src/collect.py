@@ -131,6 +131,26 @@ def snapshot(code: str, name: str, df: pd.DataFrame) -> dict:
     }
 
 
+# 引け時刻がSOX(米国)より前に確定する市場のサフィックス。
+# ここを間違えると相関が静かに壊れる。判定基準はサフィックスではなくタイムゾーン。
+_ASIA = (".T", ".KS", ".KQ", ".TW", ".TWO", ".HK", ".SS", ".SZ", ".SI", ".AX", ".NS", ".BO")
+
+
+def is_asia(code: str) -> bool:
+    return code.upper().endswith(_ASIA)
+
+
+def market_lag(driver: str, follower: str) -> int:
+    """
+    driver の終値が follower の終値より「後」に確定するなら 1、同時か前なら 0。
+
+    米国(D)引け = アジア(D)引けの約14時間後。
+    → アジア株が反応できるのは 米国(D-1) なので lag=1。
+    アジア→米国、米国→米国、アジア→アジア はすべて同日比較でよい（lag=0）。
+    """
+    return 1 if (not is_asia(driver) and is_asia(follower)) else 0
+
+
 def correlation(a: pd.Series, b: pd.Series, n: int = 60, lag: int = 0) -> float | None:
     """
     a を lag 営業日ぶん後ろにずらして b と相関を取る。

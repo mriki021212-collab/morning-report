@@ -63,14 +63,13 @@ def build_facts(cfg: dict) -> dict:
 
     # 対SOX 60日相関
     sox = hist.get("^SOX")
-    facts["correlation_vs_sox_60d"] = {"_note": "日本株はSOXのD-1終値との相関(lag=1)。時差補正済み。"}
+    facts["correlation_vs_sox_60d"] = {"_note": "アジア市場(日本/韓国/台湾等)はSOXのD-1終値との相関(lag=1)。米国は同日(lag=0)。時差補正済み。"}
     for code in list(facts["holdings"]) + list(facts["sector"]) + list(facts["overseas_semis"]):
         df = hist.get(code)
         if sox is not None and df is not None and not df.empty and not sox.empty:
-            # 日本株(.T)は前日のSOXに反応する → lag=1。米国株は同日 → lag=0
-            lag = 1 if code.endswith(".T") else 0
+            # SOXが driver、当該銘柄が follower。アジア市場なら自動で lag=1
             facts["correlation_vs_sox_60d"][code] = collect.correlation(
-                sox["Close"], df["Close"], lag=lag)
+                sox["Close"], df["Close"], lag=collect.market_lag("^SOX", code))
 
     # アナログ分析（保有3銘柄 + 日経）
     a = cfg["analog"]
@@ -96,8 +95,10 @@ def build_facts(cfg: dict) -> dict:
             if pdf is not None and not pdf.empty:
                 entry["peers"][pc] = analogs.find_analogs(
                     pdf, a["window"], a["horizon"], a["top_k"], a["min_history"])
+                # ピア(driver) vs 当該銘柄(follower)。米国ピアなら lag=1、韓国ピアなら lag=0
                 entry.setdefault("correlation_285A_vs_peer_60d", {})[pc] = collect.correlation(
-                    pdf["Close"], hist[code]["Close"], lag=1) if hist.get(code) is not None else None
+                    pdf["Close"], hist[code]["Close"], lag=collect.market_lag(pc, code)
+                ) if hist.get(code) is not None else None
         facts["peer_proxy_analog"][code] = entry
 
     # データ品質サマリ（LLMに欠損を明示させるため）
