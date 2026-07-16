@@ -51,7 +51,8 @@ def render(facts: dict) -> str:
                  f"— 両方とも {g['n225_cash_date']} 付け）")
     else:
         L.append(f"- 現物終値 {_n(g['n225_cash_close'],'円',0)}（{g['n225_cash_date']}）")
-        L.append(f"- CME円建先物 {_n(g['cme_futures_close'],'円',0)}（{g['cme_date']}）")
+        L.append(f"- CME円建先物 **{_n(g.get('futures_price_live') or g['cme_futures_close'],'円',0)}**"
+                 f"（{g.get('futures_as_of_jst', g['cme_date'])} 時点のライブ値）")
         L.append(f"- **示唆される寄り付き乖離: {g['implied_gap_pts']:+,.0f}円 "
                  f"({g['implied_gap_pct']:+.2f}%)**")
         L.append(f"- 注: {g['note']}")

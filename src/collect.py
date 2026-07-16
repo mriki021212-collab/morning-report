@@ -151,6 +151,26 @@ def market_lag(driver: str, follower: str) -> int:
     return 1 if (not is_asia(driver) and is_asia(follower)) else 0
 
 
+def live_quote(code: str) -> dict | None:
+    """
+    分足で「現在値」と「その値がいつのものか」を取る。
+
+    日足の日付だけでは、そのバーが確定済みか形成中かを区別できない。
+    先物は24時間動くので、日付が現物と同じでも中身はライブでありうる。
+    比較の可否はタイムスタンプで判定する。
+    """
+    try:
+        df = yf.Ticker(code).history(period="2d", interval="1m")
+    except Exception:
+        return None
+    if df.empty:
+        return None
+    ts = pd.to_datetime(df.index[-1])
+    if ts.tzinfo is None:
+        ts = ts.tz_localize("UTC")
+    return {"price": _f(df["Close"].iloc[-1]), "ts_jst": ts.tz_convert(JST).isoformat()}
+
+
 def correlation(a: pd.Series, b: pd.Series, n: int = 60, lag: int = 0) -> float | None:
     """
     a を lag 営業日ぶん後ろにずらして b と相関を取る。

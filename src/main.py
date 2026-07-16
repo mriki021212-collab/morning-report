@@ -45,17 +45,32 @@ def build_facts(cfg: dict) -> dict:
     # 日経GU/GD: CME円建先物終値 と 日経現物終値の乖離（機械計算）
     n225, niy = facts["macro"].get("^N225", {}), facts["macro"].get("NIY=F", {})
     if n225.get("close") and niy.get("close"):
-        # ガード: 現物と先物のas_ofが同じ日なら「一晩の値動き」を捉えていない。
-        # 朝8:35時点では 現物=前営業日 / 先物=当日 でなければギャップとして無意味。
-        stale = n225["as_of"] == niy["as_of"]
+        # 先物のライブ値を分足で取得し、現物の引け時刻(15:00 JST)より新しいかで判定する。
+        # 日付一致=無効 ではない。先物は24h動くので、同日付でも中身が現物より新しければ有効。
+        live = collect.live_quote("NIY=F")
+        cash_close_dt = dt.datetime.strptime(n225["as_of"], "%Y-%m-%d").replace(
+            hour=15, minute=0, tzinfo=JST)
+        fut_px, fut_ts, valid, warn = niy["close"], niy["as_of"] + " (日足)", None, None
+        if live and live.get("price"):
+            fut_ts_dt = dt.datetime.fromisoformat(live["ts_jst"])
+            fut_px, fut_ts = live["price"], live["ts_jst"][:19]
+            valid = fut_ts_dt > cash_close_dt
+            if not valid:
+                warn = (f"先物の最終値({fut_ts})が現物の引け({cash_close_dt:%Y-%m-%d %H:%M})"
+                        "より古い。寄り付き示唆として使用不可。")
+        else:
+            valid = n225["as_of"] != niy["as_of"]
+            warn = None if valid else "先物のライブ値を取得できず、日足の日付も現物と同一。使用不可。"
         facts["nikkei_gap"] = {
-            "valid": not stale,
-            "warning": ("現物と先物の日付が同一。一晩の値動きを反映していないため"
-                        "寄り付き示唆として使用不可。") if stale else None,
+            "valid": bool(valid),
+            "warning": warn,
+            "futures_price_live": fut_px,
+            "futures_as_of_jst": fut_ts,
+            "cash_close_dt_jst": cash_close_dt.isoformat(),
             "n225_cash_close": n225["close"], "n225_cash_date": n225["as_of"],
             "cme_futures_close": niy["close"], "cme_date": niy["as_of"],
-            "implied_gap_pts": round(niy["close"] - n225["close"], 1),
-            "implied_gap_pct": round((niy["close"] / n225["close"] - 1) * 100, 2),
+            "implied_gap_pts": round(fut_px - n225["close"], 1),
+            "implied_gap_pct": round((fut_px / n225["close"] - 1) * 100, 2),
             "note": "先物-現物の単純乖離。配当落ち・限月要因は未調整。",
         }
     else:
