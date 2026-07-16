@@ -1,0 +1,17 @@
+# 仮想環境（絶対に上げない。数百MB & OS依存）
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# 生成物（毎日増える。Actionsのartifactで保管する）
+out/
+
+# ローカル専用スクリプト
+run.ps1
+check.py
+
+# 秘密情報（万が一の保険。本来はSecretsに入れる）
+.env
+*.key
+secrets.*

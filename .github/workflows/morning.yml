@@ -1,0 +1,43 @@
+name: morning-report
+
+on:
+  schedule:
+    # UTC 23:35 (日〜木) = JST 08:35 (月〜金)
+    # GitHub Actionsのcronは最大15〜20分遅延するため、9:00着を狙って25分前倒しで起動する
+    - cron: "35 23 * * 0-4"
+  workflow_dispatch:      # 手動実行ボタン（テスト用）
+  push:
+    branches: [main]      # push時にも走る = 60日無活動によるcron自動停止の対策も兼ねる
+
+# ⚠️ GitHubは「60日間コミットが無いリポジトリ」のscheduleを自動停止する。
+# 停止するとメール通知が来るので、その時は何かpushするかActions画面で再有効化する。
+
+concurrency:
+  group: morning-report
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Generate & post
+        # ANTHROPIC_API_KEY が未設定なら空文字が渡り、LLM層は自動スキップされる（検証済）
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          JQ_REFRESH_TOKEN: ${{ secrets.JQ_REFRESH_TOKEN }}
+        run: python src/main.py
+      - name: Archive artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: report-${{ github.run_id }}
+          path: out/
+          retention-days: 90

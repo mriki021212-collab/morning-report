@@ -1,0 +1,66 @@
+# ===== 監視対象 =====
+holdings:
+  - {code: "6740.T", name: "ジャパンディスプレイ"}
+  - {code: "7974.T", name: "任天堂"}
+  - {code: "285A.T", name: "キオクシアHD"}
+
+sector:
+  - {code: "8035.T", name: "東京エレクトロン"}
+  - {code: "6920.T", name: "レーザーテック"}
+  - {code: "6146.T", name: "ディスコ"}
+  - {code: "6857.T", name: "アドバンテスト"}
+  - {code: "7735.T", name: "SCREEN"}
+  - {code: "6723.T", name: "ルネサス"}
+  - {code: "6526.T", name: "ソシオネクスト"}
+  - {code: "4063.T", name: "信越化学"}
+  - {code: "3436.T", name: "SUMCO"}
+
+# ===== 米国市場・マクロ =====
+macro:
+  - {code: "^IXIC",  name: "NASDAQ"}
+  - {code: "^GSPC",  name: "S&P500"}
+  - {code: "^DJI",   name: "ダウ"}
+  - {code: "^SOX",   name: "SOX指数"}
+  - {code: "^VIX",   name: "VIX"}
+  - {code: "JPY=X",  name: "ドル円"}
+  - {code: "^TNX",   name: "米10年金利"}
+  - {code: "CL=F",   name: "WTI"}
+  - {code: "GC=F",   name: "金"}
+  - {code: "^N225",  name: "日経平均"}
+  - {code: "NIY=F",  name: "日経平均先物(CME円建)"}
+
+overseas_semis:
+  - {code: "NVDA", name: "NVIDIA"}
+  - {code: "SNDK", name: "SanDisk (NAND)"}
+  - {code: "000660.KS", name: "SK hynix"}
+  - {code: "005930.KS", name: "Samsung Electronics"}
+  - {code: "AMD",  name: "AMD"}
+  - {code: "INTC", name: "Intel"}
+  - {code: "MU",   name: "Micron"}
+  - {code: "TSM",  name: "TSMC"}
+  - {code: "ASML", name: "ASML"}
+
+# 履歴が短くアナログ分析が成立しない銘柄 → 同業ピアで代替する
+# キオクシアは2024/12上場、履歴約1.6年のため単体では統計不成立
+peer_proxy:
+  "285A.T":
+    reason: "2024年12月上場のため履歴約1.6年。単体でのアナログ分析は統計的に不成立。"
+    peers: ["MU", "SNDK", "000660.KS"]
+
+# ===== アナログ（過去チャート類似）検索 =====
+analog:
+  window: 60          # 直近何営業日のパターンを検索キーにするか
+  horizon: 20         # その後何営業日のリターンを集計するか
+  top_k: 20           # 上位いくつの類似局面を採用するか
+  min_history: "2005-01-01"
+
+# ===== ニュースRSS =====
+rss:
+  - https://assets.wor.jp/rss/rdf/reuters/business.rdf
+  - https://assets.wor.jp/rss/rdf/nikkei/market.rdf
+  - https://www.jpx.co.jp/rss/news.xml
+  - https://finance.yahoo.co.jp/rss/news/all.xml
+
+# ===== モデル =====
+model: "claude-opus-4-8"
+max_tokens: 12000
