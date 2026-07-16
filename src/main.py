@@ -45,7 +45,13 @@ def build_facts(cfg: dict) -> dict:
     # 日経GU/GD: CME円建先物終値 と 日経現物終値の乖離（機械計算）
     n225, niy = facts["macro"].get("^N225", {}), facts["macro"].get("NIY=F", {})
     if n225.get("close") and niy.get("close"):
+        # ガード: 現物と先物のas_ofが同じ日なら「一晩の値動き」を捉えていない。
+        # 朝8:35時点では 現物=前営業日 / 先物=当日 でなければギャップとして無意味。
+        stale = n225["as_of"] == niy["as_of"]
         facts["nikkei_gap"] = {
+            "valid": not stale,
+            "warning": ("現物と先物の日付が同一。一晩の値動きを反映していないため"
+                        "寄り付き示唆として使用不可。") if stale else None,
             "n225_cash_close": n225["close"], "n225_cash_date": n225["as_of"],
             "cme_futures_close": niy["close"], "cme_date": niy["as_of"],
             "implied_gap_pts": round(niy["close"] - n225["close"], 1),

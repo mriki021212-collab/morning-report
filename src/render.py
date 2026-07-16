@@ -45,6 +45,10 @@ def render(facts: dict) -> str:
     g = facts.get("nikkei_gap", {})
     if g.get("status"):
         L.append("現時点では確認できない。")
+    elif g.get("valid") is False:
+        L.append(f"**使用不可** — {g['warning']}")
+        L.append(f"（現物 {g['n225_cash_close']:,.0f}円 / 先物 {g['cme_futures_close']:,.0f}円 "
+                 f"— 両方とも {g['n225_cash_date']} 付け）")
     else:
         L.append(f"- 現物終値 {_n(g['n225_cash_close'],'円',0)}（{g['n225_cash_date']}）")
         L.append(f"- CME円建先物 {_n(g['cme_futures_close'],'円',0)}（{g['cme_date']}）")
