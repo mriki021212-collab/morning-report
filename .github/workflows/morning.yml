@@ -8,6 +8,10 @@ on:
     - cron: "30 23 * * 0-4"   # JST 08:30 (本命)
     - cron: "40 23 * * 0-4"   # JST 08:40 (保険1)
     - cron: "50 23 * * 0-4"   # JST 08:50 (保険2・寄り付き10分前が最終)
+    - cron: "55 3 * * 5"   # TEMP TEST: JST 12:55
+    - cron: "10 4 * * 5"   # TEMP TEST: JST 13:10
+    - cron: "25 4 * * 5"   # TEMP TEST: JST 13:25
+    # ↑ TEMP: cron発火テスト用。検証後に削除する
   workflow_dispatch:
   push:
     branches: [main]
