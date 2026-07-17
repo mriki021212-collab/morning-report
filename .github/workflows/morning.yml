@@ -1,16 +1,19 @@
 name: morning-report
 
 on:
+  # GitHubのscheduleは高負荷時に「遅延」ではなく「実行されない」ことがある。
+  # 実際に 2026-07-17 08:35 JST が不発だった。単発cronは落ちる前提で3本張る。
+  # 重複投稿はキャッシュのマーカーで防ぐ。
   schedule:
-    # UTC 23:35 (日〜木) = JST 08:35 (月〜金)
-    # GitHub Actionsのcronは最大15〜20分遅延するため、9:00着を狙って25分前倒しで起動する
-    - cron: "35 23 * * 0-4"
-  workflow_dispatch:      # 手動実行ボタン（テスト用）
+    - cron: "30 23 * * 0-4"   # JST 08:30 (本命)
+    - cron: "40 23 * * 0-4"   # JST 08:40 (保険1)
+    - cron: "50 23 * * 0-4"   # JST 08:50 (保険2・寄り付き10分前が最終)
+  workflow_dispatch:
   push:
-    branches: [main]      # push時にも走る = 60日無活動によるcron自動停止の対策も兼ねる
+    branches: [main]
 
-# ⚠️ GitHubは「60日間コミットが無いリポジトリ」のscheduleを自動停止する。
-# 停止するとメール通知が来るので、その時は何かpushするかActions画面で再有効化する。
+# GitHubは60日間コミットが無いリポジトリのscheduleを自動停止する。
+# 停止時はメール通知が来るので、何かpushするかActions画面で再有効化する。
 
 concurrency:
   group: morning-report
@@ -22,18 +25,71 @@ jobs:
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
+
+      - name: Compute JST date
+        id: d
+        run: echo "today=$(TZ=Asia/Tokyo date +%Y%m%d)" >> $GITHUB_OUTPUT
+
+      # 同じ日に既に投稿済みかをキャッシュで判定（3本のcronの重複投稿を防ぐ）
+      # 手動実行とpushは常に走らせたいのでマーカーを見ない
+      - name: Check today's marker
+        id: marker
+        if: github.event_name == 'schedule'
+        uses: actions/cache/restore@v4
+        with:
+          path: .posted
+          key: posted-${{ steps.d.outputs.today }}
+
+      - name: Decide
+        id: go
+        run: |
+          if [ "${{ steps.marker.outputs.cache-hit }}" = "true" ]; then
+            echo "run=false" >> $GITHUB_OUTPUT
+            echo "already posted today - skip"
+          else
+            echo "run=true" >> $GITHUB_OUTPUT
+          fi
+
       - uses: actions/setup-python@v5
+        if: steps.go.outputs.run == 'true'
         with:
           python-version: "3.12"
           cache: pip
+
       - run: pip install -r requirements.txt
+        if: steps.go.outputs.run == 'true'
+
       - name: Generate & post
+        if: steps.go.outputs.run == 'true'
         # ANTHROPIC_API_KEY が未設定なら空文字が渡り、LLM層は自動スキップされる（検証済）
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           JQ_REFRESH_TOKEN: ${{ secrets.JQ_REFRESH_TOKEN }}
         run: python src/main.py
+
+      - name: Save today's marker
+        if: success() && steps.go.outputs.run == 'true' && github.event_name == 'schedule'
+        run: touch .posted
+      - uses: actions/cache/save@v4
+        if: success() && steps.go.outputs.run == 'true' && github.event_name == 'schedule'
+        with:
+          path: .posted
+          key: posted-${{ steps.d.outputs.today }}
+
+      # Pythonに依存しない失敗通知。
+      # pip installで落ちても、YAML読み込みで落ちても、ここは必ず動く。
+      # これが無かったため 2026-07-17 の不発を「無音」で見逃した。
+      - name: Notify failure
+        if: failure()
+        env:
+          HOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          curl -sS -H "Content-Type: application/json" \
+            -d "{\"content\":\"morning-report FAILED / event=${{ github.event_name }} / $URL\"}" \
+            "$HOOK" || true
+
       - name: Archive artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -41,3 +97,4 @@ jobs:
           name: report-${{ github.run_id }}
           path: out/
           retention-days: 90
+          if-no-files-found: ignore

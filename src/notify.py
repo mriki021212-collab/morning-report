@@ -47,6 +47,19 @@ def post(report: str, audit_result: str = "OK") -> None:
         requests.post(url, json={"content": c}, timeout=30).raise_for_status()
 
 
+def post_holiday(d) -> None:
+    """休場日の1行通知。無音を「異常」だけの意味に固定するために必要。"""
+    url = os.getenv("DISCORD_WEBHOOK_URL")
+    if not url:
+        return
+    requests.post(url, json={
+        "embeds": [{
+            "title": f"{d:%Y/%m/%d (%a)} — 東証休場",
+            "description": "本日はレポートなし。システムは正常に稼働しています。",
+            "color": 0x95A5A6,
+        }]}, timeout=30)
+
+
 def post_error(msg: str) -> None:
     url = os.getenv("DISCORD_WEBHOOK_URL")
     if not url:

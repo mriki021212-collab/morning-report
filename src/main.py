@@ -136,7 +136,11 @@ def main() -> None:
     cfg = yaml.safe_load((ROOT / "config.yaml").read_text(encoding="utf-8"))
     today = dt.datetime.now(JST).date()
     if not is_trading_day(today) and "--force" not in sys.argv:
+        # 休場日も必ず1行投げる。
+        # これをしないと「休場」「cron不発」「クラッシュ」が全部同じ"無音"になり、
+        # 届かないことに気づけない。無音 = 異常、と意味を1つに固定する。
         print(f"{today} は東証休場。スキップ。")
+        notify.post_holiday(today)
         return
     try:
         facts = build_facts(cfg)
