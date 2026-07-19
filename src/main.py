@@ -10,7 +10,7 @@ import jpholiday
 import yaml
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
-import analogs, collect, jquants, news, notify, render  # noqa: E402
+import analogs, collect, jquants, news, notify, render, tdnet  # noqa: E402
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 JST = dt.timezone(dt.timedelta(hours=9))
@@ -125,7 +125,10 @@ def build_facts(cfg: dict) -> dict:
 
     facts["margin_short"] = jquants.margin_and_short([h["code"] for h in cfg["holdings"]])
     facts["trades_spec"] = jquants.trades_spec()
+    # B層+C層: 個別ニュース+マクロ地合い（取得失敗と該当なしを区別）
     facts["news"] = news.fetch(cfg["rss"])
+    # A層: 保有銘柄の適時開示（一次情報・最優先）
+    facts["tdnet"] = tdnet.fetch([h["code"] for h in cfg["holdings"]])
     facts["sentiment"] = {"status": "現時点では確認できない（X API/掲示板は未接続）"}
     facts["orderbook"] = {"status": "現時点では確認できない（リアルタイム板は取得範囲外）"}
     facts["events"] = {"status": "web_searchで確認すること"}

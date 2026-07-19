@@ -56,10 +56,14 @@ analog:
 
 # ===== ニュースRSS =====
 rss:
+  # 複数ソース束ねる。1つ落ちても他で拾う。到達性は本人PCで要検証。
   - https://assets.wor.jp/rss/rdf/reuters/business.rdf
+  - https://assets.wor.jp/rss/rdf/reuters/top.rdf
   - https://assets.wor.jp/rss/rdf/nikkei/market.rdf
-  - https://www.jpx.co.jp/rss/news.xml
+  - https://assets.wor.jp/rss/rdf/nikkei/economy.rdf
   - https://finance.yahoo.co.jp/rss/news/all.xml
+  - https://s.minkabu.jp/news/feed
+  - https://kabutan.jp/news/rss/
 
 # ===== モデル =====
 model: "claude-opus-4-8"

@@ -163,3 +163,29 @@ python src/score.py 60   # 直近60レポートの判定を実績と突き合わ
 ## 免責
 本システムの出力は投資助言ではない。自動生成レポートであり、データ欠損・API仕様変更・
 LLMの誤りを含みうる。売買判断は自己責任で行うこと。
+
+
+---
+
+## ニュース機能（3層構造・v14で追加）
+
+7/17にキオクシアが訴訟評決で16%ストップ安になった日、旧ニュース機能は「該当なし」を出した。
+原因の切り分けのため、3層に再設計し「取得失敗」と「該当なし」を必ず区別する。
+
+- **⑥-A 適時開示(TDnet)**: やのしんWEB-API経由。保有銘柄コードで直接取得（英字コード285A対応）。
+  訴訟・下方修正・希薄化・自己株式などの語を含む開示は🚨で強調。一次情報として最優先。
+- **⑥-B 個別ニュース**: 銘柄ごとに別名（英語名・製品名・略称）の束を持ち、タイトル＋本文に対して
+  マッチ。旧版はタイトルのみ・固定キーワードだったため取りこぼしが起きた。
+- **⑥-C 全体地合い**: 日経平均・半導体・為替・FOMC等のマクロ語で拾う全体まとめ。
+
+### 到達性の検証（本人PCで必須）
+サンドボックスからはRSSが遮断されているため、実際に取れるかは本人PCで確認する:
+```powershell
+.\.venv\Scripts\python.exe -c "import feedparser as f; [print(u, f.parse(u).status if hasattr(f.parse(u),'status') else '?', len(f.parse(u).entries)) for u in ['https://finance.yahoo.co.jp/rss/news/all.xml','https://s.minkabu.jp/news/feed','https://kabutan.jp/news/rss/']]"
+```
+TDnetの疎通確認:
+```powershell
+.\.venv\Scripts\python.exe -c "import src.tdnet as t; import json; print(json.dumps(t.fetch(['6740.T','7974.T','285A.T']), ensure_ascii=False, indent=1))"
+```
+status が「取得失敗」なら、そのソースをconfig.yamlから外すか差し替える。
+「直近に開示なし」は正常（本当に開示が無い日）。

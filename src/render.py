@@ -143,15 +143,52 @@ def render(facts: dict) -> str:
                          f"{a['empirical_down_prob_pct']}% | {a['median_fwd_return_pct']:+}% | "
                          f"{_n(corr,'',2)} |")
 
-    # ⑥ ニュース
-    L.append(_sec("⑥ 直近24時間のニュース（RSS / 見出しのみ）"))
-    news = facts.get("news", [])
-    if not news:
-        L.append("該当なし。")
-    for n in news[:15]:
-        if n.get("error"):
-            continue
-        L.append(f"- [{n['title']}]({n['link']}) — {n['source']} / {n['published'][:16]}")
+    # ⑥-A 適時開示（TDnet・一次情報・最優先）
+    L.append(_sec("⑥-A 保有銘柄の適時開示（TDnet）"))
+    td = facts.get("tdnet", {})
+    if td.get("status", "").startswith("取得失敗"):
+        L.append(f"**取得失敗** — {td['status']}（開示ゼロではなく取得できていない）")
+    elif not td.get("items"):
+        L.append("直近48時間、保有銘柄の適時開示なし。")
+    else:
+        hs = td.get("high_signal", [])
+        if hs:
+            L.append("**要注意の開示:**")
+            for i in hs:
+                L.append(f"- 🚨 **[{i['company']}]** {i['title']}  "
+                         f"（{i['time']} / {'・'.join(i['high_signal_words'])}）  "
+                         f"[PDF]({i['url']})")
+            L.append("")
+        L.append("全開示:")
+        for i in td["items"][:15]:
+            L.append(f"- [{i['company']}] {i['title']} — {i['time']}  [PDF]({i['url']})")
+
+    # ⑥-B 個別ニュース（保有株・セクター）
+    L.append(_sec("⑥-B 保有株・セクター関連ニュース（RSS）"))
+    nw = facts.get("news", {})
+    if nw.get("status", "").startswith("全ソース取得失敗"):
+        L.append(f"**取得失敗** — RSSに到達できていない。errors: {nw.get('errors')}")
+    else:
+        h = nw.get("holdings", [])
+        se = nw.get("sector", [])
+        if not h and not se:
+            L.append("保有株・セクターに該当する報道は直近24時間なし。")
+        for n in h[:10]:
+            L.append(f"- **[{'・'.join(n['matched'])}]** [{n['title']}]({n['link']}) "
+                     f"— {n['source']} / {n['published']}")
+        for n in se[:8]:
+            L.append(f"- [{'・'.join(n['matched'])}] [{n['title']}]({n['link']}) "
+                     f"— {n['source']} / {n['published']}")
+        if nw.get("errors"):
+            L.append(f"\n_一部ソース取得失敗: {len(nw['errors'])}件_")
+
+    # ⑥-C 全体まとめ（マクロ地合い）
+    L.append(_sec("⑥-C 全体地合い（マクロRSS）"))
+    mc = facts.get("news", {}).get("macro", [])
+    if not mc:
+        L.append("マクロ関連の該当記事は直近24時間なし。")
+    for n in mc[:8]:
+        L.append(f"- [{n['title']}]({n['link']}) — {n['source']} / {n['published']}")
 
     # 欠損一覧
     L.append(_sec("データ欠損一覧"))
