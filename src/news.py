@@ -1,104 +1,122 @@
 """
-個別ニュース（B層）＋マクロ地合い（C層）のRSS収集。
+個別ニュース（B層）＝Googleニュース検索RSS ＋ マクロ地合い（C層）＝新聞社RSS。
 
-旧版はタイトルに固定キーワードが含まれるかだけを見ており、キオクシアのViasat訴訟
-(「Viasat」「特許」を含む見出し)を取りこぼした。原因は2つ:
-  1. マッチ対象がタイトルのみ（本文・説明を見ていない）
-  2. 銘柄ごとの別名（英語名・製品名・略称）を持っていなかった
+【B層の方式変更 v16】
+従来のニュースサイトRSS（Yahoo/みんかぶ/株探/Reuters）は 403/404 で軒並み死んでいた。
+Googleニュースの検索RSS( news.google.com/rss/search?q=銘柄名 )は到達性が高く、
+銘柄名で狙い撃ちできる。保有株・セクター各社の名前で個別に検索して集約する。
+これによりキオクシアのViasat訴訟記事のような銘柄固有ニュースを確実に拾う。
 
-対策: 銘柄ごとに「コード/正式名/別名」の束を持ち、タイトル+説明の全体に対して
-どれか1つでも当たれば拾う。当たった銘柄名も一緒に返す。
+【C層】新聞社の総合経済RSS（wor.jp経由で生存確認済みのものだけ）。
+
+「取得失敗」と「該当なし」は必ず区別する。
 """
 from __future__ import annotations
 import datetime as dt
+import urllib.parse
 import feedparser
 
-# 銘柄 -> マッチに使う語の束（英語名・製品名・略称・関連固有名詞を含む）
-HOLDING_ALIASES = {
-    "6740": ["ジャパンディスプレイ", "JDI", "Japan Display"],
-    "7974": ["任天堂", "Nintendo", "スイッチ", "Switch"],
-    "285A": ["キオクシア", "Kioxia", "Viasat", "NAND", "フラッシュメモリ"],
+# B層: 銘柄 -> Googleニュース検索クエリ（正式名・別名でOR検索）
+HOLDING_QUERIES = {
+    "ジャパンディスプレイ": "ジャパンディスプレイ OR JDI",
+    "任天堂": "任天堂 OR Nintendo",
+    "キオクシア": "キオクシア OR Kioxia",
+}
+SECTOR_QUERIES = {
+    "東京エレクトロン": "東京エレクトロン",
+    "レーザーテック": "レーザーテック",
+    "アドバンテスト": "アドバンテスト",
+    "ディスコ": "ディスコ 半導体",
+    "ルネサス": "ルネサス エレクトロニクス",
+    "SCREEN": "SCREEN ホールディングス",
+    "信越化学": "信越化学",
+    "SUMCO": "SUMCO",
+    "半導体セクター": "半導体 株",
 }
 
-# 半導体セクター（B層の拡張）
-SECTOR_ALIASES = {
-    "8035": ["東京エレクトロン", "東エレク", "Tokyo Electron", "TEL"],
-    "6920": ["レーザーテック", "Lasertec"],
-    "6146": ["ディスコ", "DISCO"],
-    "6857": ["アドバンテスト", "Advantest"],
-    "7735": ["SCREEN", "スクリーン"],
-    "6723": ["ルネサス", "Renesas"],
-    "6526": ["ソシオネクスト", "Socionext"],
-    "4063": ["信越化学", "信越"],
-    "3436": ["SUMCO"],
-}
-
-# C層: 地合い・マクロのキーワード（個別銘柄に紐づかない全体ニュース）
-MACRO_KEYWORDS = [
-    "日経平均", "TOPIX", "半導体", "SOX", "エヌビディア", "NVIDIA", "AI相場",
-    "FOMC", "FRB", "利上げ", "利下げ", "日銀", "為替", "円安", "円高", "ドル円",
-    "米国株", "ナスダック", "HBM", "メモリ", "TSMC", "マイクロン", "SKハイニックス",
-]
+GNEWS = "https://news.google.com/rss/search?q={q}&hl=ja&gl=JP&ceid=JP:ja"
 
 
-def _entry_text(e) -> str:
-    return " ".join(filter(None, [e.get("title", ""), e.get("summary", ""), e.get("description", "")]))
+def _gnews(query: str, hours: int, per: int) -> list[dict]:
+    url = GNEWS.format(q=urllib.parse.quote(query))
+    try:
+        feed = feedparser.parse(url)
+        if getattr(feed, "status", 200) >= 400:
+            return [{"_error": f"status {feed.status}", "_q": query}]
+    except Exception as e:
+        return [{"_error": f"{type(e).__name__}", "_q": query}]
 
-
-def _when(e):
-    t = e.get("published_parsed") or e.get("updated_parsed")
-    return dt.datetime(*t[:6], tzinfo=dt.timezone.utc) if t else None
-
-
-def fetch(urls: list[str], hours: int = 24, limit: int = 40) -> dict:
-    """
-    返り値: {"status", "holdings": [...], "sector": [...], "macro": [...], "errors": [...]}
-    holdings/sector の各記事には "matched"（当たった銘柄名リスト）が付く。
-    """
     cutoff = dt.datetime.now(dt.timezone.utc) - dt.timedelta(hours=hours)
-    holdings, sector, macro, errors = [], [], [], []
+    out = []
+    for e in feed.entries[:per * 3]:
+        t = e.get("published_parsed") or e.get("updated_parsed")
+        when = dt.datetime(*t[:6], tzinfo=dt.timezone.utc) if t else None
+        if when and when < cutoff:
+            continue
+        out.append({"title": e.get("title", ""), "link": e.get("link", ""),
+                    "source": (e.get("source", {}) or {}).get("title", "Google News"),
+                    "published": when.isoformat()[:16] if when else "不明"})
+        if len(out) >= per:
+            break
+    return out
+
+
+def fetch(macro_urls: list[str], hours: int = 24, per_stock: int = 3) -> dict:
+    """
+    返り値: {"status", "holdings":[...], "sector":[...], "macro":[...], "errors":[...]}
+    holdings/sector の各記事に "matched"（銘柄名）が付く。
+    macro_urls は C層用の新聞社RSS（config.yaml の rss）。
+    """
+    holdings, sector, errors = [], [], []
     seen = set()
 
-    for u in urls:
+    # --- B層: Googleニュースで銘柄ごとに検索 ---
+    for name, q in HOLDING_QUERIES.items():
+        for a in _gnews(q, hours, per_stock):
+            if a.get("_error"):
+                errors.append({"query": a["_q"], "error": a["_error"]}); continue
+            if a["title"] in seen:
+                continue
+            seen.add(a["title"]); holdings.append({**a, "matched": [name]})
+    for name, q in SECTOR_QUERIES.items():
+        for a in _gnews(q, hours, 2):
+            if a.get("_error"):
+                errors.append({"query": a["_q"], "error": a["_error"]}); continue
+            if a["title"] in seen:
+                continue
+            seen.add(a["title"]); sector.append({**a, "matched": [name]})
+
+    # --- C層: 新聞社の総合経済RSS ---
+    MACRO_KW = ["日経平均", "TOPIX", "半導体", "SOX", "NVIDIA", "エヌビディア", "AI",
+                "FOMC", "FRB", "利上げ", "利下げ", "日銀", "為替", "円安", "円高",
+                "米国株", "ナスダック", "メモリ", "TSMC", "株価", "相場", "金利"]
+    macro = []
+    cutoff = dt.datetime.now(dt.timezone.utc) - dt.timedelta(hours=hours)
+    for u in macro_urls:
         try:
             feed = feedparser.parse(u)
             if getattr(feed, "status", 200) >= 400:
-                errors.append({"url": u, "status": getattr(feed, "status", "?")})
-                continue
+                errors.append({"url": u, "status": feed.status}); continue
         except Exception as e:
-            errors.append({"url": u, "error": f"{type(e).__name__}: {e}"})
-            continue
-
+            errors.append({"url": u, "error": f"{type(e).__name__}"}); continue
         for e in feed.entries:
-            when = _when(e)
+            t = e.get("published_parsed") or e.get("updated_parsed")
+            when = dt.datetime(*t[:6], tzinfo=dt.timezone.utc) if t else None
             if when and when < cutoff:
                 continue
             title = e.get("title", "")
-            if title in seen:
+            text = title + " " + e.get("summary", "")
+            if title in seen or not any(k in text for k in MACRO_KW):
                 continue
-            text = _entry_text(e)
-            link = e.get("link", "")
-            src = feed.feed.get("title", u)
-            base = {"title": title, "link": link, "source": src,
-                    "published": when.isoformat()[:16] if when else "不明"}
-
-            h_hit = [nm for code, al in HOLDING_ALIASES.items()
-                     for nm in [al[0]] if any(a in text for a in al)]
-            s_hit = [al[0] for code, al in SECTOR_ALIASES.items() if any(a in text for a in al)]
-
-            if h_hit:
-                holdings.append({**base, "matched": h_hit}); seen.add(title)
-            elif s_hit:
-                sector.append({**base, "matched": s_hit}); seen.add(title)
-            elif any(k in text for k in MACRO_KEYWORDS):
-                macro.append(base); seen.add(title)
+            seen.add(title)
+            macro.append({"title": title, "link": e.get("link", ""),
+                          "source": feed.feed.get("title", u),
+                          "published": when.isoformat()[:16] if when else "不明"})
 
     for lst in (holdings, sector, macro):
         lst.sort(key=lambda x: x.get("published", ""), reverse=True)
 
-    status = "ok"
-    if errors and not (holdings or sector or macro):
-        status = "全ソース取得失敗（下記errors参照）"
-    return {"status": status,
-            "holdings": holdings[:limit], "sector": sector[:limit],
-            "macro": macro[:limit], "errors": errors}
+    got_any = holdings or sector or macro
+    status = "ok" if got_any else ("全ソース取得失敗" if errors else "該当なし")
+    return {"status": status, "holdings": holdings, "sector": sector,
+            "macro": macro[:10], "errors": errors}

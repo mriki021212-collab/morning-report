@@ -56,14 +56,13 @@ analog:
 
 # ===== ニュースRSS =====
 rss:
-  # 複数ソース束ねる。1つ落ちても他で拾う。到達性は本人PCで要検証。
-  - https://assets.wor.jp/rss/rdf/reuters/business.rdf
-  - https://assets.wor.jp/rss/rdf/reuters/top.rdf
-  - https://assets.wor.jp/rss/rdf/nikkei/market.rdf
+  # C層(全体地合い)専用。到達性を本人PCで実測し200を返したものだけ。
+  # 個別銘柄ニュース(B層)はGoogleニュース検索RSSをnews.py内で使うため、ここには不要。
   - https://assets.wor.jp/rss/rdf/nikkei/economy.rdf
-  - https://finance.yahoo.co.jp/rss/news/all.xml
-  - https://s.minkabu.jp/news/feed
-  - https://kabutan.jp/news/rss/
+  - https://assets.wor.jp/rss/rdf/nikkei/news.rdf
+  - https://assets.wor.jp/rss/rdf/nikkei/business.rdf
+  - https://assets.wor.jp/rss/rdf/sankei/economy.rdf
+  - https://assets.wor.jp/rss/rdf/yomiuri/economy.rdf
 
 # ===== モデル =====
 model: "claude-opus-4-8"

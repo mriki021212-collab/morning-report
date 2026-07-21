@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MORNING DESK</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans+JP:wght@400;500;600;700&display=swap');
+
+  :root{
+    --bg:#07090c;
+    --panel:#0d1117;
+    --panel-2:#111823;
+    --grid:#161d27;
+    --edge:#1e2836;
+    --ink:#e8eef5;
+    --ink-dim:#7d8896;
+    --ink-faint:#4a5462;
+    --up:#39d98a;         /* green */
+    --up-glow:#39d98a55;
+    --down:#ff5470;       /* red   */
+    --down-glow:#ff547055;
+    --amber:#ffb547;      /* alerts */
+    --cyan:#4fd1ff;       /* accent / scan */
+    --violet:#9a7cff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:
+      radial-gradient(1200px 600px at 80% -10%, #0d1a24 0%, transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, #150f1f 0%, transparent 55%),
+      var(--bg);
+    color:var(--ink);
+    font-family:'IBM Plex Sans JP',system-ui,sans-serif;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  .mono{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums}
+
+  /* ---- scanline / crt atmosphere ---- */
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:999;
+    background:repeating-linear-gradient(0deg,rgba(255,255,255,.015) 0 1px,transparent 1px 3px);
+    mix-blend-mode:overlay;
+  }
+  body::after{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:998;
+    background:radial-gradient(120% 120% at 50% 50%,transparent 60%,rgba(0,0,0,.55) 100%);
+  }
+
+  .wrap{max-width:1400px;margin:0 auto;padding:20px 22px 60px}
+
+  /* ---- header ---- */
+  header{
+    display:flex;align-items:center;gap:20px;
+    border:1px solid var(--edge);border-radius:14px;
+    background:linear-gradient(180deg,var(--panel-2),var(--panel));
+    padding:16px 22px;position:relative;overflow:hidden;
+  }
+  header::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+    background:linear-gradient(180deg,var(--cyan),var(--violet));
+    box-shadow:0 0 18px var(--cyan);
+  }
+  .brand{display:flex;flex-direction:column;gap:3px}
+  .brand h1{
+    font-family:'IBM Plex Mono';font-weight:700;font-size:20px;letter-spacing:.28em;
+    display:flex;align-items:center;gap:12px;
+  }
+  .live-dot{width:9px;height:9px;border-radius:50%;background:var(--up);
+    box-shadow:0 0 12px var(--up);animation:pulse 1.6s infinite}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
+  .brand .sub{color:var(--ink-faint);font-size:11px;letter-spacing:.22em;font-family:'IBM Plex Mono'}
+  .clock{margin-left:auto;text-align:right}
+  .clock .t{font-family:'IBM Plex Mono';font-size:26px;font-weight:600;letter-spacing:.06em}
+  .clock .d{color:var(--ink-faint);font-size:11px;letter-spacing:.2em;font-family:'IBM Plex Mono'}
+  .status-chip{
+    font-family:'IBM Plex Mono';font-size:10px;letter-spacing:.16em;
+    padding:5px 10px;border-radius:6px;border:1px solid var(--edge);
+    color:var(--ink-dim);display:flex;align-items:center;gap:7px;white-space:nowrap;
+  }
+
+  /* ---- ticker tape ---- */
+  .tape{
+    margin-top:12px;border:1px solid var(--edge);border-radius:10px;
+    background:var(--panel);overflow:hidden;position:relative;height:40px;
+  }
+  .tape::before,.tape::after{content:"";position:absolute;top:0;bottom:0;width:60px;z-index:2;pointer-events:none}
+  .tape::before{left:0;background:linear-gradient(90deg,var(--panel),transparent)}
+  .tape::after{right:0;background:linear-gradient(270deg,var(--panel),transparent)}
+  .tape-track{display:flex;gap:34px;align-items:center;height:100%;
+    padding-left:20px;white-space:nowrap;width:max-content;
+    animation:scroll 42s linear infinite}
+  .tape:hover .tape-track{animation-play-state:paused}
+  @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  .tk{display:flex;align-items:baseline;gap:9px;font-family:'IBM Plex Mono';font-size:13px}
+  .tk .sym{color:var(--ink-dim);font-weight:600;letter-spacing:.08em}
+  .tk .px{font-weight:600}
+  .tk .ch{font-size:11.5px;font-weight:600}
+
+  /* ---- layout grid ---- */
+  .grid{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;margin-top:16px}
+  @media(max-width:980px){.grid{grid-template-columns:1fr}}
+
+  .panel{
+    border:1px solid var(--edge);border-radius:14px;
+    background:linear-gradient(180deg,var(--panel-2),var(--panel));
+    position:relative;overflow:hidden;
+  }
+  .panel-h{
+    display:flex;align-items:center;gap:10px;padding:13px 18px;
+    border-bottom:1px solid var(--grid);
+  }
+  .panel-h .idx{font-family:'IBM Plex Mono';color:var(--cyan);font-size:11px;
+    font-weight:700;letter-spacing:.1em}
+  .panel-h h2{font-size:13px;font-weight:600;letter-spacing:.12em;color:var(--ink)}
+  .panel-h .meta{margin-left:auto;font-family:'IBM Plex Mono';font-size:10px;
+    color:var(--ink-faint);letter-spacing:.14em}
+
+  /* ---- holdings cards ---- */
+  .holds{padding:14px;display:flex;flex-direction:column;gap:12px}
+  .hold{
+    border:1px solid var(--edge);border-radius:12px;background:var(--panel);
+    padding:14px 16px;position:relative;overflow:hidden;
+    transition:border-color .3s;
+  }
+  .hold:hover{border-color:var(--cyan)}
+  .hold .row1{display:flex;align-items:center;gap:12px}
+  .hold .code{font-family:'IBM Plex Mono';font-size:10px;color:var(--ink-faint);
+    border:1px solid var(--edge);border-radius:5px;padding:3px 7px;letter-spacing:.1em}
+  .hold .nm{font-size:14px;font-weight:600;letter-spacing:.04em}
+  .hold .flag{margin-left:auto;font-family:'IBM Plex Mono';font-size:9.5px;
+    letter-spacing:.12em;padding:3px 8px;border-radius:5px}
+  .flag.alert{color:var(--amber);border:1px solid #4a3a1a;background:#20180a}
+  .flag.ok{color:var(--ink-faint);border:1px solid var(--edge)}
+  .hold .row2{display:flex;align-items:flex-end;gap:16px;margin-top:12px}
+  .hold .price{font-family:'IBM Plex Mono';font-size:30px;font-weight:700;line-height:1;
+    letter-spacing:.02em}
+  .hold .chg{font-family:'IBM Plex Mono';font-size:15px;font-weight:600;padding-bottom:3px}
+  .hold .spark{margin-left:auto;width:130px;height:42px}
+
+  .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;margin-top:13px;
+    background:var(--grid);border:1px solid var(--grid);border-radius:8px;overflow:hidden}
+  .metric{background:var(--panel);padding:8px 10px}
+  .metric .k{font-family:'IBM Plex Mono';font-size:9px;color:var(--ink-faint);
+    letter-spacing:.1em;margin-bottom:3px}
+  .metric .v{font-family:'IBM Plex Mono';font-size:13px;font-weight:600}
+
+  .rsi-track{height:4px;background:var(--grid);border-radius:2px;margin-top:6px;position:relative;overflow:hidden}
+  .rsi-fill{height:100%;border-radius:2px;transition:width 1s ease}
+
+  /* ---- right column ---- */
+  .side{display:flex;flex-direction:column;gap:16px}
+
+  .macro{padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .mac{border:1px solid var(--edge);border-radius:10px;padding:11px 12px;background:var(--panel)}
+  .mac .k{font-family:'IBM Plex Mono';font-size:9.5px;color:var(--ink-faint);letter-spacing:.1em}
+  .mac .v{font-family:'IBM Plex Mono';font-size:17px;font-weight:700;margin-top:5px}
+  .mac .c{font-family:'IBM Plex Mono';font-size:10.5px;font-weight:600;margin-top:2px}
+
+  .feed{padding:8px 6px;max-height:340px;overflow-y:auto}
+  .feed::-webkit-scrollbar{width:6px}
+  .feed::-webkit-scrollbar-thumb{background:var(--edge);border-radius:3px}
+  .fitem{display:flex;gap:11px;padding:10px 12px;border-radius:9px;
+    border:1px solid transparent;transition:.25s;animation:fadein .5s both}
+  .fitem:hover{background:var(--panel);border-color:var(--edge)}
+  @keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .fitem .tm{font-family:'IBM Plex Mono';font-size:10px;color:var(--ink-faint);
+    white-space:nowrap;padding-top:2px;min-width:38px}
+  .fitem .bd{font-size:12.5px;line-height:1.5;color:var(--ink-dim)}
+  .fitem .bd b{color:var(--ink);font-weight:600}
+  .fitem.hot .bd b{color:var(--amber)}
+  .tag{font-family:'IBM Plex Mono';font-size:8.5px;letter-spacing:.1em;
+    padding:1px 6px;border-radius:4px;border:1px solid var(--edge);
+    color:var(--ink-faint);margin-right:6px;vertical-align:1px}
+  .tag.td{color:var(--amber);border-color:#4a3a1a}
+  .tag.mk{color:var(--cyan);border-color:#12384a}
+
+  /* ---- pipeline footer ---- */
+  .pipe{margin-top:16px;border:1px solid var(--edge);border-radius:14px;
+    background:linear-gradient(180deg,var(--panel-2),var(--panel));padding:16px 20px}
+  .pipe-h{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .pipe-h h2{font-size:12px;font-weight:600;letter-spacing:.14em}
+  .pipe-h .idx{font-family:'IBM Plex Mono';color:var(--violet);font-size:11px;font-weight:700}
+  .flow{display:flex;align-items:center;gap:0;flex-wrap:wrap}
+  .node{flex:1;min-width:120px;text-align:center;position:relative;padding:4px}
+  .node .box{border:1px solid var(--edge);border-radius:10px;padding:12px 8px;
+    background:var(--panel);position:relative;overflow:hidden}
+  .node .box .nm{font-family:'IBM Plex Mono';font-size:11px;font-weight:600;letter-spacing:.06em}
+  .node .box .st{font-size:9px;color:var(--ink-faint);margin-top:4px;font-family:'IBM Plex Mono';letter-spacing:.08em}
+  .node .box .beam{position:absolute;left:-100%;top:0;bottom:0;width:100%;
+    background:linear-gradient(90deg,transparent,var(--cyan-flow,#4fd1ff33),transparent)}
+  .node.run .box{border-color:var(--cyan)}
+  .node.run .box .beam{animation:beam 1.8s linear infinite}
+  @keyframes beam{to{left:100%}}
+  .arrow{color:var(--ink-faint);font-family:'IBM Plex Mono';padding:0 2px;flex:0 0 auto}
+  .node .box .dot{position:absolute;top:8px;right:8px;width:6px;height:6px;border-radius:50%;
+    background:var(--up);box-shadow:0 0 8px var(--up)}
+
+  footer{margin-top:22px;text-align:center;color:var(--ink-faint);
+    font-family:'IBM Plex Mono';font-size:10px;letter-spacing:.14em;line-height:2}
+  .disc{color:#3a424e;font-size:9.5px}
+  a.src{color:var(--ink-faint);text-decoration:none;border-bottom:1px dotted var(--edge)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand">
+      <h1><span class="live-dot"></span>MORNING&nbsp;DESK</h1>
+      <span class="sub">JP EQUITY / SEMICONDUCTOR STRATEGY TERMINAL</span>
+    </div>
+    <div class="status-chip" id="modeChip"><span class="live-dot" style="background:var(--cyan);box-shadow:0 0 12px var(--cyan)"></span><span id="modeTxt">DEMO FEED</span></div>
+    <div class="clock">
+      <div class="t mono" id="clock">--:--:--</div>
+      <div class="d" id="date">----.--.--</div>
+    </div>
+  </header>
+
+  <!-- ticker tape -->
+  <div class="tape"><div class="tape-track mono" id="tape"></div></div>
+
+  <div class="grid">
+    <!-- LEFT: holdings -->
+    <div class="panel">
+      <div class="panel-h">
+        <span class="idx">03</span><h2>保有株テクニカル</h2>
+        <span class="meta" id="holdMeta">LIVE&nbsp;·&nbsp;TICK&nbsp;1s</span>
+      </div>
+      <div class="holds" id="holds"></div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="side">
+      <div class="panel">
+        <div class="panel-h"><span class="idx">01</span><h2>マクロ / 米国市場</h2>
+          <span class="meta">OVERNIGHT</span></div>
+        <div class="macro" id="macro"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><span class="idx">06</span><h2>開示 / ニュース フィード</h2>
+          <span class="meta" id="feedMeta">STREAM</span></div>
+        <div class="feed" id="feed"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- pipeline -->
+  <div class="pipe">
+    <div class="pipe-h"><span class="idx">SYS</span><h2>PIPELINE — 平日 08:30 JST 自動実行</h2>
+      <span class="meta mono" style="margin-left:auto;color:var(--ink-faint);font-size:10px" id="pipeState">CYCLING</span>
+    </div>
+    <div class="flow" id="flow"></div>
+  </div>
+
+  <footer>
+    <div>MORNING DESK TERMINAL · Python + yfinance + TDnet · Discord delivery · self-built</div>
+    <div class="disc">数値はPythonの計算結果。判断は含まない。本画面は投資助言ではない。デモフィードは動作イメージであり実取引値ではない。</div>
+  </footer>
+</div>
+
+<script>
+// ============================================================
+//  Morning Desk — live dashboard
+//  Tries out/dashboard.json first; falls back to a seeded demo feed.
+// ============================================================
+const fmt = (n,d=0)=>n.toLocaleString('ja-JP',{minimumFractionDigits:d,maximumFractionDigits:d});
+const pct = n=>(n>=0?'+':'')+n.toFixed(2)+'%';
+const col = n=>n>=0?'var(--up)':'var(--down)';
+const glow= n=>n>=0?'var(--up-glow)':'var(--down-glow)';
+
+// ---- seed data (mirrors the real 285A/7974/6740 + sector world) ----
+const SEED = {
+  holds:[
+    {code:'285A.T',nm:'キオクシアHD',px:52110,base:52110,chg:-16.10,rsi:34.2,
+     ma25:-38.2,vol:'41.5M',candle:'大陰線',flag:'訴訟評決 開示', hot:true,
+     s:seedWalk(52110,-0.06)},
+    {code:'7974.T',nm:'任天堂',px:7294,base:7294,chg:3.02,rsi:56.1,
+     ma25:3.6,vol:'12.2M',candle:'小陽線',flag:null,
+     s:seedWalk(7294,0.03)},
+    {code:'6740.T',nm:'ジャパンディスプレイ',px:46,base:46,chg:-6.12,rsi:38.2,
+     ma25:-12.4,vol:'33.4M',candle:'小陰線',flag:'債務超過 継続',
+     s:seedWalk(46,-0.02)},
+  ],
+  macro:[
+    {k:'SOX 半導体指数',v:'11,867.50',c:-4.29},
+    {k:'NASDAQ',v:'25,881.95',c:-1.47},
+    {k:'S&P 500',v:'7,533.77',c:-0.51},
+    {k:'VIX 恐怖指数',v:'18.42',c:10.10},
+    {k:'USD/JPY',v:'162.41',c:0.21},
+    {k:'日経225',v:'64,141',c:-4.03},
+  ],
+  tape:[
+    ['NVDA',207.40,-2.40],['ASML',1784.87,-1.67],['AMD',500.94,-5.33],
+    ['MU',853.20,-5.65],['TSM',409.74,-2.32],['INTC',96.98,-5.84],
+    ['8035 東エレク',65100,-8.17],['6857 アドバンテスト',27505,-7.20],
+    ['6920 レーザーテック',41890,-9.66],['6146 ディスコ',64780,-8.23],
+    ['6723 ルネサス',3822,-7.66],['3436 SUMCO',3914,-15.17],
+  ],
+  feed:[
+    {tm:'13:00',tag:'td', hot:true, html:'<b>キオクシアHD</b> 当社子会社に対する訴訟の陪審評決に関するお知らせ'},
+    {tm:'10:14',tag:'mk', html:'<b>キオクシア</b>株、一時ストップ安 上場来高値から半値以下に'},
+    {tm:'09:31',tag:'mk', html:'日経平均、<b>キオクシアショック</b>波及で1ヵ月ぶり安値圏'},
+    {tm:'09:05',tag:'mk', html:'米衛星通信 Viasat 特許訴訟、約370億円の賠償評決'},
+    {tm:'08:40',tag:'td', html:'<b>任天堂</b> 自己株式取得状況に関するお知らせ'},
+    {tm:'08:12',tag:'mk', html:'半導体セクター全面安、SOX -4.3% 韓国メモリ株も急落'},
+  ],
+};
+function seedWalk(start,drift){const a=[start];for(let i=0;i<39;i++){a.push(a[i]*(1+drift/40+(Math.random()-0.5)*0.012))}return a}
+
+// ---- sparkline ----
+function spark(arr,up){
+  const w=130,h=42,mn=Math.min(...arr),mx=Math.max(...arr),rg=(mx-mn)||1;
+  const pts=arr.map((v,i)=>[i/(arr.length-1)*w,h-((v-mn)/rg)*(h-6)-3]);
+  const d=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+  const c=up>=0?'var(--up)':'var(--down)', g=up>=0?'var(--up-glow)':'var(--down-glow)';
+  const area=`M0 ${h} L`+pts.map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' L')+` L${w} ${h} Z`;
+  return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+    <defs><linearGradient id="g${up>=0?'u':'d'}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="${g}"/><stop offset="1" stop-color="transparent"/></linearGradient></defs>
+    <path d="${area}" fill="url(#g${up>=0?'u':'d'})"/>
+    <path d="${d}" fill="none" stroke="${c}" stroke-width="1.6" style="filter:drop-shadow(0 0 4px ${c})"/>
+    <circle cx="${pts.at(-1)[0].toFixed(1)}" cy="${pts.at(-1)[1].toFixed(1)}" r="2.4" fill="${c}"/>
+  </svg>`;
+}
+
+let DATA = SEED;
+
+// ---- render holdings ----
+function renderHolds(){
+  document.getElementById('holds').innerHTML = DATA.holds.map(h=>{
+    const rsiCol = h.rsi>=70?'var(--down)':h.rsi<=30?'var(--up)':'var(--cyan)';
+    return `<div class="hold">
+      <div class="row1">
+        <span class="code">${h.code}</span>
+        <span class="nm">${h.nm}</span>
+        ${h.flag?`<span class="flag alert">⚠ ${h.flag}</span>`:`<span class="flag ok">通常</span>`}
+      </div>
+      <div class="row2">
+        <div>
+          <div class="price" data-px="${h.code}" style="color:${col(h.chg)};text-shadow:0 0 18px ${glow(h.chg)}">${fmt(h.px)}</div>
+        </div>
+        <div class="chg" style="color:${col(h.chg)}">${pct(h.chg)}</div>
+        ${spark(h.s,h.chg)}
+      </div>
+      <div class="metrics">
+        <div class="metric"><div class="k">RSI 14</div><div class="v" style="color:${rsiCol}">${h.rsi.toFixed(1)}</div>
+          <div class="rsi-track"><div class="rsi-fill" style="width:${h.rsi}%;background:${rsiCol};box-shadow:0 0 8px ${rsiCol}"></div></div></div>
+        <div class="metric"><div class="k">25日乖離</div><div class="v" style="color:${col(h.ma25)}">${pct(h.ma25)}</div></div>
+        <div class="metric"><div class="k">出来高</div><div class="v">${h.vol}</div></div>
+        <div class="metric"><div class="k">ローソク</div><div class="v" style="font-size:11px">${h.candle}</div></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ---- render macro ----
+function renderMacro(){
+  document.getElementById('macro').innerHTML = DATA.macro.map(m=>`
+    <div class="mac"><div class="k">${m.k}</div>
+      <div class="v">${m.v}</div>
+      <div class="c" style="color:${col(m.c)}">${pct(m.c)}</div></div>`).join('');
+}
+
+// ---- render tape ----
+function renderTape(){
+  const one = DATA.tape.map(([s,p,c])=>`<span class="tk"><span class="sym">${s}</span>
+    <span class="px">${fmt(p, p<1000?2:0)}</span>
+    <span class="ch" style="color:${col(c)}">${c>=0?'▲':'▼'}${Math.abs(c).toFixed(2)}%</span></span>`).join('');
+  document.getElementById('tape').innerHTML = one+one; // duplicated for seamless loop
+}
+
+// ---- render feed ----
+function renderFeed(){
+  document.getElementById('feed').innerHTML = DATA.feed.map((f,i)=>`
+    <div class="fitem ${f.hot?'hot':''}" style="animation-delay:${i*.06}s">
+      <span class="tm">${f.tm}</span>
+      <span class="bd"><span class="tag ${f.tag}">${f.tag==='td'?'適時開示':'MARKET'}</span>${f.html}</span>
+    </div>`).join('');
+}
+
+// ---- pipeline ----
+const NODES=[['yfinance','価格取得'],['collect','指標計算'],['analogs','類似局面'],
+  ['tdnet','適時開示'],['render','整形'],['Discord','配信']];
+function renderFlow(){
+  document.getElementById('flow').innerHTML = NODES.map((n,i)=>
+    `<div class="node" id="node${i}"><div class="box"><span class="dot"></span>
+       <div class="beam"></div><div class="nm">${n[0]}</div><div class="st">${n[1]}</div></div></div>`
+    + (i<NODES.length-1?`<span class="arrow">▸</span>`:'')
+  ).join('');
+}
+function cyclePipe(){
+  let i=0;
+  setInterval(()=>{
+    NODES.forEach((_,k)=>document.getElementById('node'+k).classList.remove('run'));
+    document.getElementById('node'+i).classList.add('run');
+    document.getElementById('pipeState').textContent = 'RUN · '+NODES[i][0];
+    i=(i+1)%NODES.length;
+  },900);
+}
+
+// ---- live tick (demo motion) ----
+function tick(){
+  if(MODE!=='demo') return;
+  DATA.holds.forEach(h=>{
+    const drift=(Math.random()-0.5)*0.004;
+    h.px = Math.max(1, h.px*(1+drift));
+    h.chg = (h.px/h.base-1)*100 + h.baseChg0;
+    h.s.push(h.px); if(h.s.length>40) h.s.shift();
+    const el=document.querySelector(`[data-px="${h.code}"]`);
+    if(el){el.textContent=fmt(h.px); el.style.color=col(h.chg);
+      el.style.textShadow=`0 0 18px ${glow(h.chg)}`;}
+  });
+  // keep chg anchored around the real close, just add micro noise
+}
+// anchor demo chg around real values
+SEED.holds.forEach(h=>h.baseChg0=h.chg - 0);
+
+// ---- clock ----
+function clock(){
+  const d=new Date();
+  const jst=new Date(d.getTime()+(d.getTimezoneOffset()+540)*60000);
+  const p=n=>String(n).padStart(2,'0');
+  document.getElementById('clock').textContent=`${p(jst.getHours())}:${p(jst.getMinutes())}:${p(jst.getSeconds())}`;
+  document.getElementById('date').textContent=`${jst.getFullYear()}.${p(jst.getMonth()+1)}.${p(jst.getDate())} JST`;
+}
+
+// ---- try to load real data ----
+let MODE='demo';
+async function boot(){
+  try{
+    const r=await fetch('out/dashboard.json',{cache:'no-store'});
+    if(r.ok){
+      const j=await r.json();
+      if(j && j.holds){ DATA=j; MODE='live';
+        document.getElementById('modeTxt').textContent='LIVE · '+(j.as_of||'DATA');
+        document.getElementById('modeChip').firstElementChild.style.background='var(--up)';
+        document.getElementById('modeChip').firstElementChild.style.boxShadow='0 0 12px var(--up)';
+      }
+    }
+  }catch(e){/* stays demo */}
+  renderHolds();renderMacro();renderTape();renderFeed();renderFlow();
+  clock();setInterval(clock,1000);
+  cyclePipe();
+  setInterval(tick,1000);
+}
+boot();
+</script>
+</body>
+</html>

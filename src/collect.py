@@ -95,10 +95,38 @@ def snapshot(code: str, name: str, df: pd.DataFrame) -> dict:
     sup, res = support_resistance(df)
     vol = df["Volume"]
 
+    # --- データ鮮度チェック ---
+    # yfinance無料データは金曜が欠損したり当日が場中でNaNだったりする。
+    # 「確定した最新終値」が実行日から何営業日前かを測り、古ければ警告する。
+    # これをしないと4日前の値を「最新」と誤読する(2026/7/21のキオクシア問題)。
+    last_date = df.index[-1].date()
+    today = dt.datetime.now(JST).date()
+    bdays_old = int(np.busday_count(last_date, today))  # 実行日までの営業日数
+    stale = bdays_old >= 2  # 前営業日ならbdays_old<=1。2以上は古い
+
+    # --- 株式分割の疑い検知 ---
+    # 前日比が±30%を超える急変は、実際の暴騰暴落か「株式分割の未調整」の可能性。
+    # 分割が未調整だと移動平均が汚染され-80%乖離のような異常値が出る(キオクシア10分割検討)。
+    chg1 = (c.iloc[-1] / c.iloc[-2] - 1) * 100 if len(c) >= 2 else 0
+    split_suspect = abs(chg1) >= 30
+    # 移動平均乖離が-50%以下も分割未調整の典型症状
+    dev25 = (c.iloc[-1] / ma25.iloc[-1] - 1) * 100 if ma25.iloc[-1] else 0
+    if abs(dev25) >= 50:
+        split_suspect = True
+
     return {
         "code": code,
         "name": name,
         "as_of": df.index[-1].strftime("%Y-%m-%d"),
+        "data_age_bdays": bdays_old,
+        "stale": stale,
+        "stale_warning": (f"最新確定値が{bdays_old}営業日前({last_date})。"
+                          "yfinance無料データの欠損/未確定のため、直近の実勢と乖離する場合がある。"
+                          if stale else None),
+        "split_suspect": split_suspect,
+        "split_warning": ("前日比または移動平均乖離が異常に大きい。株式分割の未調整の可能性があり、"
+                          "移動平均・乖離率・アナログ分析が汚染されている恐れがある。要確認。"
+                          if split_suspect else None),
         "close": _f(c.iloc[-1]),
         "prev_close": _f(c.iloc[-2]),
         "chg_pct": _f((c.iloc[-1] / c.iloc[-2] - 1) * 100),
@@ -106,7 +134,8 @@ def snapshot(code: str, name: str, df: pd.DataFrame) -> dict:
         "high": _f(df["High"].iloc[-1]),
         "low": _f(df["Low"].iloc[-1]),
         "volume": _f(vol.iloc[-1]),
-        "volume_vs_20d_avg_pct": _f((vol.iloc[-1] / vol.tail(20).mean() - 1) * 100),
+        "volume_vs_20d_avg_pct": _f((vol.iloc[-1] / vol.tail(20).mean() - 1) * 100
+                                     if vol.tail(20).mean() else None),
         "rsi14": _f(rsi(c).iloc[-1]),
         "macd": _f(ml.iloc[-1]),
         "macd_signal": _f(ms.iloc[-1]),

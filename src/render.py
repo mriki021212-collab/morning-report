@@ -65,6 +65,10 @@ def render(facts: dict) -> str:
             continue
         dq = facts.get("data_quality", {}).get(code, {})
         L.append(f"\n### {s['name']}（{code}） — {s['as_of']}")
+        if s.get("stale_warning"):
+            L.append(f"> ⚠️ **{s['stale_warning']}**")
+        if s.get("split_warning"):
+            L.append(f"> 🔀 **{s['split_warning']}**")
         L.append(f"終値 **{_n(s['close'],'円')}** / {_arrow(s['chg_pct'])} / "
                  f"出来高 {_n(s['volume'],'',0)}（20日平均比 {_arrow(s['volume_vs_20d_avg_pct'])}）")
         L.append("")

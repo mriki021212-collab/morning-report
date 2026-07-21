@@ -10,7 +10,7 @@ import jpholiday
 import yaml
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
-import analogs, collect, jquants, news, notify, render, tdnet  # noqa: E402
+import analogs, collect, dashboard, jquants, news, notify, render, tdnet  # noqa: E402
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 JST = dt.timezone(dt.timedelta(hours=9))
@@ -132,7 +132,7 @@ def build_facts(cfg: dict) -> dict:
     facts["sentiment"] = {"status": "現時点では確認できない（X API/掲示板は未接続）"}
     facts["orderbook"] = {"status": "現時点では確認できない（リアルタイム板は取得範囲外）"}
     facts["events"] = {"status": "web_searchで確認すること"}
-    return facts
+    return facts, hist
 
 
 def main() -> None:
@@ -146,9 +146,10 @@ def main() -> None:
         notify.post_holiday(today)
         return
     try:
-        facts = build_facts(cfg)
+        facts, hist = build_facts(cfg)
         out = ROOT / "out"
         out.mkdir(exist_ok=True)
+        dashboard.write(facts, hist, out)
         (out / f"facts_{today:%Y%m%d}.json").write_text(
             json.dumps(facts, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
 
