@@ -48,17 +48,46 @@ def _gnews(query: str, hours: int, per: int) -> list[dict]:
 
     cutoff = dt.datetime.now(dt.timezone.utc) - dt.timedelta(hours=hours)
     out = []
-    for e in feed.entries[:per * 3]:
+    for e in feed.entries[:per * 4]:
         t = e.get("published_parsed") or e.get("updated_parsed")
         when = dt.datetime(*t[:6], tzinfo=dt.timezone.utc) if t else None
         if when and when < cutoff:
             continue
-        out.append({"title": e.get("title", ""), "link": e.get("link", ""),
+        title = e.get("title", "").strip()
+        if not _is_real_article(title):
+            continue
+        out.append({"title": _clean_title(title), "link": e.get("link", ""),
                     "source": (e.get("source", {}) or {}).get("title", "Google News"),
                     "published": when.isoformat()[:16] if when else "不明"})
         if len(out) >= per:
             break
     return out
+
+
+# --- ノイズ除去 ---
+# Googleニュースは記事以外に「株価情報ページ」「Google Newsまとめ」を混ぜてくる。
+# これらは見出しとして無価値なので弾く。2026/7/22のレポートで大量混入していた。
+_NOISE_PATTERNS = (
+    "：株価・株式情報", ":株価・株式情報", "値動きの背景をAIが解説",
+    "今の株価の理由は", "株価・株式情報（", "Comprehensive up-to-date",
+)
+_NOISE_TITLES = ("Google News", "Google ニュース", "")
+
+
+def _is_real_article(title: str) -> bool:
+    if title in _NOISE_TITLES:
+        return False
+    return not any(p in title for p in _NOISE_PATTERNS)
+
+
+def _clean_title(title: str) -> str:
+    # 末尾の " - 媒体名" を1回だけ落として簡潔にする（読みやすさ）
+    if " - " in title:
+        head, _, tail = title.rpartition(" - ")
+        # 媒体名は概ね短い。長い場合は記事タイトルの一部なので残す
+        if len(tail) <= 20:
+            return head.strip()
+    return title
 
 
 def fetch(macro_urls: list[str], hours: int = 24, per_stock: int = 3) -> dict:
