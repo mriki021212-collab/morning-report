@@ -43,8 +43,12 @@ def post(report: str, audit_result: str = "OK") -> None:
     r.raise_for_status()
 
     # 2) 本文もチャンク投稿（スマホでファイルを開かず読めるように）
+    # flags=4 (SUPPRESS_EMBEDS): 本文中のURLをDiscordがカード展開しないようにする。
+    # これが無いとGoogleニュースの各リンクに「Google News / Comprehensive...」という
+    # プレビューカードが大量生成され、レポートが読みづらくなる（本文自体は正常）。
     for i, c in enumerate(_chunks(report)):
-        requests.post(url, json={"content": c}, timeout=30).raise_for_status()
+        requests.post(url, json={"content": c, "flags": 4},
+                      timeout=30).raise_for_status()
 
 
 def post_holiday(d) -> None:
