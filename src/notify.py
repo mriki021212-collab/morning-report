@@ -6,7 +6,7 @@ import json
 import requests
 
 JST = dt.timezone(dt.timedelta(hours=9))
-LIMIT = 1900  # Discord本文2000字制限に対する安全マージン
+LIMIT = 1900
 
 GREEN = 0x2ECC71
 RED = 0xE74C3C
@@ -15,7 +15,6 @@ ORANGE = 0xE67E22
 
 
 def _chunks(text: str) -> list[str]:
-    """見出し(#)を跨がないように分割"""
     out, buf = [], ""
     for line in text.split("\n"):
         if len(buf) + len(line) + 1 > LIMIT:
@@ -28,7 +27,6 @@ def _chunks(text: str) -> list[str]:
 
 
 def _pct(v):
-    """前日比%を矢印つき文字列に。Noneは取得不可。"""
     if v is None:
         return "取得不可"
     arrow = "🔺" if v > 0 else "🔻" if v < 0 else "➖"
@@ -36,7 +34,6 @@ def _pct(v):
 
 
 def _mood_color(facts: dict) -> int:
-    """日経225とSOXの騰落から地合い色を決める。両方取れなければグレー。"""
     macro = facts.get("macro", {}) if facts else {}
     vals = []
     for key in ("^N225", "^SOX"):
@@ -102,7 +99,6 @@ def post(report: str, audit_result: str = "OK", facts: dict | None = None) -> No
     if facts:
         fields = [_macro_field(facts), _gap_field(facts), _holdings_field(facts)]
 
-    # 1) サマリーEmbed（色は地合いで動的）＋全文をmdファイル添付（2000字制限を回避する本命）
     files = {"file": (f"morning_{now:%Y%m%d}.md",
                       io.BytesIO(report.encode("utf-8")), "text/markdown")}
     payload = {
@@ -118,13 +114,11 @@ def post(report: str, audit_result: str = "OK", facts: dict | None = None) -> No
                       files=files, timeout=30)
     r.raise_for_status()
 
-    # 2) 本文もチャンク投稿（スマホでファイルを開かず読めるように、等幅で桁揃え）
     for c in _chunks(report):
         requests.post(url, json={"content": f"```\n{c}\n```"[:1990]}, timeout=30).raise_for_status()
 
 
 def post_holiday(d) -> None:
-    """休場日の1行通知。「無音を異常」の意味に固定するために必要。"""
     url = os.getenv("DISCORD_WEBHOOK_URL")
     if not url:
         return
