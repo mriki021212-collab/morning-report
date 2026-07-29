@@ -167,7 +167,7 @@ def main() -> None:
             print("LLM層はスキップ（ANTHROPIC_API_KEY未設定 または --no-llm）")
 
         (out / f"report_{today:%Y%m%d}.md").write_text(report, encoding="utf-8")
-        notify.post(report, verdict)
+        notify.post(report, verdict, facts)
         print("posted. audit =", verdict)
     except Exception:
         notify.post_error(traceback.format_exc())
