@@ -12,6 +12,10 @@ GREEN = 0x2ECC71
 RED = 0xE74C3C
 GRAY = 0x95A5A6
 ORANGE = 0xE67E22
+PURPLE = 0x8E44AD  # ファクトチェック不一致専用。地合いの赤/緑と意味が違うので別色にする
+
+DASHBOARD_URL = "https://mriki021212-collab.github.io/morning-report/terminal_dashboard.html"
+MOVER_ALERT_PCT = 3.0  # 保有株の前日比がこれ以上なら結論行で警告する
 
 
 def _chunks(text: str) -> list[str]:
@@ -33,17 +37,69 @@ def _pct(v):
     return f"{arrow}{abs(v):.2f}%"
 
 
-def _mood_color(facts: dict) -> int:
+def _mood_avg(facts: dict) -> float | None:
     macro = facts.get("macro", {}) if facts else {}
     vals = []
     for key in ("^N225", "^SOX"):
         s = macro.get(key) or {}
         if not s.get("status") and isinstance(s.get("chg_pct"), (int, float)):
             vals.append(s["chg_pct"])
-    if not vals:
+    return sum(vals) / len(vals) if vals else None
+
+
+def _mood_color(facts: dict) -> int:
+    avg = _mood_avg(facts)
+    if avg is None:
         return GRAY
-    avg = sum(vals) / len(vals)
     return GREEN if avg > 0 else RED if avg < 0 else GRAY
+
+
+def _biggest_mover(facts: dict):
+    """保有銘柄のうち前日比の絶対値が最大のものを (name, chg_pct) で返す。無ければ None"""
+    best = None
+    for s in (facts.get("holdings", {}) or {}).values():
+        chg = s.get("chg_pct")
+        if s.get("status") or not isinstance(chg, (int, float)):
+            continue
+        if best is None or abs(chg) > abs(best[1]):
+            best = (s.get("name", "?"), chg)
+    return best
+
+
+def _is_audit_clean(verdict: str) -> bool:
+    v = (verdict or "").strip()
+    return v == "OK" or "未使用" in v  # 「数値のみ（LLM未使用）」は不一致ではない
+
+
+def _conclusion(facts: dict, audit_result: str) -> str:
+    """embed descriptionに載せる結論。優先度: 要注意開示 → 地合い → 急変銘柄 → 監査警告"""
+    lines = []
+    hs = (facts.get("tdnet", {}) or {}).get("high_signal", []) if facts else []
+    if hs:
+        i = hs[0]
+        extra = f" ほか{len(hs) - 1}件" if len(hs) > 1 else ""
+        lines.append(f"🚨 **{i['company']}**: {i['title']}{extra}")
+
+    avg = _mood_avg(facts) if facts else None
+    if avg is None:
+        lines.append("⚪ **地合い: データ不足**")
+    elif avg > 0:
+        lines.append(f"🟢 **地合い: 上昇**（日経+SOX平均 {avg:+.2f}%）")
+    elif avg < 0:
+        lines.append(f"🔴 **地合い: 下落**（日経+SOX平均 {avg:+.2f}%）")
+    else:
+        lines.append("⚪ **地合い: 変わらず**")
+
+    mover = _biggest_mover(facts) if facts else None
+    if mover and abs(mover[1]) >= MOVER_ALERT_PCT:
+        name, chg = mover
+        arrow = "🔺" if chg > 0 else "🔻"
+        lines.append(f"🚨 **{name}** が{arrow}{abs(chg):.2f}%の大幅変動")
+
+    if not _is_audit_clean(audit_result):
+        lines.append("⚠️ **ファクトチェックで数値の不一致が検出されました**（詳細は下部参照）")
+
+    return "\n".join(lines)
 
 
 def _macro_field(facts: dict) -> dict:
@@ -62,16 +118,35 @@ def _macro_field(facts: dict) -> dict:
 def _gap_field(facts: dict) -> dict:
     g = facts.get("nikkei_gap", {}) if facts else {}
     if not g or g.get("status"):
-        return {"name": "📈 日経寄り付き示唆", "value": "現時点では確認できない", "inline": False}
+        return {"name": "📈 日経寄り付き示唆", "value": "現時点では確認できない", "inline": True}
     if g.get("valid") is False:
-        return {"name": "📈 日経寄り付き示唆", "value": f"使用不可 — {g.get('warning','')}", "inline": False}
+        return {"name": "📈 日経寄り付き示唆", "value": f"使用不可 — {g.get('warning','')}", "inline": True}
     pts = g.get("implied_gap_pts")
     pct = g.get("implied_gap_pct")
     if pts is None or pct is None:
-        return {"name": "📈 日経寄り付き示唆", "value": "算出不可", "inline": False}
+        return {"name": "📈 日経寄り付き示唆", "value": "算出不可", "inline": True}
     arrow = "🔺GU" if pts > 0 else "🔻GD" if pts < 0 else "➖"
     return {"name": "📈 日経寄り付き示唆",
-            "value": f"```\n{arrow}  {pts:+,.0f}円 ({pct:+.2f}%)\n```", "inline": False}
+            "value": f"```\n{arrow}  {pts:+,.0f}円 ({pct:+.2f}%)\n```", "inline": True}
+
+
+def _alert_field(high_signal: list[dict]) -> dict:
+    lines = []
+    for i in high_signal[:5]:
+        lines.append(f"**[{i['company']}]** {i['title']}  "
+                     f"（{i['time']} / {'・'.join(i['high_signal_words'])}）  [PDF]({i['url']})")
+    return {"name": "🚨 要注意開示（TDnet）", "value": "\n".join(lines)[:1024], "inline": False}
+
+
+def _factcheck_field(audit_result: str) -> dict:
+    ok = _is_audit_clean(audit_result)
+    value = "✅ 不一致なし" if ok else f"⚠️ 不一致あり\n{audit_result[:150]}"
+    return {"name": "🔍 ファクトチェック", "value": value, "inline": True}
+
+
+def _dashboard_field() -> dict:
+    return {"name": "🔗 ライブダッシュボード",
+            "value": f"[ターミナル表示を開く]({DASHBOARD_URL})", "inline": False}
 
 
 def _holdings_field(facts: dict) -> dict:
@@ -93,11 +168,25 @@ def _holdings_field(facts: dict) -> dict:
 def post(report: str, audit_result: str = "OK", facts: dict | None = None) -> None:
     url = os.environ["DISCORD_WEBHOOK_URL"]
     now = dt.datetime.now(JST)
-    color = _mood_color(facts) if facts else (0x2E86C1 if audit_result == "OK" else ORANGE)
+
+    # 色の優先度: 監査不一致(紫) > 保有株の要注意開示(橙) > 地合い(緑/赤/灰)
+    if not _is_audit_clean(audit_result):
+        color = PURPLE
+    elif facts and (facts.get("tdnet", {}) or {}).get("high_signal"):
+        color = ORANGE
+    else:
+        color = _mood_color(facts) if facts else GRAY
 
     fields = []
     if facts:
-        fields = [_macro_field(facts), _gap_field(facts), _holdings_field(facts)]
+        hs = (facts.get("tdnet", {}) or {}).get("high_signal", [])
+        if hs:
+            fields.append(_alert_field(hs))
+        fields.append(_holdings_field(facts))
+        fields.append(_gap_field(facts))
+        fields.append(_factcheck_field(audit_result))
+        fields.append(_macro_field(facts))
+    fields.append(_dashboard_field())
 
     files = {"file": (f"morning_{now:%Y%m%d}.md",
                       io.BytesIO(report.encode("utf-8")), "text/markdown")}
@@ -105,9 +194,11 @@ def post(report: str, audit_result: str = "OK", facts: dict | None = None) -> No
         "username": "Morning Strategist",
         "embeds": [{
             "title": f"🗾 モーニングレポート {now:%Y/%m/%d (%a) %H:%M} JST",
+            "url": DASHBOARD_URL,
+            "description": _conclusion(facts, audit_result) if facts else "⚪ **データ取得なし**",
             "color": color,
             "fields": fields,
-            "footer": {"text": f"ファクトチェック: {audit_result[:200]}"},
+            "footer": {"text": "自動生成レポート・投資助言ではありません"},
         }],
     }
     r = requests.post(url, data={"payload_json": json.dumps(payload)},
