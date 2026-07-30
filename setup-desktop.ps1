@@ -112,6 +112,21 @@ if ($LASTEXITCODE -ne 0) { "[$(Get-Date -Format 'HH:mm:ss')] WARN: git sync fail
 "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] start" | Add-Content $log
 & ".\.venv\Scripts\python.exe" "src\main.py" 2>&1 | Add-Content $log
 "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] exit=$LASTEXITCODE" | Add-Content $log
+
+# GitHub Pages: commit and push out/dashboard.json only, and only if it changed.
+git add out/dashboard.json 2>&1 | Out-Null
+git diff --cached --quiet
+if ($LASTEXITCODE -eq 0) {
+    "[$(Get-Date -Format 'HH:mm:ss')] dashboard.json: no change - skip push" | Add-Content $log
+} else {
+    git -c user.email="local@example.com" -c user.name="local" commit -q -m "dashboard: $(Get-Date -Format 'yyyy-MM-dd HH:mm')"
+    git push --quiet 2>&1 | Out-Null
+    if ($LASTEXITCODE -eq 0) {
+        "[$(Get-Date -Format 'HH:mm:ss')] dashboard.json pushed" | Add-Content $log
+    } else {
+        "[$(Get-Date -Format 'HH:mm:ss')] WARN: dashboard.json push failed" | Add-Content $log
+    }
+}
 '@
 Set-Content -Path "$Dest\run-daily.ps1" -Value $runner -Encoding ASCII
 Write-Host "  run-daily.ps1 written" -Fore Green

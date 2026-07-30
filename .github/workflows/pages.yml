@@ -1,0 +1,45 @@
+name: deploy-pages
+
+# out/dashboard.json 以外（config.yaml, prompts/, 過去の out/report_*.md 等）は
+# サイトに含めない。公開範囲は dashboard.html / terminal_dashboard.html / out/dashboard.json のみ。
+on:
+  push:
+    branches: [main]
+    paths:
+      - out/dashboard.json
+      - dashboard.html
+      - terminal_dashboard.html
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build restricted site (only dashboard files, not the whole repo)
+        run: |
+          mkdir -p _site/out
+          cp dashboard.html _site/index.html
+          cp dashboard.html _site/dashboard.html
+          cp terminal_dashboard.html _site/terminal_dashboard.html
+          cp out/dashboard.json _site/out/dashboard.json
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

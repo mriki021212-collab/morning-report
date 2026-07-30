@@ -5,7 +5,9 @@ __pycache__/
 *.pyc
 
 # 生成物（毎日増える。Actionsのartifactで保管する）
-out/
+# dashboard.jsonだけは例外: GitHub Pagesで配信するためコミットする
+out/*
+!out/dashboard.json
 
 # ローカル専用スクリプト
 run.ps1
