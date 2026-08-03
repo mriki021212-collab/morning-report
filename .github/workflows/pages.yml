@@ -7,6 +7,7 @@ on:
     branches: [main]
     paths:
       - out/dashboard.json
+      - out/quotes.json
       - dashboard.html
       - terminal_dashboard.html
   workflow_dispatch:
@@ -36,6 +37,7 @@ jobs:
           cp dashboard.html _site/dashboard.html
           cp terminal_dashboard.html _site/terminal_dashboard.html
           cp out/dashboard.json _site/out/dashboard.json
+          if [ -f out/quotes.json ]; then cp out/quotes.json _site/out/quotes.json; fi
 
       - uses: actions/upload-pages-artifact@v3
         with:
