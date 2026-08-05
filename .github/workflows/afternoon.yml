@@ -1,0 +1,131 @@
+name: afternoon-report
+
+on:
+  # 大引け(15:30 JST)後の「本日の振り返り＋明日の予測」。
+  # morning.yml と同じ理由で単発cronは落ちる前提で3本張る。
+  #
+  # 16:00 は大引けの30分後で、yfinanceの日足がまだ当日分に更新されていないことがある。
+  # その場合 main.py は session_close.confirmed=false を立てて「本日の値動き」を書かずに
+  # 出力する。マーカーはそのとき保存しないので、16:20 / 16:40 が確定済みデータで
+  # 取り直す。つまりこの3本は単なる保険ではなく、データ確定待ちの再試行でもある。
+  schedule:
+    - cron: "0 7 * * 1-5"    # JST 16:00 (本命)
+    - cron: "20 7 * * 1-5"   # JST 16:20 (再試行1)
+    - cron: "40 7 * * 1-5"   # JST 16:40 (再試行2・最終)
+  workflow_dispatch:
+
+# out/dashboard.json 等を自分でコミットするため書き込み権限が要る
+permissions:
+  contents: write
+
+concurrency:
+  group: afternoon-report
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compute JST date
+        id: d
+        run: echo "today=$(TZ=Asia/Tokyo date +%Y%m%d)" >> $GITHUB_OUTPUT
+
+      # 同じ日に既に投稿済みかをキャッシュで判定（3本のcronの重複投稿を防ぐ）
+      # 手動実行は常に走らせたいのでマーカーを見ない
+      - name: Check today's marker
+        id: marker
+        if: github.event_name == 'schedule'
+        uses: actions/cache/restore@v4
+        with:
+          path: .posted-pm
+          key: posted-pm-${{ steps.d.outputs.today }}
+
+      - name: Decide
+        id: go
+        run: |
+          if [ "${{ steps.marker.outputs.cache-hit }}" = "true" ]; then
+            echo "run=false" >> $GITHUB_OUTPUT
+            echo "already posted this afternoon - skip"
+          else
+            echo "run=true" >> $GITHUB_OUTPUT
+          fi
+
+      - uses: actions/setup-python@v5
+        if: steps.go.outputs.run == 'true'
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+        if: steps.go.outputs.run == 'true'
+
+      - name: Generate & post
+        if: steps.go.outputs.run == 'true'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          JQ_REFRESH_TOKEN: ${{ secrets.JQ_REFRESH_TOKEN }}
+        run: python src/main.py --afternoon
+
+      # 当日終値が確定していたときだけ「今日は完了」とマークする。
+      # 未確定のまま投稿した回でマークしてしまうと、確定後の取り直しが
+      # スキップされ、その日は永遠に不完全なレポートで終わる。
+      - name: Check whether today's close was confirmed
+        id: closed
+        if: success() && steps.go.outputs.run == 'true'
+        run: |
+          F="out/facts_afternoon_$(TZ=Asia/Tokyo date +%Y%m%d).json"
+          if [ -f "$F" ] && python -c "import json,sys; sys.exit(0 if json.load(open('$F',encoding='utf-8')).get('session_close',{}).get('confirmed') else 1)"; then
+            echo "confirmed=true" >> $GITHUB_OUTPUT
+          else
+            echo "confirmed=false" >> $GITHUB_OUTPUT
+            echo "close not confirmed yet - later cron will retry"
+          fi
+
+      - name: Save today's marker
+        if: success() && steps.go.outputs.run == 'true' && steps.closed.outputs.confirmed == 'true' && github.event_name == 'schedule'
+        run: touch .posted-pm
+      - uses: actions/cache/save@v4
+        if: success() && steps.go.outputs.run == 'true' && steps.closed.outputs.confirmed == 'true' && github.event_name == 'schedule'
+        with:
+          path: .posted-pm
+          key: posted-pm-${{ steps.d.outputs.today }}
+
+      # 公開ダッシュボードを当日終値ベースに更新する。
+      # 未確定の回ではコミットしない（前営業日の値を「本日」として公開しないため）。
+      - name: Commit dashboard data
+        if: success() && steps.go.outputs.run == 'true' && steps.closed.outputs.confirmed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add out/dashboard.json out/earnings.json out/quotes.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "no dashboard changes"
+          else
+            git commit -m "data: $(TZ=Asia/Tokyo date +%Y-%m-%d) 大引け後の値に更新"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+
+      # Pythonに依存しない失敗通知。morning.yml と同じ理由でここは必ず動かす。
+      - name: Notify failure
+        if: failure()
+        env:
+          HOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          curl -sS -H "Content-Type: application/json" \
+            -d "{\"content\":\"afternoon-report FAILED / event=${{ github.event_name }} / $URL\"}" \
+            "$HOOK" || true
+
+      - name: Archive artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: afternoon-${{ github.run_id }}
+          path: out/
+          retention-days: 90
+          if-no-files-found: ignore

@@ -207,3 +207,150 @@ def render(facts: dict) -> str:
         L.append(f"- {s}")
     L.append("\n_本レポートは投資助言ではない。売買判断は自己責任で。_")
     return "\n".join(L)
+
+
+def _earnings_section(facts: dict) -> list[str]:
+    """明日以降の決算予定。日付は earnings.json が持つものだけを出す（推定しない）。"""
+    L = [_sec("④ 明日以降の決算予定")]
+    e = facts.get("earnings", {})
+    if e.get("status"):
+        L.append(f"**{e['status']}**")
+        return L
+    ev, failed = e.get("events", []), e.get("failed", [])
+    if not ev:
+        L.append(f"{len(failed)}銘柄の決算予定を取得できなかった（{', '.join(failed)}）。"
+                 if failed else "今後の決算予定なし。")
+        return L
+    L.append("| 日付 | 銘柄 | 確定/予定 | 保有 |")
+    L.append("|---|---|---|---|")
+    for x in ev[:10]:
+        L.append(f"| {x['date']} | {x['name']}（{x['code']}） | "
+                 f"{'確定' if x['confirmed'] else '**予定**'} | {'○' if x.get('held') else ''} |")
+    if any(not x["confirmed"] for x in ev[:10]):
+        L.append("\n_「予定」は企業が正式発表した日付ではない。変更されることがある。_")
+    if failed:
+        L.append(f"\n_取得できなかった銘柄: {', '.join(failed)}（推定日では埋めていない）_")
+    return L
+
+
+def render_afternoon(facts: dict) -> str:
+    """大引け後の「本日の振り返り」。数値のみで、明日の予測（判断）は含まない。
+
+    render() との最大の違いは、当日終値が確定しているかを最初に検査すること。
+    未確定なら「本日の値動き」を一切書かずに打ち切る。前営業日の値を今日の値として
+    出すくらいなら、何も出さないほうがよい。
+    """
+    sc = facts.get("session_close", {})
+    L = ["# アフタヌーンレポート（数値編）",
+         f"生成: {facts['generated_at_jst'][:19]} JST / 東証: "
+         f"{'営業日' if facts['trading_day'] else '休場'}",
+         "\n> 全数値はPythonの計算結果。解釈・明日の予測は含まない（それらは判断であり別レイヤの仕事）。"]
+
+    # ⓪ 当日終値の確定チェック — ここが最重要。未確定なら以降を信用してはいけない
+    L.append(_sec("⓪ 当日終値の確定状況"))
+    if not sc:
+        L.append("**検査未実施**（後場モードで生成されていない）。")
+    elif sc.get("confirmed"):
+        L.append(f"国内 {len(sc.get('confirmed_codes', []))}銘柄すべてが "
+                 f"**{sc['expected_date']} の日足を確定済み**。以下の数値は本日の終値。")
+    else:
+        L.append(f"⚠️ **当日終値は未確定** — {sc.get('warning')}")
+        L.append("\n以下の国内銘柄は前営業日の値のままである:")
+        for p in sc.get("pending", []):
+            L.append(f"- {p.get('name') or p['code']}（{p['code']}）— 最新確定 {p['as_of']}")
+        L.append("\n**この状態では「本日の値動き」を記述できない。**"
+                 "16:00 JST は大引け(15:30)の30分後で、yfinanceの日足が当日分に"
+                 "更新されていないことがある。後続のcron（16:20 / 16:40）での再取得を待つこと。")
+    if sc.get("note"):
+        L.append(f"\n_{sc['note']}_")
+
+    # ① 本日の着地
+    L.append(_sec("① 本日の着地"))
+    if sc and not sc.get("confirmed"):
+        L.append("当日終値が未確定のため出力しない（前営業日の値を本日として出さない）。")
+    else:
+        L.append("| 銘柄 | 終値 | 前日比 | 出来高(20日平均比) | RSI | 25日乖離 |")
+        L.append("|---|---:|---:|---:|---:|---:|")
+        for code, s in list(facts["holdings"].items()) + list(facts["sector"].items()):
+            if s.get("status"):
+                continue
+            L.append(f"| {s['name']}（{code}） | {_n(s['close'],'円')} | {_arrow(s['chg_pct'])} | "
+                     f"{_arrow(s['volume_vs_20d_avg_pct'])} | {_n(s['rsi14'],'',1)} | "
+                     f"{_arrow(s['dev_ma25_pct'])} |")
+
+    # ② 朝の想定との差分
+    L.append(_sec("② 今朝の想定と実績の差"))
+    mv = facts.get("morning_vs_actual", {})
+    if mv.get("status"):
+        L.append(f"**{mv['status']}**")
+    else:
+        L.append(f"今朝のレポート生成: {mv.get('morning_generated_at', '―')}")
+        n = mv.get("nikkei", {})
+        if n.get("status"):
+            L.append(f"\n日経平均: {n['status']}")
+        else:
+            L.append(f"\n- 今朝の先物示唆（寄り付き乖離）: **{n['implied_gap_pct_at_morning']:+.2f}%**")
+            L.append(f"- 実際の終値前日比: **{n['actual_chg_pct']:+.2f}%**")
+            L.append(f"- 差: **{n['diff_pct_pt']:+.2f}%pt**")
+            L.append(f"- _{n['note']}_")
+        hs = mv.get("holdings", {})
+        if hs:
+            L.append("\n| 保有銘柄 | 今朝の基準終値 | 本日終値 | 変化 |")
+            L.append("|---|---:|---:|---:|")
+            for code, h in hs.items():
+                if h.get("status"):
+                    L.append(f"| {code} | ― | ― | {h['status']} |")
+                    continue
+                L.append(f"| {h['name']}（{code}） | {_n(h['morning_base_close'],'円')}"
+                         f"（{h['morning_base_date']}） | {_n(h['actual_close'],'円')}"
+                         f"（{h['actual_date']}） | {_arrow(h['chg_pct'])} |")
+
+    # ③ 米国市場（これから動く材料）
+    L.append(_sec("③ 米国市場・マクロ（前日終値／今夜これから動く）"))
+    L.append("| 指標 | 終値 | 前日比 | 日付 |")
+    L.append("|---|---:|---:|---|")
+    for code, s in facts["macro"].items():
+        if s.get("status"):
+            L.append(f"| {code} | 取得不可 | ― | ― |")
+            continue
+        L.append(f"| {s['name']} | {_n(s['close'])} | {_arrow(s['chg_pct'])} | {s['as_of']} |")
+
+    L.extend(_earnings_section(facts))
+
+    # ⑤ 本日出た開示・ニュース
+    L.append(_sec("⑤ 本日の適時開示（TDnet）"))
+    td = facts.get("tdnet", {})
+    if td.get("status", "").startswith("取得失敗"):
+        L.append(f"**取得失敗** — {td['status']}（開示ゼロではなく取得できていない）")
+    elif not td.get("items"):
+        L.append("直近48時間、保有銘柄の適時開示なし。")
+    else:
+        for i in td.get("high_signal", []):
+            L.append(f"- 🚨 **[{i['company']}]** {i['title']}  "
+                     f"（{i['time']} / {'・'.join(i['high_signal_words'])}）  [PDF]({i['url']})")
+        for i in td["items"][:12]:
+            L.append(f"- [{i['company']}] {i['title']} — {i['time']}  [PDF]({i['url']})")
+
+    L.append(_sec("⑥ 本日のニュース"))
+    nw = facts.get("news", {})
+    if nw.get("status", "").startswith("全ソース取得失敗"):
+        L.append(f"**取得失敗** — RSSに到達できていない。errors: {nw.get('errors')}")
+    else:
+        rows = nw.get("holdings", [])[:8] + nw.get("sector", [])[:6] + nw.get("macro", [])[:6]
+        if not rows:
+            L.append("該当する報道は直近24時間なし。")
+        for n in rows:
+            tag = f"**[{'・'.join(n['matched'])}]** " if n.get("matched") else ""
+            L.append(f"- {tag}[{n['title']}]({n['link']}) — {n['source']} / {n['published']}")
+
+    L.append(_sec("データ欠損一覧"))
+    for k in ("orderbook", "sentiment"):
+        L.append(f"- **{k}**: {facts.get(k, {}).get('status', '―')}")
+    L.append("- **明日の予測 / 市場心理 / ★重要度評価**: 本モード（無LLM）では出力しない。"
+             "これらは数値ではなく判断であり、機械的に導出できないため。")
+
+    L.append(_sec("出典"))
+    for s in facts["sources"]:
+        L.append(f"- {s}")
+    L.append("\n_本レポートは投資助言ではない。売買判断は自己責任で。_")
+    return "\n".join(L)

@@ -9,8 +9,9 @@ on:
     - cron: "40 23 * * 0-4"   # JST 08:40 (保険1)
     - cron: "50 23 * * 0-4"   # JST 08:50 (保険2・寄り付き10分前が最終)
   workflow_dispatch:
-  push:
-    branches: [main]
+  # push トリガーは外した。データ更新やコード修正をpushするたびに
+  # レポートが生成されDiscordに投稿されてしまうため（実際に夜間に余分な通知が出た）。
+  # 手動で流したいときは workflow_dispatch を使う。
 
 # GitHubは60日間コミットが無いリポジトリのscheduleを自動停止する。
 # 停止時はメール通知が来るので、何かpushするかActions画面で再有効化する。

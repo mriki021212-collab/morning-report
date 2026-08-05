@@ -24,10 +24,109 @@ def is_trading_day(d: dt.date) -> bool:
     return True
 
 
-def build_facts(cfg: dict) -> dict:
+def session_close_check(facts: dict) -> dict:
+    """後場レポート用: 当日の日足が本当に確定しているかを国内銘柄だけで判定する。
+
+    16:00 JST は大引け(15:30)の30分後で、yfinanceの日足がまだ当日分に更新されて
+    いないことがある。その場合 snapshot の close は「前営業日の終値」であり、
+    それを「本日の終値」として書くと、エラーを一切出さないまま日付が1日ずれた
+    レポートが出る。このプロジェクトで最も避けたい失敗そのものなので、
+    ここで機械的に検査して、確定していなければレポート側に明示させる。
+
+    米国指数(^IXIC等)は16:00 JST時点で当日分が存在しなくて当たり前なので対象外。
+    判定はティッカーの綴りではなく collect.is_asia() の市場区分で行う。
+    """
+    today = dt.datetime.now(JST).date().isoformat()
+    confirmed, pending = [], []
+    for group in ("holdings", "sector", "macro"):
+        for code, s in facts.get(group, {}).items():
+            if s.get("status") or not collect.is_asia(code):
+                continue
+            (confirmed if s.get("as_of") == today else pending).append(
+                {"code": code, "name": s.get("name"), "as_of": s.get("as_of")})
+    return {
+        "expected_date": today,
+        "confirmed": not pending and bool(confirmed),
+        "confirmed_codes": [c["code"] for c in confirmed],
+        "pending": pending,
+        "warning": (
+            None if not pending else
+            f"国内{len(pending)}銘柄の日足がまだ当日({today})分に更新されていない。"
+            "これらの終値は前営業日の値であり、本日の終値ではない。"
+            "本日の値動きとして記述してはならない。"),
+        "note": "米国市場は16:00 JST時点で当日分が存在しないため判定対象外。",
+    }
+
+
+def morning_vs_actual(facts: dict, out_dir: pathlib.Path) -> dict:
+    """後場レポート用: 今朝の寄り付き前レポートの想定と、実際の着地を突き合わせる。
+
+    朝の facts には先物から機械計算した寄り付き示唆(nikkei_gap.implied_gap_pct)がある。
+    それと当日の実際の騰落率を並べるだけ。当たった/外れたの評価はしない（それは判断であり、
+    LLM層か人間の仕事）。ここは差分という数値を出すところまで。
+    """
+    today = dt.datetime.now(JST).date()
+    path = out_dir / f"facts_{today:%Y%m%d}.json"
+    if not path.exists():
+        return {"status": "現時点では確認できない（今朝のfactsファイルが存在しない）"}
+    try:
+        m = json.loads(path.read_text(encoding="utf-8"))
+    except Exception as e:
+        return {"status": f"取得失敗: {e}"}
+
+    if m.get("session") == "afternoon":
+        # 既に後場版で上書きされている＝今朝の寄り付き前スナップショットが残っていない
+        return {"status": "現時点では確認できない（factsが後場版で上書き済み・朝の想定を復元できない）"}
+
+    # 生成時刻が寄り付き(09:00)より後なら、それは「朝の想定」ではない。
+    # 日中に --force で回すと同じファイル名で上書きされるため、session キーだけでは
+    # 見分けられない。時刻を見ないと「今日の終値を今日の終値と比較して全部0.00%」という
+    # 一見それらしい無意味な表を出してしまう（実際にそうなった）。
+    gen = m.get("generated_at_jst", "")
+    try:
+        gen_dt = dt.datetime.fromisoformat(gen)
+    except ValueError:
+        return {"status": f"現時点では確認できない（factsの生成時刻を解釈できない: {gen!r}）"}
+    if gen_dt.timetz() >= dt.time(9, 0, tzinfo=JST):
+        return {"status": f"現時点では確認できない（比較対象のfactsが寄り付き後の生成 "
+                          f"{gen_dt:%H:%M} JST。朝の想定として使えない）"}
+
+    out = {"morning_generated_at": gen[:19]}
+    g = m.get("nikkei_gap", {})
+    n = facts.get("macro", {}).get("^N225", {})
+    if g.get("valid") and n.get("chg_pct") is not None:
+        out["nikkei"] = {
+            "implied_gap_pct_at_morning": g.get("implied_gap_pct"),
+            "actual_chg_pct": n.get("chg_pct"),
+            "diff_pct_pt": round(n["chg_pct"] - g["implied_gap_pct"], 2),
+            "note": "朝の先物示唆は寄り付きの乖離、実績は終値の前日比。始値と終値の違いを含むため一致は前提としない。",
+        }
+    else:
+        out["nikkei"] = {"status": "現時点では確認できない（朝の先物示唆が使用不可だった）"}
+
+    # 保有銘柄: 朝時点の確定終値(=前営業日)から当日終値までの変化
+    out["holdings"] = {}
+    for code, s in facts.get("holdings", {}).items():
+        ms = m.get("holdings", {}).get(code, {})
+        if s.get("status") or ms.get("status") or ms.get("close") in (None, 0):
+            out["holdings"][code] = {"status": "現時点では確認できない"}
+            continue
+        out["holdings"][code] = {
+            "name": s.get("name"),
+            "morning_base_close": ms.get("close"),
+            "morning_base_date": ms.get("as_of"),
+            "actual_close": s.get("close"),
+            "actual_date": s.get("as_of"),
+            "chg_pct": round((s["close"] / ms["close"] - 1) * 100, 2),
+        }
+    return out
+
+
+def build_facts(cfg: dict, session: str = "morning") -> dict:
     now = dt.datetime.now(JST)
     facts: dict = {
         "generated_at_jst": now.isoformat(),
+        "session": session,  # "morning"=寄り付き前 / "afternoon"=大引け後
         "trading_day": is_trading_day(now.date()),
         "sources": ["Yahoo Finance (yfinance) — 前営業日終値ベース",
                     "J-Quants API (JPX公式) — 信用/空売り",
@@ -132,52 +231,82 @@ def build_facts(cfg: dict) -> dict:
     facts["sentiment"] = {"status": "現時点では確認できない（X API/掲示板は未接続）"}
     facts["orderbook"] = {"status": "現時点では確認できない（リアルタイム板は取得範囲外）"}
     facts["events"] = {"status": "web_searchで確認すること"}
+
+    if session == "afternoon":
+        # 当日終値が本当に確定しているかの検査。ここがFalseなら後場レポートは
+        # 「本日の値動き」を語ってはいけない（render/prompt の両方がこのキーを見る）。
+        facts["session_close"] = session_close_check(facts)
+        facts["morning_vs_actual"] = morning_vs_actual(facts, ROOT / "out")
+        try:
+            facts["earnings"] = earnings.build(cfg)
+        except Exception as e:
+            facts["earnings"] = {"status": f"取得失敗: {e}"}
     return facts, hist
 
 
 def main() -> None:
     cfg = yaml.safe_load((ROOT / "config.yaml").read_text(encoding="utf-8"))
+    # 大引け後の「本日の振り返り＋明日の予測」モード。無指定なら従来どおり寄り付き前レポート。
+    session = "afternoon" if "--afternoon" in sys.argv else "morning"
     today = dt.datetime.now(JST).date()
     if not is_trading_day(today) and "--force" not in sys.argv:
         # 休場日も必ず1行投げる。
         # これをしないと「休場」「cron不発」「クラッシュ」が全部同じ"無音"になり、
         # 届かないことに気づけない。無音 = 異常、と意味を1つに固定する。
         print(f"{today} は東証休場。スキップ。")
-        notify.post_holiday(today)
+        notify.post_holiday(today, session=session)
         return
     try:
-        facts, hist = build_facts(cfg)
+        facts, hist = build_facts(cfg, session=session)
         out = ROOT / "out"
         out.mkdir(exist_ok=True)
         dashboard.write(facts, hist, out)
-        # 決算カレンダーは朝レポート本体とは独立。落ちても朝レポートは止めない。
+        # 決算カレンダーはレポート本体とは独立。落ちてもレポートは止めない。
         # ただし握りつぶさず、失敗はログに出して earnings.json の failed に残す。
         try:
             e = earnings.write(cfg, out)
             print(f"earnings: {len(e['events'])}件 / 取得不可 {len(e['failed'])}銘柄")
         except Exception:
-            print("earnings の生成に失敗（朝レポートは続行）:\n" + traceback.format_exc())
-        (out / f"facts_{today:%Y%m%d}.json").write_text(
+            print("earnings の生成に失敗（レポートは続行）:\n" + traceback.format_exc())
+
+        # 後場版は朝のファイルを上書きしない。
+        # morning_vs_actual が今朝のスナップショットを読むため潰すと比較ができなくなる。
+        # また score.py は report_*.md を採点対象にglobするので、後場版がそれに
+        # マッチすると「本日の戦略」を持たないレポートを誤採点してしまう。
+        stem = f"afternoon_{today:%Y%m%d}" if session == "afternoon" else f"report_{today:%Y%m%d}"
+        fstem = f"facts_afternoon_{today:%Y%m%d}" if session == "afternoon" else f"facts_{today:%Y%m%d}"
+        (out / f"{fstem}.json").write_text(
             json.dumps(facts, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
 
+        if session == "afternoon":
+            sc = facts.get("session_close", {})
+            if not sc.get("confirmed"):
+                print("警告: 当日終値が未確定 — " + str(sc.get("warning")))
+
         # 数値レポートは常に生成（API不要・幻覚ゼロ）
-        report = render.render(facts)
+        report = render.render_afternoon(facts) if session == "afternoon" else render.render(facts)
         verdict = "数値のみ（LLM未使用）"
 
         use_llm = "--no-llm" not in sys.argv and os.getenv("ANTHROPIC_API_KEY")
         if use_llm:
             import analyst  # APIキーがある時だけ読み込む
-            narrative = analyst.write_report(facts, cfg["model"], cfg["max_tokens"])
+            narrative = analyst.write_report(facts, cfg["model"], cfg["max_tokens"], session=session)
             verdict = analyst.audit(narrative, facts, "claude-sonnet-4-6")
             report = narrative + "\n\n---\n\n" + report
         else:
             print("LLM層はスキップ（ANTHROPIC_API_KEY未設定 または --no-llm）")
 
-        (out / f"report_{today:%Y%m%d}.md").write_text(report, encoding="utf-8")
+        (out / f"{stem}.md").write_text(report, encoding="utf-8")
+        # --no-post: 数値だけ更新したい時にDiscordへの投稿を止める。
+        # 定時実行では絶対に付けないこと（無音 = 異常、の前提が崩れる）。
+        if "--no-post" in sys.argv:
+            print(f"generated ({session}) — Discord投稿はスキップ（--no-post）。out/{stem}.md")
+            return
         notify.post(report, verdict, facts)
-        print("posted. audit =", verdict)
+        print(f"posted ({session}). audit =", verdict)
     except Exception:
-        notify.post_error(traceback.format_exc())
+        if "--no-post" not in sys.argv:
+            notify.post_error(traceback.format_exc())
         raise
 
 

@@ -165,12 +165,30 @@ def _holdings_field(facts: dict) -> dict:
     return {"name": "💼 保有銘柄", "value": f"```\n{body}\n```", "inline": False}
 
 
+def _session_close_field(facts: dict) -> dict | None:
+    """後場版のみ: 当日終値が未確定なら、それを埋もれさせず最上段に出す。
+    ここが未確定のまま届いたレポートは「本日の振り返り」として読んではいけない。"""
+    sc = facts.get("session_close") or {}
+    if not sc or sc.get("confirmed"):
+        return None
+    names = "・".join((p.get("name") or p["code"]) for p in sc.get("pending", [])[:6])
+    return {"name": "⚠️ 当日終値が未確定",
+            "value": f"{names} の日足がまだ {sc.get('expected_date')} 分に更新されていません。"
+                     "本日の値動きとしては読めません（後続cronの再取得待ち）。",
+            "inline": False}
+
+
 def post(report: str, audit_result: str = "OK", facts: dict | None = None) -> None:
     url = os.environ["DISCORD_WEBHOOK_URL"]
     now = dt.datetime.now(JST)
+    afternoon = bool(facts) and facts.get("session") == "afternoon"
+    stale_close = afternoon and not (facts.get("session_close") or {}).get("confirmed")
 
-    # 色の優先度: 監査不一致(紫) > 保有株の要注意開示(橙) > 地合い(緑/赤/灰)
-    if not _is_audit_clean(audit_result):
+    # 色の優先度: 当日終値未確定(橙) > 監査不一致(紫) > 保有株の要注意開示(橙) > 地合い(緑/赤/灰)
+    # 未確定を最優先にするのは、地合いの緑で「正常に見える」のが一番危ないため。
+    if stale_close:
+        color = ORANGE
+    elif not _is_audit_clean(audit_result):
         color = PURPLE
     elif facts and (facts.get("tdnet", {}) or {}).get("high_signal"):
         color = ORANGE
@@ -179,21 +197,29 @@ def post(report: str, audit_result: str = "OK", facts: dict | None = None) -> No
 
     fields = []
     if facts:
+        sf = _session_close_field(facts) if afternoon else None
+        if sf:
+            fields.append(sf)
         hs = (facts.get("tdnet", {}) or {}).get("high_signal", [])
         if hs:
             fields.append(_alert_field(hs))
         fields.append(_holdings_field(facts))
-        fields.append(_gap_field(facts))
+        # 寄り付き示唆は朝だけ意味を持つ。大引け後に出しても読み手を混乱させるだけ。
+        if not afternoon:
+            fields.append(_gap_field(facts))
         fields.append(_factcheck_field(audit_result))
         fields.append(_macro_field(facts))
     fields.append(_dashboard_field())
 
-    files = {"file": (f"morning_{now:%Y%m%d}.md",
+    prefix = "afternoon" if afternoon else "morning"
+    files = {"file": (f"{prefix}_{now:%Y%m%d}.md",
                       io.BytesIO(report.encode("utf-8")), "text/markdown")}
+    title = (f"🌇 アフタヌーンレポート {now:%Y/%m/%d (%a) %H:%M} JST"
+             if afternoon else f"🗾 モーニングレポート {now:%Y/%m/%d (%a) %H:%M} JST")
     payload = {
         "username": "Morning Strategist",
         "embeds": [{
-            "title": f"🗾 モーニングレポート {now:%Y/%m/%d (%a) %H:%M} JST",
+            "title": title,
             "url": DASHBOARD_URL,
             "description": _conclusion(facts, audit_result) if facts else "⚪ **データ取得なし**",
             "color": color,
@@ -209,14 +235,15 @@ def post(report: str, audit_result: str = "OK", facts: dict | None = None) -> No
         requests.post(url, json={"content": f"```\n{c}\n```"[:1990]}, timeout=30).raise_for_status()
 
 
-def post_holiday(d) -> None:
+def post_holiday(d, session: str = "morning") -> None:
     url = os.getenv("DISCORD_WEBHOOK_URL")
     if not url:
         return
+    kind = "アフタヌーンレポート" if session == "afternoon" else "モーニングレポート"
     requests.post(url, json={
         "embeds": [{
             "title": f"{d:%Y/%m/%d (%a)} ― 東証休場",
-            "description": "本日はレポートなし。システムは正常に稼働しています。",
+            "description": f"本日は{kind}なし。システムは正常に稼働しています。",
             "color": GRAY,
         }]}, timeout=30)
 
