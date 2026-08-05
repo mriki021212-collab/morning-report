@@ -39,7 +39,7 @@
   .clocks{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
   .clock{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-variant-numeric:tabular-nums;cursor:default}
   .clock .dot{width:6px;height:6px;border-radius:50%;background:var(--mut-dim);display:inline-block;flex:none}
-  .clock .dot.live{background:var(--up);animation:pulseDot 1.6s ease-in-out infinite}
+  .clock .dot.live{background:var(--up);animation:pulseDot 2s ease-in-out infinite}
   .clock b{font-weight:600}
   .clock b.up{color:var(--up)}
   .clock b.flat{color:var(--mut-dim)}
@@ -110,12 +110,19 @@
   /* ---- heatmap ---- */
   .heat{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
   @media(max-width:900px){.heat{grid-template-columns:repeat(2,1fr)}}
-  .hcell{border:1px solid var(--line);padding:7px 9px;background:var(--panel2)}
-  .hcell .nm{font-size:11px;color:var(--mut)}
-  .hcell .pc{font-size:14px;font-weight:600;margin-top:3px}
+  .hcell{border:1px solid var(--line);padding:7px 9px;background:var(--panel2);position:relative;overflow:hidden}
+  .hcell .nm{font-size:11px;color:var(--mut);position:relative}
+  .hcell .pc{font-size:14px;font-weight:600;margin-top:3px;position:relative}
   .hcell.na{opacity:.5;border-style:dashed;padding:6px 9px}
   .hcell.na .nm{font-size:10px}
   .hcell.na .pc{font-size:10.5px;font-weight:400;margin-top:2px}
+  /* M5: セクターの塗り幅。scaleXのみで伸縮させ、初回描画のみアニメーションする（更新時はM1フラッシュで表現） */
+  .hcell .fill{position:absolute;left:0;top:0;bottom:0;width:50%;transform-origin:left center;
+               transform:scaleX(0);z-index:0;opacity:.16}
+  .hcell .fill.up{background:var(--up)}
+  .hcell .fill.dn{background:var(--dn)}
+  .hcell .fill.grow{animation:fillGrow .5s ease forwards}
+  @keyframes fillGrow{from{transform:scaleX(0)}to{transform:scaleX(var(--fill-x, 1))}}
 
   /* ---- news ---- */
   .news-filters{display:flex;gap:6px;font-size:10px}
@@ -168,14 +175,73 @@
   /* ---- system info ---- */
   #sysinfo{letter-spacing:0}
 
-  /* ---- 値変化フラッシュ：quotes.json等で値が実際に変わった瞬間だけ ---- */
-  @keyframes flashUp{0%{background:rgba(63,191,128,.35)}100%{background:transparent}}
-  @keyframes flashDn{0%{background:rgba(226,89,107,.35)}100%{background:transparent}}
-  .flash-up{animation:flashUp .6s ease}
-  .flash-dn{animation:flashDn .6s ease}
+  /* ---- 値変化フラッシュ：quotes.json等で値が実際に変わった瞬間だけ ----
+     background-colorそのものは静的に固定し(::after)、アニメーションはopacityのみで行う。
+     ルール8(transform/opacityのみ)を守るための構造。 */
+  .flashable{position:relative}
+  .flashable::after{content:"";position:absolute;inset:-2px -5px;pointer-events:none;
+                     border-radius:2px;opacity:0}
+  .flash-up::after{background:var(--up);animation:flashFade .6s ease}
+  .flash-dn::after{background:var(--dn);animation:flashFade .6s ease}
+  @keyframes flashFade{0%{opacity:.35}100%{opacity:0}}
+
+  /* ---- M7: ウォッチリスト選択のアクセントバー(移動はtransformのみ) ---- */
+  #watchlist{position:relative}
+  .wl-accent{position:absolute;left:0;top:0;width:3px;background:var(--accent);
+             transform:translateY(0);transition:transform .22s cubic-bezier(.2,.8,.3,1),height .22s cubic-bezier(.2,.8,.3,1);
+             pointer-events:none}
+
+  /* ---- M11: 鮮度による減衰。アニメーションではなく経過時間に応じた状態表現 ---- */
+  .decay-1{filter:none;opacity:1}
+  .decay-2{filter:saturate(.55);opacity:.82}
+  .decay-3{filter:saturate(.3);opacity:.62}
+
+  /* ---- M12: パネルホバー（影は付けない） ---- */
+  .panel{transition:border-color .15s ease, transform .15s ease}
+  .panel:hover{border-color:var(--accent-dim);transform:translateY(-1px)}
+
+  /* ---- M9: CRITICALアラートの呼吸（box-shadowの広がり。レイアウトに影響しないpaint専用プロパティ） ---- */
+  @keyframes alertBreathe{
+    0%,100%{box-shadow:0 0 0 0 rgba(226,89,107,.35)}
+    50%{box-shadow:0 0 0 4px rgba(226,89,107,0)}
+  }
+  .alert-list li.breathe{animation:alertBreathe 2.5s ease-in-out infinite}
+
+  /* ---- M10: データ取得中プログレスバー。fetchが実際に走っている間だけ表示 ---- */
+  #fetchbar{position:fixed;top:0;left:0;height:2px;width:100%;z-index:100;
+            opacity:0;pointer-events:none;overflow:hidden;transition:opacity .3s ease}
+  #fetchbar.on{opacity:1}
+  #fetchbar .run{position:absolute;top:0;left:0;height:100%;width:40%;background:var(--accent);
+                 transform:translateX(-100%);animation:fetchRun 1.1s ease-in-out infinite;
+                 animation-play-state:paused}
+  #fetchbar.on .run{animation-play-state:running}
+  @keyframes fetchRun{0%{transform:translateX(-100%)}100%{transform:translateX(350%)}}
+
+  /* ---- M6: ニュース新着 ---- */
+  .news li.news-new{animation:newsIn .35s ease both}
+  @keyframes newsIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+  .news .new-mark{color:var(--accent);font-size:9px;border:1px solid var(--accent-dim);
+                   padding:0 4px;border-radius:2px;margin-left:4px;animation:newsMarkOut 10s ease forwards}
+  @keyframes newsMarkOut{0%,85%{opacity:1}100%{opacity:0}}
+
+  /* ---- M4: チャートのクロスヘア（縦線・ドットの追従はtransformのみ、80ms） ---- */
+  .xhair-line{stroke:var(--mut);stroke-width:1;stroke-dasharray:2,2;opacity:.6;transition:transform 80ms linear}
+  .xhair-dot{fill:#fff;transition:transform 80ms linear}
+  .ma25-line{fill:none;stroke:var(--accent);stroke-width:1.2;opacity:.85}
+
+  /* ---- prefers-reduced-motion: 全アニメーション・トランジションを実質無効化 ---- */
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{
+      animation-duration:0.001ms !important;
+      animation-iteration-count:1 !important;
+      transition-duration:0.001ms !important;
+      scroll-behavior:auto !important;
+    }
+  }
 </style>
 </head>
 <body>
+<div id="fetchbar"><div class="run"></div></div>
 <div class="wrap" id="wrap">
   <div class="top">
     <div class="brand">MORNING STRATEGIST<small>保有株モーニングダッシュボード</small></div>
@@ -195,7 +261,7 @@
       <div class="col col-left">
         <div class="panel" id="panel-watchlist">
           <h2>保有ウォッチリスト</h2>
-          <div class="body" id="watchlist"></div>
+          <div class="body" id="watchlist"><div id="watchlist-items"></div><div class="wl-accent" id="wl-accent-bar"></div></div>
         </div>
         <div class="panel" id="panel-portfolio">
           <h2>ポートフォリオ統計<span class="note">本数・単純平均のみ</span></h2>
@@ -334,7 +400,23 @@ function arw(v){ return v>0?"▲":v<0?"▼":"■"; }
 function pc(v){ return (v==null||isNaN(v)) ? "—" : arw(v)+Math.abs(v).toFixed(2)+"%"; }
 function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
-/* ---- 値が実際に変わった時だけ0.6秒フラッシュ ---- */
+/* ---- prefers-reduced-motion: JS駆動のアニメーション(カウントアップ/チャート描画/
+   クロスヘア追従)はCSSの@mediaだけでは止められないため、ここで明示的に分岐する。 ---- */
+let REDUCE_MOTION = matchMedia("(prefers-reduced-motion: reduce)").matches;
+matchMedia("(prefers-reduced-motion: reduce)").addEventListener("change", e=>{ REDUCE_MOTION = e.matches; });
+
+/* ---- M10: dashboard.json/quotes.jsonのfetchが実際に走っている間だけ進捗バーを出す ---- */
+let _activeFetches = 0;
+function fetchStart(){
+  _activeFetches++;
+  document.getElementById("fetchbar").classList.add("on");
+}
+function fetchEnd(){
+  _activeFetches = Math.max(0, _activeFetches-1);
+  if(_activeFetches===0) document.getElementById("fetchbar").classList.remove("on");
+}
+
+/* ---- 値が実際に変わった時だけ0.6秒フラッシュ（M1）---- */
 const _flashPrev = new Map();
 function flashClass(key, val){
   if(val==null || isNaN(val)) return "";
@@ -342,6 +424,31 @@ function flashClass(key, val){
   _flashPrev.set(key, val);
   if(prev==null || prev===val) return "";
   return val>prev ? "flash-up" : "flash-dn";
+}
+
+/* ---- M2: 値が変わった時だけ0.4秒でカウントアップ。初回描画は最終値をいきなり出す ----
+   0.4秒以内に収めることで「アニメーション中の中間値」をDOMに一瞬だけ持たせる方式を許容する
+   （指示書ルール6の「または0.4秒以内に収める」の代替条件に合わせている）。 */
+const _countPrev = new Map();
+function animateValue(el, key, val, formatFn){
+  if(val==null || isNaN(val)){ el.textContent = "—"; return; }
+  const prev = _countPrev.get(key);
+  _countPrev.set(key, val);
+  if(prev==null || prev===val || REDUCE_MOTION){ el.textContent = formatFn(val); return; }
+  const from = prev, to = val, dur = 400, t0 = performance.now();
+  (function step(t){
+    const p = Math.min(1, (t-t0)/dur);
+    const e = 1-Math.pow(1-p, 3); // easeOutCubic
+    el.textContent = formatFn(from + (to-from)*e);
+    if(p<1) requestAnimationFrame(step);
+    else el.textContent = formatFn(to);
+  })(t0);
+}
+function animateCount(el, key, val, decimals){
+  animateValue(el, key, val, v=>v.toLocaleString("ja-JP",{minimumFractionDigits:decimals,maximumFractionDigits:decimals}));
+}
+function animatePercent(el, key, val){
+  animateValue(el, key, val, v=>arw(v)+Math.abs(v).toFixed(2)+"%");
 }
 
 /* =========================================================================
@@ -403,11 +510,15 @@ function renderStrip(macro){
     if(!c.has){
       return `<div class="qc"><div class="lb">${esc(c.label)}</div><div class="vl na">—</div><div class="ch na">データなし</div></div>`;
     }
-    const flash = flashClass("macro:"+c.label, parseFloat(String(c.v).replace(/,/g,"")));
+    const key = "macro:"+c.label;
+    const numVal = parseFloat(String(c.v).replace(/,/g,""));
+    const flash = flashClass(key, numVal);
     return `<div class="qc"><div class="lb">${esc(c.label)}</div>
-      <div class="vl num ${flash}">${esc(c.v)}</div>
+      <div class="vl num flashable ${flash}" data-ck="${esc(key)}" data-cv="${numVal}" data-cd="2">${esc(c.v)}</div>
       <div class="ch num ${cls(c.c)}">${pc(c.c)}</div></div>`;
   }).join("");
+  document.querySelectorAll("#strip [data-ck]").forEach(el=>
+    animateCount(el, el.dataset.ck, parseFloat(el.dataset.cv), parseInt(el.dataset.cd,10)));
 }
 
 /* ---- mood: 日経とSOXの前日比平均。両方欠損なら判定不能 ---- */
@@ -423,12 +534,15 @@ function moodOf(macro){
 let QUOTES = null; // {generated_at_jst, quotes:{code:{price, ts_jst}}}
 
 async function pollQuotes(){
+  fetchStart();
   try{
     const r = await fetch("out/quotes.json?_="+Date.now(), {cache:"no-store"});
     if(!r.ok) throw new Error("no quotes.json");
     QUOTES = await r.json();
   }catch(e){
     QUOTES = null; // ファイル自体が無い/失敗 → 場中更新なし。静的スナップショットのみ表示
+  } finally {
+    fetchEnd();
   }
   // QUOTESが変わるとウォッチリストだけでなく、それを材料にするアラート/センチメント/
   // ポートフォリオ統計/システム情報も古い値のまま固定されてしまうため、まとめて再描画する。
@@ -467,14 +581,24 @@ function effectiveHold(h){
 
 /* ---- watchlist ---- */
 const STATE = { data:null, selectedCode:null, period:CONFIG.chartPeriods[CONFIG.chartPeriods.length-1] };
+let _chartSig = null; // M3: 直前に描画した「銘柄|期間|終値系列」の署名。同じなら描画アニメを再生しない
+
+// M11: 鮮度による減衰。演出ではなく経過時間の状態表現なので毎回再計算してよい（アニメーションではない）
+function decayClass(ageSec){
+  if(ageSec==null) return "";
+  if(ageSec <= 1800) return "decay-1";
+  if(ageSec <= 10800) return "decay-2";
+  return "decay-3";
+}
 
 function renderWatchlist(holds){
   holds = holds || [];
   if(!STATE.selectedCode && holds.length) STATE.selectedCode = holds[0].code;
-  document.getElementById("watchlist").innerHTML = holds.map(h=>{
+  document.getElementById("watchlist-items").innerHTML = holds.map(h=>{
     const eff = effectiveHold(h);
     const px = eff.px, chg = eff.chg;
     let freshHtml = '<span class="fresh">寄付き時点のスナップショット</span>';
+    const decay = eff.live ? decayClass(eff.ageSec) : "";
     if(eff.inconsistent){
       freshHtml = '<span class="fresh" style="color:var(--dn)">価格系列の整合性を確認できません</span>';
     } else if(eff.live){
@@ -486,19 +610,53 @@ function renderWatchlist(holds){
       freshHtml = '<span class="fresh" style="color:var(--dn)">場中更新: 取得できていません</span>';
     }
     const sel = h.code===STATE.selectedCode ? " sel" : "";
-    const flash = flashClass("px:"+h.code, px);
-    return `<div class="wl-item${sel}" data-code="${esc(h.code)}">
+    const key = "px:"+h.code;
+    const flash = flashClass(key, px);
+    return `<div class="wl-item${sel}" data-code="${esc(h.code)}" tabindex="0">
       <div class="r1"><span><span class="nm">${esc(h.nm)}</span><span class="code">${esc(h.code)}</span></span>
-      <span class="px num ${cls(chg)} ${flash}">${px!=null?fmt2(px):"—"}</span></div>
+      <span class="px num ${cls(chg)} flashable ${flash} ${decay}" data-ck="${esc(key)}" data-cv="${px==null?"":px}" data-cd="2">${px!=null?fmt2(px):"—"}</span></div>
       <div class="r2"><span class="${cls(chg)}">${pc(chg)}</span>${freshHtml}</div>
       ${h.flag?`<div class="flag">⚠ ${esc(h.flag)}</div>`:""}
     </div>`;
   }).join("") || '<div class="empty">保有銘柄データがありません</div>';
 
-  document.querySelectorAll(".wl-item").forEach(el=>{
-    el.addEventListener("click", ()=>{ STATE.selectedCode = el.dataset.code; renderAll(); });
+  document.querySelectorAll("#watchlist [data-ck]").forEach(el=>{
+    if(el.dataset.cv==="") { el.textContent="—"; return; }
+    animateCount(el, el.dataset.ck, parseFloat(el.dataset.cv), 2);
   });
+
+  document.querySelectorAll(".wl-item").forEach(el=>{
+    el.addEventListener("click", ()=>{ STATE.selectedCode = el.dataset.code; renderAll(); el.focus(); });
+  });
+  positionAccent();
 }
+
+// M7: 選択中インジケータの移動はtransformのみ。実要素のoffsetTopを測って追従させる。
+// バー自体はinnerHTML書き換えの外側にある永続要素なので、CSSのtransition:transformが
+// 「前回位置→今回位置」を正しく補間できる（毎回作り直すと補間元が無くスナップしてしまう）。
+function positionAccent(){
+  const bar = document.getElementById("wl-accent-bar");
+  const sel = document.querySelector("#watchlist-items .wl-item.sel");
+  if(!sel){ bar.style.opacity = "0"; return; }
+  bar.style.opacity = "1";
+  bar.style.height = sel.offsetHeight + "px";
+  bar.style.transform = `translateY(${sel.offsetTop}px)`;
+}
+
+// ↑↓キーでウォッチリストの選択を連続移動しても破綻しないようにする（M7の検証条件）
+document.addEventListener("keydown", ev=>{
+  if(ev.key!=="ArrowUp" && ev.key!=="ArrowDown") return;
+  if(!document.activeElement || !document.activeElement.closest("#watchlist")) return;
+  const holds = (STATE.data && STATE.data.holds) || [];
+  if(!holds.length) return;
+  ev.preventDefault();
+  const idx = holds.findIndex(h=>h.code===STATE.selectedCode);
+  const next = ev.key==="ArrowDown" ? Math.min(holds.length-1, idx+1) : Math.max(0, idx-1);
+  STATE.selectedCode = holds[next].code;
+  renderAll();
+  const el = document.querySelector(`.wl-item[data-code="${CSS.escape(STATE.selectedCode)}"]`);
+  if(el) el.focus();
+});
 
 /* ---- center chart ---- */
 function renderPeriods(hist){
@@ -577,8 +735,27 @@ function renderChart(){
   document.getElementById("chart-sub").textContent =
     `${dates[0]} 〜 ${dates[dates.length-1]}（${n}営業日）` + (clipped ? "　※要求期間分のデータがないため全期間を表示" : "");
 
+  // M3: MA25はクライアント側で単純移動平均を計算する（実データの決定論的な変換であり、
+  // 値の推定・補完ではない）。全履歴で計算してから表示区間に合わせて切り出すことで、
+  // 短い期間ボタンを選んでも直前25営業日を正しく反映したトレーリング平均になる。
+  // 25本に満たない区間はnullのまま＝線を引かない（存在しない平均を捏造しない）。
+  function movingAvg(arr, w){
+    const out = new Array(arr.length).fill(null);
+    let sum = 0;
+    for(let i=0;i<arr.length;i++){
+      sum += arr[i];
+      if(i>=w) sum -= arr[i-w];
+      if(i>=w-1) out[i] = sum/w;
+    }
+    return out;
+  }
+  const ma25Full = movingAvg(hist.c, 25);
+  const maSlice = ma25Full.slice(-n);
+  const maValid = maSlice.some(v=>v!=null);
+
   const W=560,Hh=220,padR=10,padT=10,padB=20;
-  const mn=Math.min(...closes), mx=Math.max(...closes), rng=(mx-mn)||1;
+  const domain = closes.concat(maValid ? maSlice.filter(v=>v!=null) : []);
+  const mn=Math.min(...domain), mx=Math.max(...domain), rng=(mx-mn)||1;
   const yTicks=4;
   const tickVals = Array.from({length:yTicks+1}, (_,i)=> mn + rng*i/yTicks);
   const tickLabels = tickVals.map(axisFmt);
@@ -590,6 +767,7 @@ function renderChart(){
   const x=i=> padL + (W-padL-padR) * i/(closes.length-1);
   const y=v=> padT + (Hh-padT-padB) * (1-(v-mn)/rng);
   const pts = closes.map((v,i)=>`${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
+  const maPts = maValid ? maSlice.map((v,i)=>v==null?null:`${x(i).toFixed(1)},${y(v).toFixed(1)}`).filter(Boolean).join(" ") : "";
   const up = closes[closes.length-1] >= closes[0];
   const col = up ? "#3fbf80" : "#e2596b";
 
@@ -601,21 +779,59 @@ function renderChart(){
 
   box.innerHTML = `<svg viewBox="0 0 ${W} ${Hh}" preserveAspectRatio="none">
       ${gridLines.join("")}
-      <polyline fill="none" stroke="${col}" stroke-width="1.6" points="${pts}"/>
+      ${maValid ? `<polyline class="ma25-line" points="${maPts}"/>` : ""}
+      <polyline class="price-line" fill="none" stroke="${col}" stroke-width="1.6" points="${pts}"/>
+      <line class="xhair-line" x1="0" y1="${padT}" x2="0" y2="${Hh-padB}" style="display:none"/>
+      <circle class="xhair-dot" r="3" cx="0" cy="0" style="display:none"/>
     </svg><div class="chart-tip" id="chart-tip"></div>`;
 
   const svg = box.querySelector("svg");
+  const priceLine = svg.querySelector(".price-line");
+  const maLine = svg.querySelector(".ma25-line");
+
+  // M3: ラインを左から右へ引く。ユーザー操作（銘柄選択・期間切替）のたびに再生してよいが、
+  // 自動更新(dashboard.jsonの定期再取得等)で中身が変わっていない再描画では再生しない
+  // （ルール5：値が変わっていないものをアニメーションさせない）。
+  const sig = STATE.selectedCode+"|"+STATE.period.n+"|"+closes.join(",");
+  const shouldAnimate = sig !== _chartSig;
+  _chartSig = sig;
+  [priceLine, maLine].forEach((line, idx)=>{
+    if(!line) return;
+    const len = line.getTotalLength();
+    if(shouldAnimate && !REDUCE_MOTION){
+      line.style.strokeDasharray = len;
+      line.style.strokeDashoffset = len;
+      line.getBoundingClientRect(); // レイアウト確定を強制してからtransitionを効かせる
+      line.style.transition = `stroke-dashoffset .6s ease ${idx===1?'.15s':'0s'}`;
+      requestAnimationFrame(()=>{ line.style.strokeDashoffset = "0"; });
+    } else {
+      line.style.transition = "none";
+      line.style.strokeDasharray = "none";
+      line.style.strokeDashoffset = "0";
+    }
+  });
+
   const tip = document.getElementById("chart-tip");
+  const xhLine = svg.querySelector(".xhair-line");
+  const xhDot = svg.querySelector(".xhair-dot");
   svg.addEventListener("mousemove", ev=>{
     const rect = svg.getBoundingClientRect();
     const relX = (ev.clientX-rect.left)/rect.width * W;
     const i = Math.max(0, Math.min(closes.length-1, Math.round((relX-padL)/(W-padL-padR)*(closes.length-1))));
+    const px = x(i), py = y(closes[i]);
     tip.style.display="block";
     tip.style.left = Math.min(rect.width-120, Math.max(0,(ev.clientX-rect.left+8)))+"px";
     tip.style.top = (ev.clientY-rect.top-28)+"px";
     tip.innerHTML = `${dates[i]}<br><b class="num">${fmt2(closes[i])}</b>`;
+    // M4: 縦線とドットの移動はtransform(SVG座標系)のみ。CSS側のtransitionで80ms追従する
+    xhLine.style.display=""; xhDot.style.display="";
+    xhLine.setAttribute("transform", `translate(${px} 0)`);
+    xhDot.setAttribute("transform", `translate(${px} ${py})`);
   });
-  svg.addEventListener("mouseleave", ()=>{ tip.style.display="none"; });
+  svg.addEventListener("mouseleave", ()=>{
+    tip.style.display="none";
+    xhLine.style.display="none"; xhDot.style.display="none";
+  });
 
   const periodChg = ((closes[closes.length-1]/closes[0])-1)*100;
   statRow.innerHTML = `
@@ -624,7 +840,8 @@ function renderChart(){
     <span>期間騰落 <b class="num ${cls(periodChg)}">${pc(periodChg)}</b></span>
     <span>RSI <b class="num">${h.rsi!=null?h.rsi.toFixed(1):"—"}</b></span>
     <span>25MA乖離 <b class="num">${h.ma25!=null?h.ma25.toFixed(1)+"%":"—"}</b></span>
-    <span>出来高 <b class="num">${esc(h.vol||"—")}</b></span>`;
+    <span>出来高 <b class="num">${esc(h.vol||"—")}</b></span>
+    ${maValid ? '<span style="color:var(--accent)">— MA25(表示用・簡易計算)</span>' : ""}`;
 }
 
 /* ---- AI summary ---- */
@@ -639,15 +856,28 @@ function renderAI(ai){
 }
 
 /* ---- sector heatmap ---- */
+// M5: 塗りバーは初回描画だけ scaleX(0→1) で伸ばす。2回目以降、値が変わってもM1のフラッシュで
+// 表現し、塗りバー自体は再アニメーションしない（このSetが「初回を済ませたか」の記録）。
+const _heatGrown = new Set();
 function renderHeat(sectors){
   sectors = sectors || {};
   document.getElementById("heat").innerHTML = CONFIG.sectors.map(name=>{
     const v = sectors[name];
     if(v==null){
+      // データなしのマスはアニメーションしない（無いものが動いて見えるのを避ける）
       return `<div class="hcell na"><div class="nm">${esc(name)}</div><div class="pc na">データなし</div></div>`;
     }
-    return `<div class="hcell"><div class="nm">${esc(name)}</div><div class="pc num ${cls(v)}">${pc(v)}</div></div>`;
-  }).join("") + `<div class="def full" style="grid-column:1/-1">定義: セクター値=構成銘柄の前日比(%)の単純平均（加重ではない）。データソースが無いセクターは「データなし」のまま表示し、値を推定しない。</div>`;
+    const key = "sector:"+name;
+    const flash = flashClass(key, v);
+    const firstTime = !_heatGrown.has(name);
+    _heatGrown.add(name);
+    const scale = Math.min(1, Math.abs(v)/10); // ±10%を満タンとする表示上のスケール
+    return `<div class="hcell">
+      <div class="fill ${v>=0?'up':'dn'} ${firstTime?'grow':''}" style="--fill-x:${scale}${firstTime?'':`;transform:scaleX(${scale})`}"></div>
+      <div class="nm">${esc(name)}</div>
+      <div class="pc num flashable ${flash}" data-ck="${esc(key)}" data-cv="${v}" data-cd="2">${pc(v)}</div></div>`;
+  }).join("") + `<div class="def full">定義: セクター値=構成銘柄の前日比(%)の単純平均（加重ではない）。バーの幅は±10%を満タンとする表示上のスケール。データソースが無いセクターは「データなし」のまま表示し、値を推定しない。</div>`;
+  document.querySelectorAll("#heat [data-ck]").forEach(el=>animatePercent(el, el.dataset.ck, parseFloat(el.dataset.cv)));
 }
 
 /* ---- breaking news ---- */
@@ -671,6 +901,23 @@ function renderNewsFilters(){
   });
 }
 
+/* ---- M6: ニュース新着検知。「本当にデータが更新された時」だけ呼ぶ関数と、
+   フィルタ切替のたびに呼ばれるrenderNews()を分離する。フィルタ切替を新着と誤検知しない。 ---- */
+let _seenNewsKeys = null;                 // null=まだ一度もデータを見ていない（初回は新着扱いしない）
+const _newsDetected = new Map();          // key -> 検知時刻ms（直近10秒以内のみ保持）
+const _newsSlidIn = new Set();            // スライドインを再生済みのkey（再生は1回だけ）
+function newsKey(n){ return (n.tag||"")+"|"+(n.tm||"")+"|"+(n.html||""); }
+function updateNewsSeen(feed){
+  const keys = new Set((feed||[]).map(newsKey));
+  if(_seenNewsKeys!==null){
+    const now = Date.now();
+    for(const k of keys){ if(!_seenNewsKeys.has(k)) _newsDetected.set(k, now); }
+  }
+  _seenNewsKeys = keys;
+  const cutoff = Date.now()-10000;
+  for(const [k,t] of _newsDetected){ if(t<cutoff) _newsDetected.delete(k); }
+}
+
 function renderNews(d){
   const feed = d.feed || [];
   const listEl = document.getElementById("feed");
@@ -688,10 +935,18 @@ function renderNews(d){
   listEl.innerHTML = rows.map(n=>{
     const imp = feedImportance(n);
     const body = n.url ? `<a href="${esc(n.url)}" target="_blank" rel="noopener">${n.html}</a>` : n.html;
-    return `<li>
+    const key = newsKey(n);
+    const detectedAt = _newsDetected.get(key);
+    const isNew = detectedAt!=null;
+    const playSlide = isNew && !_newsSlidIn.has(key);
+    if(playSlide) _newsSlidIn.add(key);
+    const remain = isNew ? Math.max(0, 10000-(Date.now()-detectedAt)) : 0;
+    const marker = (isNew && remain>0) ? `<span class="new-mark" style="animation-delay:${remain}ms">NEW</span>` : "";
+    const liClass = (playSlide && !REDUCE_MOTION) ? "news-new" : "";
+    return `<li class="${liClass}">
       <span class="tm num">${esc(n.tm||"")}</span>
       <span class="badge imp${imp}">${IMP_LABEL[imp]}</span>
-      <span class="txt">${body}${n.source?`<span class="src">[${esc(n.source)}]</span>`:""}</span>
+      <span class="txt">${body}${marker}${n.source?`<span class="src">[${esc(n.source)}]</span>`:""}</span>
     </li>`;
   }).join("");
 }
@@ -750,7 +1005,12 @@ function renderAlerts(d){
   const el = document.getElementById("alerts-body");
   const alerts = buildAlerts(d);
   if(!alerts.length){ el.innerHTML = '<div class="empty">アラートなし</div>'; return; }
-  el.innerHTML = `<ul class="alert-list">${alerts.map(a=>`<li class="sev${a.sev}">${esc(a.text)}</li>`).join("")}</ul>`;
+  // M9: CRITICAL(sev4)が複数あっても呼吸させるのは先頭の1件だけ（全部光ると意味が消える）
+  let breathed = false;
+  el.innerHTML = `<ul class="alert-list">${alerts.map(a=>{
+    const breathe = (a.sev===4 && !breathed) ? (breathed=true, "breathe") : "";
+    return `<li class="sev${a.sev} ${breathe}">${esc(a.text)}</li>`;
+  }).join("")}</ul>`;
 }
 
 /* ---- センチメント：セクター平均・保有騰落平均の単純平均。重大ニュースは参考情報のみ ---- */
@@ -794,10 +1054,11 @@ function renderPortfolio(holds){
   rows.forEach(r=>{ if(r.eff.chg>best.eff.chg) best=r; if(r.eff.chg<worst.eff.chg) worst=r; });
   el.innerHTML = `
     <div class="pf-bar"><span class="up">▲${up}</span><span class="flat">■${flat}</span><span class="dn">▼${down}</span></div>
-    <div class="pf-row">平均騰落 <b class="num ${cls(avg)}">${pc(avg)}</b></div>
-    <div class="pf-row">最強 <b>${esc(best.h.nm)}</b> <span class="num ${cls(best.eff.chg)}">${pc(best.eff.chg)}</span></div>
-    <div class="pf-row">最弱 <b>${esc(worst.h.nm)}</b> <span class="num ${cls(worst.eff.chg)}">${pc(worst.eff.chg)}</span></div>
+    <div class="pf-row">平均騰落 <b class="num ${cls(avg)} flashable ${flashClass('pf:avg',avg)}" data-ck="pf:avg" data-cv="${avg}"></b></div>
+    <div class="pf-row">最強 <b>${esc(best.h.nm)}</b> <span class="num ${cls(best.eff.chg)} flashable ${flashClass('pf:best',best.eff.chg)}" data-ck="pf:best" data-cv="${best.eff.chg}"></span></div>
+    <div class="pf-row">最弱 <b>${esc(worst.h.nm)}</b> <span class="num ${cls(worst.eff.chg)} flashable ${flashClass('pf:worst',worst.eff.chg)}" data-ck="pf:worst" data-cv="${worst.eff.chg}"></span></div>
     <div class="def">保有株数データが無いため、金額ベースの損益・配分は算出不可。</div>`;
+  el.querySelectorAll("[data-ck]").forEach(e=>animatePercent(e, e.dataset.ck, parseFloat(e.dataset.cv)));
 }
 
 /* ---- システム情報：実測できる値のみ ---- */
@@ -839,7 +1100,13 @@ function renderAll(){
   renderSysInfo(d);
 }
 
+// M6: ニュースの新着検知にはdashboard.json自体の再取得が要る。quotes.jsonは価格のみで
+// フィードを含まないため、これが無いと「新着」は初回描画以外に発火しようがなかった。
+// quotes.jsonと同じ発想で定期ポーリングを追加する（頻度はニュース更新頻度に合わせて5分）。
+const DASHBOARD_POLL_MS = 5*60*1000;
+
 function boot(d){
+  updateNewsSeen(d.feed); // 初回は「新着」判定をしない（比較対象がまだ無いだけなので）
   document.getElementById("stamp").textContent = "生成: " + (d.as_of || "—") + " JST";
   STATE.data = d;
   document.getElementById("boot-msg").style.display="none";
@@ -850,6 +1117,27 @@ function boot(d){
   pollQuotes();
   setInterval(pollQuotes, CONFIG.quotesPollMs);
   setInterval(()=>renderSysInfo(STATE.data), 1000);
+  setInterval(pollDashboard, DASHBOARD_POLL_MS);
+}
+
+async function pollDashboard(){
+  fetchStart();
+  const t0 = performance.now();
+  try{
+    const r = await fetch("out/dashboard.json?_="+Date.now(), {cache:"no-store"});
+    if(!r.ok) throw new Error("HTTP "+r.status);
+    const d = await r.json();
+    FETCH_MS = performance.now()-t0;
+    updateNewsSeen(d.feed);
+    document.getElementById("stamp").textContent = "生成: " + (d.as_of || "—") + " JST";
+    STATE.data = d;
+    renderAll();
+  }catch(e){
+    // dashboard.json自体が読めなくなっても、直近表示を架空の値で上書きしない。
+    // 何もせず直近の表示を維持する（取得停止はウォッチリストの鮮度表示側で既に警告している）。
+  } finally {
+    fetchEnd();
+  }
 }
 
 renderClocks();
@@ -857,16 +1145,18 @@ setInterval(renderClocks, 1000);
 renderSchedule();
 setInterval(renderSchedule, 60000);
 
-const _fetchStart = performance.now();
+fetchStart();
+const _fetchStartTs = performance.now();
 fetch("out/dashboard.json", {cache:"no-store"})
-  .then(r => { FETCH_MS = performance.now()-_fetchStart; return r.ok ? r.json() : Promise.reject(new Error("HTTP "+r.status)); })
+  .then(r => { FETCH_MS = performance.now()-_fetchStartTs; return r.ok ? r.json() : Promise.reject(new Error("HTTP "+r.status)); })
   .then(boot)
   .catch(err=>{
     document.getElementById("boot-msg").style.display="block";
     document.getElementById("boot-msg").innerHTML =
       `<div>out/dashboard.json を読み込めません <span class="warn">[NO DATA]</span></div>
        <div style="color:var(--mut-dim);margin-top:6px">main.py (src/main.py) を実行して out/dashboard.json を生成してください。（${esc(err.message)}）</div>`;
-  });
+  })
+  .finally(()=>fetchEnd());
 </script>
 </body>
 </html>
