@@ -47,6 +47,47 @@ peer_proxy:
     reason: "2024年12月上場のため履歴約1.6年。単体でのアナログ分析は統計的に不成立。"
     peers: ["MU", "SNDK", "000660.KS"]
 
+# ===== 決算カレンダー =====
+# 対象銘柄をここで定義する（earnings.py にハードコードしない）。
+# yfinance の isEarningsDateEstimate が「企業が正式発表した日か」の判定に使える（実測確認済み）。
+# manual: IRページで確認した日付を手で書く欄。yfinanceで取れない銘柄の受け皿。
+#   yfinance より manual を優先する（人が一次情報で確認した日付のほうが強い）。
+#   date を書いたら period も併記すること。書かなければ画面には「—」と出る。
+earnings:
+  targets:
+    - {code: "6740.T", name: "ジャパンディスプレイ", region: "JP"}
+    - {code: "7974.T", name: "任天堂",             region: "JP"}
+    - {code: "285A.T", name: "キオクシアHD",        region: "JP"}
+    - {code: "8035.T", name: "東京エレクトロン",     region: "JP"}
+    - {code: "6920.T", name: "レーザーテック",       region: "JP"}
+    - {code: "6146.T", name: "ディスコ",           region: "JP"}
+    - {code: "6857.T", name: "アドバンテスト",       region: "JP"}
+    - {code: "7735.T", name: "SCREEN",           region: "JP"}
+    - {code: "6723.T", name: "ルネサス",           region: "JP"}
+    - {code: "6526.T", name: "ソシオネクスト",       region: "JP"}
+    - {code: "4063.T", name: "信越化学",           region: "JP"}
+    - {code: "3436.T", name: "SUMCO",            region: "JP"}
+    - {code: "NVDA",   name: "NVIDIA",           region: "US"}
+    - {code: "TSM",    name: "TSMC",             region: "US"}
+    - {code: "ASML",   name: "ASML",             region: "US"}
+    - {code: "AMD",    name: "AMD",              region: "US"}
+    - {code: "MU",     name: "Micron",           region: "US"}
+    - {code: "INTC",   name: "Intel",            region: "US"}
+    - {code: "AMAT",   name: "Applied Materials", region: "US"}
+    - {code: "LRCX",   name: "Lam Research",     region: "US"}
+    - {code: "KLAC",   name: "KLA",              region: "US"}
+
+  # 当日決算をHIGHアラートにする国内主力（セクター全体の地合いを決める銘柄）
+  sector_bellwethers: ["8035.T", "6857.T", "6920.T"]
+
+  # 手動メンテナンス欄。IRページで確認した日付だけを書く。推定日は書かない。
+  # 例:
+  #   "6740.T":
+  #     date: "2026-08-07"
+  #     period: "2027/3期 1Q"
+  #     source_url: "https://www.j-display.com/ir/"
+  manual: {}
+
 # ===== アナログ（過去チャート類似）検索 =====
 analog:
   window: 60          # 直近何営業日のパターンを検索キーにするか

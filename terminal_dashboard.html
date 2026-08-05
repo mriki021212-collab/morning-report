@@ -163,6 +163,28 @@
   .ev-list li.soon{color:var(--accent);font-weight:600}
   .ev-list .tz{color:var(--mut);font-size:8.5px;border:1px solid var(--line);padding:0 3px;border-radius:2px}
 
+  /* ---- earnings calendar ---- */
+  .ern-list{margin:0;padding:0;list-style:none}
+  .ern-list li{padding:5px 2px 5px 0;border-bottom:1px solid var(--line-soft);
+               display:flex;gap:8px;align-items:baseline;font-size:11px;position:relative}
+  .ern-list li:last-child{border-bottom:none}
+  /* 保有銘柄は左の細いアクセントバーで強調。色以外に位置の差もつけて識別できるようにする */
+  .ern-list li.held{padding-left:7px}
+  .ern-list li.held::before{content:"";position:absolute;left:0;top:4px;bottom:4px;
+                            width:2px;background:var(--accent);border-radius:1px}
+  .ern-list li.today{background:rgba(201,161,90,.07)}
+  .ern-list .dd{color:var(--mut);font-size:10px;min-width:30px;white-space:nowrap}
+  .ern-list li.today .dd{color:var(--accent);font-weight:600}
+  .ern-list .dt{color:var(--mut-dim);font-size:10px;white-space:nowrap}
+  .ern-list .nm{color:var(--txt);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ern-list li.held .nm{font-weight:600}
+  .ern-list .cd{color:var(--mut-dim);font-size:9.5px}
+  .ern-list .pd{color:var(--mut);font-size:9.5px;white-space:nowrap}
+  /* 確定/予定は必ず文字ラベルで示す。色だけの区別にはしない */
+  .ern-tag{font-size:8.5px;border:1px solid var(--line);padding:0 3px;border-radius:2px;white-space:nowrap}
+  .ern-tag.fix{color:var(--up);border-color:var(--up-dim)}
+  .ern-tag.est{color:var(--mut);border-color:var(--line)}
+
   /* ---- sentiment ---- */
   .sent-score{font-size:19px;font-weight:700;margin-bottom:6px}
   .sent-detail{font-size:10.5px;color:var(--mut);margin-bottom:3px}
@@ -300,6 +322,11 @@
         <div class="panel" id="panel-events">
           <h2>本日のイベント時系列<span class="note">日付予定なし・祝日判定なし</span></h2>
           <div class="body" id="events-body"></div>
+        </div>
+
+        <div class="panel" id="panel-earnings">
+          <h2>決算カレンダー<span class="note">確定/予定を区別・推定日は出さない</span></h2>
+          <div class="body" id="earnings-body"></div>
         </div>
 
         <div class="panel" id="panel-sentiment">
@@ -965,6 +992,98 @@ function renderSchedule(){
   document.getElementById("events-body").innerHTML = `<ul class="ev-list">${rows}</ul>`;
 }
 
+/* ---- 決算カレンダー ----
+   out/earnings.json は dashboard.json とは独立に読む。片方が落ちてももう片方は表示する。
+   EARNINGS の意味は3値: null=まだ読めていない / オブジェクト=読めた。
+   「ファイルが無い」「予定ゼロ」「取得失敗あり」は全部意味が違うので、空表示を1つにまとめない。 */
+let EARNINGS = null;
+
+// D-n の n は JST の暦日差で数える。閲覧者のPCがどのTZでも同じ日数になるようにする
+// （東証の寄り付きに対して何日前か、が知りたい値なので基準はJST固定が正しい）。
+function jstToday(){
+  const p = new Intl.DateTimeFormat("en-CA",
+    {timeZone:"Asia/Tokyo", year:"numeric", month:"2-digit", day:"2-digit"}).format(new Date());
+  return p; // "YYYY-MM-DD"
+}
+function dayNum(s){
+  const [y,m,d] = s.split("-").map(Number);
+  return Date.UTC(y, m-1, d) / 86400000;
+}
+function daysUntil(dateStr, todayStr){ return dayNum(dateStr) - dayNum(todayStr); }
+
+function renderEarnings(){
+  const el = document.getElementById("earnings-body");
+  if(!EARNINGS){
+    el.innerHTML = '<div class="empty">決算予定を取得できていません（out/earnings.json が読めません）</div>';
+    return;
+  }
+  const events = EARNINGS.events || [];
+  const failed = EARNINGS.failed || [];
+  if(!events.length){
+    el.innerHTML = failed.length
+      ? `<div class="empty">${failed.length}銘柄の決算予定を取得できませんでした<br><span style="font-size:10px">${esc(failed.join(", "))}</span></div>`
+      : '<div class="empty">今後の決算予定はありません</div>';
+    return;
+  }
+
+  const today = jstToday();
+  const shown = events.slice(0, 10);
+  const rows = shown.map(e=>{
+    const d = daysUntil(e.date, today);
+    const isToday = d === 0;
+    const dd = isToday ? "当日" : `D-${d}`;
+    const md = e.date.slice(5).replace("-", "/");
+    const tag = e.confirmed
+      ? '<span class="ern-tag fix">確定</span>'
+      : '<span class="ern-tag est">予定</span>';
+    return `<li class="${e.held?"held":""} ${isToday?"today":""}">
+      <span class="dd num">${dd}</span>
+      <span class="dt num">${md}</span>
+      <span class="nm">${esc(e.name)}<span class="cd"> ${esc(e.code)}</span></span>
+      ${tag}
+      <span class="pd">${e.period ? esc(e.period) : "—"}</span>
+    </li>`;
+  }).join("");
+
+  const srcs = (EARNINGS.sources||[]).join(" / ") || "—";
+  const estCount = shown.filter(e=>!e.confirmed).length;
+  const notes = [`取得元: ${esc(srcs)}。予定日は変更されることがあります。`];
+  if(estCount) notes.push(`このうち${estCount}件は企業が正式発表した日付ではなく「予定」です（確定次第 確定 に変わります）。`);
+  if(failed.length) notes.push(`${failed.length}銘柄は予定日を取得できませんでした: ${esc(failed.join(", "))}。推定日では埋めていません。`);
+  if(events.length > shown.length) notes.push(`他${events.length-shown.length}件は非表示（近い順に10件まで）。`);
+  notes.push("米国企業は現地16:00発表のため、東京市場が反応するJST日付で表示。期(1Q等)はソースが提供する場合のみ表示。");
+
+  el.innerHTML = `<ul class="ern-list">${rows}</ul><div class="def">${notes.join("<br>")}</div>`;
+}
+
+/* ---- 決算アラート ----
+   confirmed:false の日付で「あと2日」と断定しない。文言に必ず「予定」を入れて、
+   確定していない日付であることを読み手が分かるようにする。 */
+function earningsAlerts(){
+  if(!EARNINGS) return [];
+  const today = jstToday();
+  // 国内主力。当日決算はセクター全体の地合いを決める。銘柄はconfig.yaml側で定義する
+  const bell = new Set(EARNINGS.bellwethers||[]);
+  const out = [];
+  (EARNINGS.events||[]).forEach(e=>{
+    const d = daysUntil(e.date, today);
+    if(d < 0 || d > 3) return;
+    const when = d===0 ? "本日" : `あと${d}日`;
+    const kind = e.confirmed ? "決算" : "決算(予定日)";
+    const label = `${e.name} ${kind} ${when}（${e.date}${e.confirmed?"":" ※未確定"}）`;
+    if(e.held){
+      out.push({sev: d===0 ? 4 : 3, text: "保有 " + label});
+    } else if(bell.has(e.code) && d===0){
+      out.push({sev:3, text: label});
+    } else if(e.code === "NVDA"){
+      // NVDAだけ非保有・非国内でも3日以内でHIGH。AI半導体の需要見通しを事実上決める銘柄で、
+      // 結果が保有のキオクシア/国内装置株までまとめて動かすため、単独銘柄以上の意味を持つ。
+      out.push({sev:3, text: label + " ※セクター全体に波及"});
+    }
+  });
+  return out;
+}
+
 /* ---- アラート：取得済みデータからの機械的な抽出。作文はしない ---- */
 function buildAlerts(d){
   const alerts = [];
@@ -994,6 +1113,7 @@ function buildAlerts(d){
     skeys.forEach(k=>{ if(sectors[k]>sectors[best]) best=k; if(sectors[k]<sectors[worst]) worst=k; });
     alerts.push({sev:2, text:`セクター最強 ${best} ${pc(sectors[best])} / 最弱 ${worst} ${pc(sectors[worst])}`});
   }
+  earningsAlerts().forEach(a=>alerts.push(a));
   if(/取得失敗/.test(d.tdnet_status||"")) alerts.push({sev:4, text:"TDnet取得失敗: "+d.tdnet_status});
   if(/取得失敗/.test(d.news_status||"")) alerts.push({sev:4, text:"ニュース取得失敗: "+d.news_status});
   if(QUOTES===null) alerts.push({sev:1, text:"quotes.json: 場中データは未連携（手動起動が必要）"});
@@ -1094,6 +1214,7 @@ function renderAll(){
   renderHeat(d.sectors);
   renderNewsFilters();
   renderNews(d);
+  renderEarnings();
   renderAlerts(d);
   renderSentiment(d);
   renderPortfolio(d.holds);
@@ -1118,6 +1239,7 @@ function boot(d){
   setInterval(pollQuotes, CONFIG.quotesPollMs);
   setInterval(()=>renderSysInfo(STATE.data), 1000);
   setInterval(pollDashboard, DASHBOARD_POLL_MS);
+  setInterval(loadEarnings, DASHBOARD_POLL_MS);
 }
 
 async function pollDashboard(){
@@ -1144,6 +1266,22 @@ renderClocks();
 setInterval(renderClocks, 1000);
 renderSchedule();
 setInterval(renderSchedule, 60000);
+
+/* earnings.json は dashboard.json とは独立に読む。
+   読めなければ EARNINGS は null のまま = パネルは「取得できていません」を出す。
+   ここで空配列などにフォールバックすると「予定ゼロ」と区別がつかなくなるので、しない。 */
+async function loadEarnings(){
+  try{
+    const r = await fetch("out/earnings.json?_="+Date.now(), {cache:"no-store"});
+    if(!r.ok) throw new Error("HTTP "+r.status);
+    EARNINGS = await r.json();
+  }catch(e){
+    EARNINGS = null;
+  }
+  if(STATE.data){ renderEarnings(); renderAlerts(STATE.data); }
+  else renderEarnings();
+}
+loadEarnings();
 
 fetchStart();
 const _fetchStartTs = performance.now();

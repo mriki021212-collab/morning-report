@@ -10,7 +10,7 @@ import jpholiday
 import yaml
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
-import analogs, collect, dashboard, jquants, news, notify, render, tdnet  # noqa: E402
+import analogs, collect, dashboard, earnings, jquants, news, notify, render, tdnet  # noqa: E402
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 JST = dt.timezone(dt.timedelta(hours=9))
@@ -150,6 +150,13 @@ def main() -> None:
         out = ROOT / "out"
         out.mkdir(exist_ok=True)
         dashboard.write(facts, hist, out)
+        # 決算カレンダーは朝レポート本体とは独立。落ちても朝レポートは止めない。
+        # ただし握りつぶさず、失敗はログに出して earnings.json の failed に残す。
+        try:
+            e = earnings.write(cfg, out)
+            print(f"earnings: {len(e['events'])}件 / 取得不可 {len(e['failed'])}銘柄")
+        except Exception:
+            print("earnings の生成に失敗（朝レポートは続行）:\n" + traceback.format_exc())
         (out / f"facts_{today:%Y%m%d}.json").write_text(
             json.dumps(facts, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
 
