@@ -1,5 +1,5 @@
 {
- "as_of": "2026-08-10 16:00",
+ "as_of": "2026-08-10 19:47",
  "holds": [
   {
    "code": "6740.T",
@@ -1175,7 +1175,7 @@
    "ma25": -18.4042,
    "vol": "32.5M",
    "candle": "小陽線",
-   "flag": null,
+   "flag": "自己株式 開示",
    "s": [
     90910.0,
     94720.0,
@@ -1743,7 +1743,8 @@
      47730.0,
      48010.0
     ]
-   }
+   },
+   "hot": true
   }
  ],
  "macro": [
@@ -1774,13 +1775,13 @@
   },
   {
    "k": "VIX 恐怖指数",
-   "v": "14.90",
-   "c": -1.6502
+   "v": "15.45",
+   "c": 3.6913
   },
   {
    "k": "USD/JPY",
-   "v": "158.38",
-   "c": -0.0177
+   "v": "158.78",
+   "c": 0.2329
   },
   {
    "k": "米10年債利回り",
@@ -1789,18 +1790,18 @@
   },
   {
    "k": "WTI原油",
-   "v": "78.10",
-   "c": -0.1023
+   "v": "79.21",
+   "c": 1.3175
   },
   {
    "k": "金(GOLD)",
-   "v": "4,415.60",
-   "c": 1.7255
+   "v": "4,398.10",
+   "c": 1.3224
   },
   {
    "k": "日経平均先物(CME円建)",
-   "v": "67,110.00",
-   "c": 1.344
+   "v": "67,145.00",
+   "c": 1.3969
   }
  ],
  "tape": [
@@ -1877,6 +1878,26 @@
  ],
  "feed": [
   {
+   "tm": "18:15",
+   "tag": "td",
+   "hot": true,
+   "matched": [
+    "自己株式"
+   ],
+   "url": "https://webapi.yanoshin.jp/rd.php?https://www.release.tdnet.info/inbs/140120260810517251.pdf",
+   "source": "TDnet",
+   "html": "<b>キオクシアＨＤ</b> 自己株式の取得状況及び取得終了に関するお知らせ"
+  },
+  {
+   "tm": "18:15",
+   "tag": "td",
+   "hot": false,
+   "matched": [],
+   "url": "https://webapi.yanoshin.jp/rd.php?https://www.release.tdnet.info/inbs/140120260810517256.pdf",
+   "source": "TDnet",
+   "html": "<b>キオクシアＨＤ</b> 主要株主である筆頭株主の異動に関するお知らせ"
+  },
+  {
    "tm": "15:30",
    "tag": "td",
    "hot": false,
@@ -1915,48 +1936,26 @@
    "html": "<b>ＪＤＩ</b> 上場維持基準（純資産基準）への適合に向けた計画に基づく進捗状況について"
   },
   {
-   "tm": "06:30",
-   "tag": "mk",
-   "hot": false,
-   "matched": [
-    "ジャパンディスプレイ"
-   ],
-   "url": "https://news.google.com/rss/articles/CBMizAFBVV95cUxNNEh6ZlVoaEJJVHhZZXpzSmR0ZXdPOV8xWUZHMW5wRW1KTXdwc0pfemV0SVRQTUNoOEtiWUpjTGFDRXNuS0xlM1hXSFd0OXdRNFlZOGlILTBtWmUzYXA4M3BkaG5SRnlodTlnWHVReW5JblJ6bGRReHRFRE9wb25mNzlfa2RRak5kM0R5TmtMdTBUTllGcENIN3JuMGExRkhadDV4VFFWQWZiTWxTdUFFSUJqOTV5VmVUZXNBY2NOa1JwUUYwcnZCQUpnTVY?oc=5",
-   "source": "日本経済新聞",
-   "html": "<b>ジャパンディスプレイ</b> ジャパンディスプレイ[6740]：営業外費用、特別利益及び特別損失の計上のお知らせ 2026年8月10日(適時開示) ：日経会社情報DIGITAL"
-  },
-  {
-   "tm": "06:30",
-   "tag": "mk",
-   "hot": false,
-   "matched": [
-    "ジャパンディスプレイ"
-   ],
-   "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxOdndjQ3dGd1BwejE4ckRSSzZJNEpIZWRTdm9jOVVsaVlmaEFNMmw3aXhkOGdvbjdPZkRfeTIzRXE4VkZZRWF2YU1MYnVXNzNsUW9XV016Z0poR1U3QjBHTFlTdEg2N2w1MTY0NkJRZFRpZXNpR0J0Ymd2ZkVScHUzY0h2MW5WY1k?oc=5",
-   "source": "Yahoo!ファイナンス",
-   "html": "<b>ジャパンディスプレイ</b> 【決算速報】Ｊディスプレイ、1Q経常-3,318百万。(アイフィス株予報)"
-  },
-  {
-   "tm": "06:30",
-   "tag": "mk",
-   "hot": false,
-   "matched": [
-    "ジャパンディスプレイ"
-   ],
-   "url": "https://news.google.com/rss/articles/CBMizAFBVV95cUxPSzA1WUhyQzQwTzdtU1M0UUlMRjJ2R2lLM0tVVHRuNUhMSm1TTXZENThHVHJuemo2QjhRMHhVT2R4QWZ5MGZRejIwVDBtSmVaS0Q1UWExNDNPN1pKMTBhV1h6dkZ6TXRzd0p3ZVoyNmRRcVlEa1BTaDVKMEJiRDFCMmN6cDBqV1ZNX0FoeUFCelhpSk1JaWRieEtkU2dPdzJfR3R3UUNhR210S2hPVDBrN3d3UThlS3BQVXZIeGlKaHhjVVdGY3ZNWTJnZ3I?oc=5",
-   "source": "日本経済新聞",
-   "html": "<b>ジャパンディスプレイ</b> ジャパンディスプレイ[6740]：2027年３月期 第1四半期決算短信〔日本基準〕(連結) 2026年8月10日(適時開示) ：日経会社情報DIGITAL"
-  },
-  {
-   "tm": "05:05",
+   "tm": "09:59",
    "tag": "mk",
    "hot": false,
    "matched": [
     "キオクシア"
    ],
-   "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxQZVhVQ1lFN0lJc3VaaGYza2ZBNFNJWllTSlNZNkVMRHhkZ1hZbmlsWDI3WTNkZ3RNZ3VRaGV6SEpkSGVlX3liaUlFaTBnSVhiVDhDVE5PLWFzalotTV8tVE5rLUc4eDYxRy10TTgwY1hZMzJ6NmFOYWZ0bnN2NEZfYzlWSlZCM0k?oc=5",
-   "source": "Yahoo!ファイナンス",
-   "html": "<b>キオクシア</b> 日経平均は１１９０円程度高、売買代金はキオクシア、フジクラ、太陽誘電が上位(ウエルスアドバイザー)"
+   "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxQU1M4Z2N2a1U4NkVwYmI4S3NTLVFHTUh2bkJBWktwVXVROTJoZXZwU0ZvQjdqUkY4bjJvNzZjSmRiMXpjTXRmbk4yelZEbE1mR2dSVEF2ZWZTeEpyYXV0X204Y0RCZG1SVTRSaXhkX0ZEVktsd28waEdSSk9FOFV1OQ?oc=5",
+   "source": "ロイター",
+   "html": "<b>キオクシア</b> キオクシアＨＤ ベインが筆頭株主に 東芝の一部売却で"
+  },
+  {
+   "tm": "09:57",
+   "tag": "mk",
+   "hot": false,
+   "matched": [
+    "ジャパンディスプレイ"
+   ],
+   "url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTE5LY3N3OU16T09nQkc3SkRPc091WHFFdm4ycDNPcGNVRHpoZ3p6NG5sZ2RTS1d3dEI3ZjNWUDJ1WnEtTkd0TVdXQVZqQTl0NWpoV0NzaA?oc=5",
+   "source": "sp.m.jiji.com",
+   "html": "<b>ジャパンディスプレイ</b> ＪＤＩ、債務超過解消＝上場維持に道筋"
   }
  ],
  "tdnet_status": "ok",
