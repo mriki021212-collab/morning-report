@@ -1,7 +1,12 @@
 name: deploy-pages
 
-# out/dashboard.json 以外（config.yaml, prompts/, 過去の out/report_*.md 等）は
-# サイトに含めない。公開範囲は dashboard.html / terminal_dashboard.html / out/dashboard.json のみ。
+# 公開範囲は terminal_dashboard.html と out/*.json のみ。
+# config.yaml / prompts/ / 過去の out/report_*.md 等はサイトに含めない。
+#
+# dashboard.html は公開対象から外した。あれは v1 で、fetch に失敗すると
+# MODE='demo' の seed データ（実在しない価格）を表示するフォールバック経路を持つ。
+# public に出ている以上その経路はいつか踏まれるので、公開物からは除外する。
+# ファイル自体はリポジトリに残す（削除は別判断）。
 on:
   push:
     branches: [main]
@@ -9,8 +14,8 @@ on:
       - out/dashboard.json
       - out/quotes.json
       - out/earnings.json
-      - dashboard.html
       - terminal_dashboard.html
+      - .github/workflows/pages.yml
   workflow_dispatch:
 
 permissions:
@@ -34,12 +39,27 @@ jobs:
       - name: Build restricted site (only dashboard files, not the whole repo)
         run: |
           mkdir -p _site/out
-          cp dashboard.html _site/index.html
-          cp dashboard.html _site/dashboard.html
+          cp terminal_dashboard.html _site/index.html
           cp terminal_dashboard.html _site/terminal_dashboard.html
           cp out/dashboard.json _site/out/dashboard.json
           if [ -f out/quotes.json ]; then cp out/quotes.json _site/out/quotes.json; fi
           if [ -f out/earnings.json ]; then cp out/earnings.json _site/out/earnings.json; fi
+
+      # 公開物が意図したファイルだけであることを毎回機械的に確認する。
+      # config.yaml や .env が紛れ込んだら、Pagesに載る前にここで落とす。
+      - name: Verify site contents
+        run: |
+          echo "--- _site contents ---"
+          find _site -type f | sort
+          ALLOWED='_site/index.html _site/terminal_dashboard.html _site/out/dashboard.json _site/out/quotes.json _site/out/earnings.json'
+          rc=0
+          for f in $(find _site -type f); do
+            case " $ALLOWED " in
+              *" $f "*) ;;
+              *) echo "想定外のファイルが _site に含まれている: $f"; rc=1 ;;
+            esac
+          done
+          exit $rc
 
       - uses: actions/upload-pages-artifact@v3
         with:

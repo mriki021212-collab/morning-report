@@ -54,16 +54,31 @@
   .qc .ch{font-size:11px;margin-top:1px}
   .up{color:var(--up)}.dn{color:var(--dn)}.flat{color:var(--flat)}
 
+  /* ---- layout ---- */
+  /* 各列を .col(flexの縦積み)でラップする。生グリッドの行ストレッチに任せると、
+     中身が短いパネル(AIサマリー等)まで同じ行の一番高いパネルに合わせて間延びする。 */
+  /* 主戦場はデスクトップ横長。パネルが減った分を中央チャートに回すため、
+     左右の列は固定幅・中央は 1fr で残り全部を取る。左右のパネルを hidden に
+     しても列そのものは崩れず、その列の中で下のパネルが詰まるだけ。 */
+  .cols{display:grid;grid-template-columns:300px minmax(0,1fr) 330px;gap:12px;align-items:start}
+  @media(max-width:1400px){.cols{grid-template-columns:280px minmax(0,1fr) 300px}}
+  @media(max-width:1080px){.cols{grid-template-columns:1fr 1fr}}
+  @media(max-width:680px){.cols{grid-template-columns:1fr}}
+  /* 中身が空になった列は幅を占有しない（パネル全消し時にレイアウトが空くのを防ぐ） */
+  .col:empty{display:none}
+
   /* ---- 鮮度警告バー ---- */
   .freshbar{border:1px solid var(--dn-dim);background:rgba(226,89,107,.10);color:var(--dn);
             padding:6px 10px;margin-bottom:10px;font-size:11.5px;letter-spacing:.02em}
 
-  /* ---- layout ---- */
-  /* 各列を .col(flexの縦積み)でラップする。生グリッドの行ストレッチに任せると、
-     中身が短いパネル(AIサマリー等)まで同じ行の一番高いパネルに合わせて間延びする。 */
-  .cols{display:grid;grid-template-columns:280px 1fr 320px;gap:12px;align-items:start}
-  @media(max-width:1080px){.cols{grid-template-columns:1fr 1fr}}
-  @media(max-width:680px){.cols{grid-template-columns:1fr}}
+  /* ---- 投資信託 ---- */
+  .fund-row{padding:7px 6px;border-bottom:1px solid var(--line-soft)}
+  .fund-row:last-of-type{border-bottom:none}
+  .fund-row .r1{display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+  .fund-row .nm{font-weight:600;font-size:12px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .fund-row .px{font-weight:600;font-size:13px;flex:none}
+  .fund-row .r2{display:flex;justify-content:space-between;color:var(--mut);font-size:10.5px;margin-top:2px}
+  .fund-row .fresh{font-size:9.5px;color:var(--mut-dim)}
   .col{display:flex;flex-direction:column;gap:12px;min-width:0}
   .panel{border:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;min-height:0}
   .panel h2{margin:0;font-size:10.5px;letter-spacing:.1em;color:var(--mut);background:var(--panel2);
@@ -86,7 +101,12 @@
   .wl-item .nm{font-weight:600;font-size:12.5px}
   .wl-item .code{color:var(--mut);font-size:10px;margin-left:4px}
   .wl-item .px{font-weight:600;font-size:13px}
-  .wl-item .r2{display:flex;justify-content:space-between;color:var(--mut);font-size:10.5px;margin-top:2px}
+  .wl-item .r2{display:flex;justify-content:space-between;gap:8px;color:var(--mut);font-size:10.5px;margin-top:2px}
+  .wl-item .r2 .fresh{text-align:right;min-width:0}
+  /* テクニカルを保有行に直接出す。別パネルを開かずに RSI / 25MA乖離 / 出来高を読めるようにする */
+  .wl-item .r3{display:flex;justify-content:space-between;gap:6px;margin-top:3px;
+               color:var(--mut-dim);font-size:9.5px;font-family:var(--mono)}
+  .wl-item .r3 b{color:var(--mut);font-weight:600}
   .wl-item .fresh{font-size:9.5px;color:var(--mut-dim)}
   .wl-item .flag{color:var(--accent);font-size:10px;margin-top:3px}
 
@@ -100,7 +120,9 @@
   .periods button.on{color:var(--accent);border-color:var(--accent-dim)}
   .periods button:disabled{opacity:.35;cursor:not-allowed}
   .chart-box{position:relative}
-  .chart-box svg{display:block;width:100%;height:220px}
+  /* パネルを減らした分の面積は中央チャートに回す。ビューポート高に追従させ、
+     横長デスクトップでは実際に大きく表示されるようにする。 */
+  .chart-box svg{display:block;width:100%;height:clamp(240px,46vh,520px)}
   .chart-tip{position:absolute;pointer-events:none;background:var(--panel2);border:1px solid var(--line);
              padding:4px 8px;font-size:10.5px;color:var(--txt);white-space:nowrap;display:none}
   .stat-row{display:flex;gap:16px;margin-top:8px;flex-wrap:wrap;font-size:11px;color:var(--mut)}
@@ -112,6 +134,7 @@
   .ai-point{border-top:1px dashed var(--line);padding-top:8px;font-size:12px;color:var(--accent)}
 
   /* ---- heatmap ---- */
+  .hcell .mem{position:relative;color:var(--mut-dim);font-size:9px;margin-top:3px;line-height:1.35}
   .heat{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
   @media(max-width:900px){.heat{grid-template-columns:repeat(2,1fr)}}
   .hcell{border:1px solid var(--line);padding:7px 9px;background:var(--panel2);position:relative;overflow:hidden}
@@ -255,6 +278,9 @@
   .xhair-dot{fill:#fff;transition:transform 80ms linear}
   .ma25-line{fill:none;stroke:var(--accent);stroke-width:1.2;opacity:.85}
 
+  /* ---- 演出 OFF: CSS側のアニメーションも止める（Bキーで切替） ---- */
+  html[data-motion="OFF"] *{animation:none!important;transition:none!important}
+
   /* ---- prefers-reduced-motion: 全アニメーション・トランジションを実質無効化 ---- */
   @media (prefers-reduced-motion: reduce){
     *, *::before, *::after{
@@ -287,11 +313,19 @@
     <div class="cols">
       <div class="col col-left">
         <div class="panel" id="panel-watchlist">
-          <h2>保有ウォッチリスト</h2>
+          <h2>保有銘柄</h2>
           <div class="body" id="watchlist"><div id="watchlist-items"></div><div class="wl-accent" id="wl-accent-bar"></div></div>
         </div>
+        <div class="panel" id="panel-watchonly" hidden>
+          <h2>ウォッチ<span class="note">非保有・統計には含めない</span></h2>
+          <div class="body" id="watchonly"><div id="watchonly-items"></div></div>
+        </div>
+        <div class="panel" id="panel-funds" hidden>
+          <h2>投資信託<span class="note">基準価額のみ・テクニカルなし</span></h2>
+          <div class="body" id="funds-body"></div>
+        </div>
         <div class="panel" id="panel-portfolio">
-          <h2>ポートフォリオ統計<span class="note">本数・単純平均のみ</span></h2>
+          <h2>ポートフォリオ統計<span class="note">保有のみ・本数・単純平均</span></h2>
           <div class="body" id="portfolio-body"></div>
         </div>
       </div>
@@ -357,7 +391,9 @@
   </div>
 
   <div class="foot">DATA: yfinance / J-Quants / TDnet / Google News RSS &nbsp;·&nbsp; 全数値はPython計算結果・投資助言ではない &nbsp;·&nbsp; 欠損値は必ず明示表示（推定・補完はしない）</div>
+  <div class="foot" id="unavail" hidden></div>
   <div class="foot" id="sysinfo">システム情報を計測中…</div>
+  <div class="foot"><span id="motion-chip">演出 HIGH</span> &nbsp;·&nbsp; B: 演出切替 (OFF / MID / HIGH) &nbsp;·&nbsp; ↑↓: 銘柄選択</div>
 </div>
 
 <script>
@@ -385,9 +421,17 @@ const CONFIG = {
     { label: "GOLD",    as: ["金(GOLD)", "金"] },
   ],
 
-  // セクターヒートマップの表示枠。データソースが無いセクターは「データなし」のまま残す。
-  // (半導体だけ src/dashboard.py が実データを出力できる。他は取得手段が未実装。)
-  sectors: ["AI", "半導体", "銀行", "商社", "自動車", "防衛", "エネルギー", "不動産"],
+  // セクターヒートマップは固定枠を持たない。dashboard.json の sectors / sector_defs に
+  // 実データがあるものだけを描く。「データなし」のマスを並べて画面を埋めることはしない。
+  // AI/銀行/商社/自動車/防衛/エネルギー/不動産 は収集元が無いので出力自体が存在せず、
+  // 結果としてマスも出ない。将来 config.yaml の sector_groups: に定義を足して
+  // src/dashboard.py が値を出せば、このファイルを触らずに自動で列が増える。
+  unavailable: [
+    { label: "AI / 銀行 / 商社 / 自動車 / 防衛 / エネルギー / 不動産 セクター",
+      why: "構成銘柄の定義と価格取得元が未実装" },
+    { label: "AIサマリー", why: "LLM層(analyst.py)がダッシュボードに未接続" },
+    { label: "板情報・信用残のリアルタイム表示", why: "取得範囲外" },
+  ],
 
   // 中央チャートの期間ボタン。nは営業日数（カレンダー日数ではない）。
   // 実データがn本に満たない場合はボタンを無効化し、存在しない期間を捏造しない。
@@ -438,6 +482,17 @@ const CONFIG = {
 function normLabel(s){
   return String(s==null?"":s).normalize("NFKC").replace(/[\s　]+/g,"").toUpperCase();
 }
+
+/* ---- 条件付きレンダリング ----------------------------------------------
+   パネルは「消す」のではなく hidden にするだけ。実装は常に残っているので、
+   dashboard.json にデータが現れた瞬間に同じ描画経路で自動的に戻る。
+   グリッドは flex/auto-fit なので、隠れた分だけ他のパネルが詰まって崩れない。 */
+function showPanel(id, visible){
+  const el = document.getElementById(id);
+  if(!el) return visible;
+  el.hidden = !visible;
+  return visible;
+}
 function fmt2(n){ return Number(n).toLocaleString("ja-JP",{minimumFractionDigits:2,maximumFractionDigits:2}); }
 function cls(v){ return v>0?"up":v<0?"dn":"flat"; }
 function arw(v){ return v>0?"▲":v<0?"▼":"■"; }
@@ -446,8 +501,48 @@ function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;"
 
 /* ---- prefers-reduced-motion: JS駆動のアニメーション(カウントアップ/チャート描画/
    クロスヘア追従)はCSSの@mediaだけでは止められないため、ここで明示的に分岐する。 ---- */
-let REDUCE_MOTION = matchMedia("(prefers-reduced-motion: reduce)").matches;
-matchMedia("(prefers-reduced-motion: reduce)").addEventListener("change", e=>{ REDUCE_MOTION = e.matches; });
+let PREFERS_REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---- B キー: 演出レベル OFF / MID / HIGH ---------------------------------
+   0=OFF  アニメーションを一切かけない（OSのprefers-reduced-motionと同じ扱い）
+   1=MID  数値のカウントアップと値変化フラッシュのみ
+   2=HIGH さらにチャートの描画アニメーションとニュースのスライドインを行う
+   OSが reduce を要求している場合はその意思を優先し、レベルに関わらずOFFに倒す。
+   選択は端末ごとの好みなので localStorage に保存する（読めない環境でも既定値で動く）。 */
+const MOTION_LABELS = ["OFF","MID","HIGH"];
+let MOTION_LEVEL = 2;
+try{
+  const v = localStorage.getItem("motionLevel");
+  if(v!=null && !isNaN(parseInt(v,10))) MOTION_LEVEL = Math.max(0, Math.min(2, parseInt(v,10)));
+}catch(e){ /* プライベートウィンドウ等でstorageが読めなくても既定値で動く */ }
+
+// 既存コードが参照している「JS駆動アニメを止めるか」のフラグ。意味は変えていない。
+let REDUCE_MOTION = PREFERS_REDUCED || MOTION_LEVEL === 0;
+// HIGH でのみ行う重い演出（チャートの線引き・ニュースのスライドイン）
+let MOTION_HIGH = !REDUCE_MOTION && MOTION_LEVEL >= 2;
+
+function applyMotionLevel(){
+  REDUCE_MOTION = PREFERS_REDUCED || MOTION_LEVEL === 0;
+  MOTION_HIGH = !REDUCE_MOTION && MOTION_LEVEL >= 2;
+  document.documentElement.dataset.motion = MOTION_LABELS[MOTION_LEVEL];
+  const el = document.getElementById("motion-chip");
+  if(el) el.textContent = "演出 " + MOTION_LABELS[MOTION_LEVEL] + (PREFERS_REDUCED ? "（OS設定により停止中）" : "");
+}
+matchMedia("(prefers-reduced-motion: reduce)").addEventListener("change", e=>{
+  PREFERS_REDUCED = e.matches; applyMotionLevel();
+});
+document.addEventListener("keydown", ev=>{
+  if(ev.key !== "b" && ev.key !== "B") return;
+  // 入力欄にフォーカスがある時は横取りしない
+  const t = ev.target;
+  if(t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName||""))) return;
+  if(ev.ctrlKey || ev.metaKey || ev.altKey) return;
+  ev.preventDefault();
+  MOTION_LEVEL = (MOTION_LEVEL + 1) % 3;
+  try{ localStorage.setItem("motionLevel", String(MOTION_LEVEL)); }catch(e){ /* 保存できなくても動作は継続 */ }
+  applyMotionLevel();
+});
+applyMotionLevel();
 
 /* ---- M10: dashboard.json/quotes.jsonのfetchが実際に走っている間だけ進捗バーを出す ---- */
 let _activeFetches = 0;
@@ -592,6 +687,7 @@ async function pollQuotes(){
   // ポートフォリオ統計/システム情報も古い値のまま固定されてしまうため、まとめて再描画する。
   if(STATE.data){
     renderWatchlist(STATE.data.holds);
+    renderWatchlist(STATE.data.watch, "watchonly-items");
     renderAlerts(STATE.data);
     renderSentiment(STATE.data);
     renderPortfolio(STATE.data.holds);
@@ -679,10 +775,15 @@ function decayClass(ageSec){
   return "decay-3";
 }
 
-function renderWatchlist(holds){
+// containerId を差し替えることで「保有」と「ウォッチ(非保有)」の両方を同じ描画で出す。
+// 行の見た目と計算経路を1つに保つことで、片方だけ古い値が出るような食い違いを防ぐ。
+function renderWatchlist(holds, containerId){
+  containerId = containerId || "watchlist-items";
   holds = holds || [];
   if(!STATE.selectedCode && holds.length) STATE.selectedCode = holds[0].code;
-  document.getElementById("watchlist-items").innerHTML = holds.map(h=>{
+  const host = document.getElementById(containerId);
+  if(!host) return;
+  host.innerHTML = holds.map(h=>{
     const eff = effectiveHold(h);
     const px = eff.px, chg = eff.chg;
     let freshHtml = '<span class="fresh">寄付き時点のスナップショット</span>';
@@ -709,11 +810,17 @@ function renderWatchlist(holds){
       <div class="r1"><span><span class="nm">${esc(h.nm)}</span><span class="code">${esc(h.code)}</span></span>
       <span class="px num ${cls(chg)} flashable ${flash} ${decay}" data-ck="${esc(key)}" data-cv="${px==null?"":px}" data-cd="2">${px!=null?fmt2(px):"—"}</span></div>
       <div class="r2"><span class="${cls(chg)}">${pc(chg)}</span>${freshHtml}</div>
+      <div class="r3">
+        <span>RSI <b>${h.rsi!=null?h.rsi.toFixed(1):"—"}</b></span>
+        <span>25MA <b class="${h.ma25!=null?cls(h.ma25):""}">${h.ma25!=null?(h.ma25>0?"+":"")+h.ma25.toFixed(1)+"%":"—"}</b></span>
+        <span>出来高 <b>${esc(h.vol||"—")}</b></span>
+        <span>${esc(h.candle||"—")}</span>
+      </div>
       ${h.flag?`<div class="flag">⚠ ${esc(h.flag)}</div>`:""}
     </div>`;
-  }).join("") || '<div class="empty">保有銘柄データがありません</div>';
+  }).join("") || '<div class="empty">該当する銘柄データがありません</div>';
 
-  document.querySelectorAll("#watchlist [data-ck]").forEach(el=>{
+  document.querySelectorAll("#watchlist [data-ck], #watchonly-items [data-ck]").forEach(el=>{
     if(el.dataset.cv==="") { el.textContent="—"; return; }
     animateCount(el, el.dataset.ck, parseFloat(el.dataset.cv), 2);
   });
@@ -722,6 +829,11 @@ function renderWatchlist(holds){
     el.addEventListener("click", ()=>{ STATE.selectedCode = el.dataset.code; renderAll(); el.focus(); });
   });
   positionAccent();
+}
+
+// チャートで選択できるのは保有+ウォッチの全銘柄。
+function allRows(d){
+  return [].concat((d && d.holds) || [], (d && d.watch) || []);
 }
 
 // M7: 選択中インジケータの移動はtransformのみ。実要素のoffsetTopを測って追従させる。
@@ -739,8 +851,8 @@ function positionAccent(){
 // ↑↓キーでウォッチリストの選択を連続移動しても破綻しないようにする（M7の検証条件）
 document.addEventListener("keydown", ev=>{
   if(ev.key!=="ArrowUp" && ev.key!=="ArrowDown") return;
-  if(!document.activeElement || !document.activeElement.closest("#watchlist")) return;
-  const holds = (STATE.data && STATE.data.holds) || [];
+  if(!document.activeElement || !document.activeElement.closest("#watchlist, #watchonly")) return;
+  const holds = allRows(STATE.data);
   if(!holds.length) return;
   ev.preventDefault();
   const idx = holds.findIndex(h=>h.code===STATE.selectedCode);
@@ -785,7 +897,7 @@ function axisFmt(v){
 }
 
 function renderChart(){
-  const holds = STATE.data.holds || [];
+  const holds = allRows(STATE.data);
   const h = holds.find(x=>x.code===STATE.selectedCode);
   const box = document.getElementById("chart-box");
   const statRow = document.getElementById("chart-stats");
@@ -891,7 +1003,7 @@ function renderChart(){
   [priceLine, maLine].forEach((line, idx)=>{
     if(!line) return;
     const len = line.getTotalLength();
-    if(shouldAnimate && !REDUCE_MOTION){
+    if(shouldAnimate && MOTION_HIGH){
       line.style.strokeDasharray = len;
       line.style.strokeDashoffset = len;
       line.getBoundingClientRect(); // レイアウト確定を強制してからtransitionを効かせる
@@ -938,12 +1050,14 @@ function renderChart(){
 }
 
 /* ---- AI summary ---- */
+// データが無いときは「算出不可」を並べるのではなくパネルごと隠す。
+// 実装は残してあるので、dashboard.json に ai キーが現れた瞬間に自動で再表示される
+// （src/dashboard.py は facts["ai"] がある時だけこのキーを出す）。
 function renderAI(ai){
   const el = document.getElementById("ai-body");
-  if(!ai || !Array.isArray(ai.lines) || !ai.lines.length){
-    el.innerHTML = '<div class="empty">算出不可（AI要約層は未接続）</div>';
-    return;
-  }
+  const ok = !!(ai && Array.isArray(ai.lines) && ai.lines.length);
+  showPanel("panel-ai", ok);
+  if(!ok) return;
   el.innerHTML = `<ul class="ai-lines">${ai.lines.map(l=>`<li>${esc(l)}</li>`).join("")}</ul>` +
     (ai.point ? `<div class="ai-point">▶ ${esc(ai.point)}</div>` : "");
 }
@@ -952,14 +1066,15 @@ function renderAI(ai){
 // M5: 塗りバーは初回描画だけ scaleX(0→1) で伸ばす。2回目以降、値が変わってもM1のフラッシュで
 // 表現し、塗りバー自体は再アニメーションしない（このSetが「初回を済ませたか」の記録）。
 const _heatGrown = new Set();
-function renderHeat(sectors){
+function renderHeat(sectors, defs){
   sectors = sectors || {};
-  document.getElementById("heat").innerHTML = CONFIG.sectors.map(name=>{
+  defs = defs || {};
+  // 実データがあるセクターだけを描く。固定枠は持たない。
+  const names = Object.keys(sectors);
+  showPanel("panel-sector", names.length > 0);
+  if(!names.length) return;
+  document.getElementById("heat").innerHTML = names.map(name=>{
     const v = sectors[name];
-    if(v==null){
-      // データなしのマスはアニメーションしない（無いものが動いて見えるのを避ける）
-      return `<div class="hcell na"><div class="nm">${esc(name)}</div><div class="pc na">データなし</div></div>`;
-    }
     const key = "sector:"+name;
     const flash = flashClass(key, v);
     const firstTime = !_heatGrown.has(name);
@@ -968,9 +1083,23 @@ function renderHeat(sectors){
     return `<div class="hcell">
       <div class="fill ${v>=0?'up':'dn'} ${firstTime?'grow':''}" style="--fill-x:${scale}${firstTime?'':`;transform:scaleX(${scale})`}"></div>
       <div class="nm">${esc(name)}</div>
-      <div class="pc num flashable ${flash}" data-ck="${esc(key)}" data-cv="${v}" data-cd="2">${pc(v)}</div></div>`;
-  }).join("") + `<div class="def full">定義: セクター値=構成銘柄の前日比(%)の単純平均（加重ではない）。バーの幅は±10%を満タンとする表示上のスケール。データソースが無いセクターは「データなし」のまま表示し、値を推定しない。</div>`;
+      <div class="pc num flashable ${flash}" data-ck="${esc(key)}" data-cv="${v}" data-cd="2">${pc(v)}</div>
+      <div class="mem">${memberText(defs[name])}</div></div>`;
+  }).join("") + `<div class="def full">定義: セクター値=構成銘柄の前日比(%)の単純平均（加重ではない。sum(chg_pct)/取得できた銘柄数）。バーの幅は±10%を満タンとする表示上のスケール。構成銘柄は各マスに明記。取得元が無いセクターはマス自体を出さない（「データなし」で画面を埋めない）。</div>`;
   document.querySelectorAll("#heat [data-ck]").forEach(el=>animatePercent(el, el.dataset.ck, parseFloat(el.dataset.cv)));
+}
+
+// 構成銘柄をマスに明記する。どの銘柄の平均なのかがUIだけで分かる状態を保つ
+// （同じ定義が src/dashboard.py の _add_sector / config.yaml にもコメントで書いてある）。
+function memberText(def){
+  if(!def || !Array.isArray(def.members) || !def.members.length) return "";
+  const names = def.members.map(m=>{
+    const nm = m.nm || m.code;
+    return m.status ? esc(nm)+"(取得できていません)" : esc(nm);
+  });
+  const cnt = (def.n_used!=null && def.n_total!=null && def.n_used!==def.n_total)
+    ? ` ／ ${def.n_used}/${def.n_total}銘柄で算出` : "";
+  return names.join("・") + cnt;
 }
 
 /* ---- breaking news ---- */
@@ -1035,7 +1164,7 @@ function renderNews(d){
     if(playSlide) _newsSlidIn.add(key);
     const remain = isNew ? Math.max(0, 10000-(Date.now()-detectedAt)) : 0;
     const marker = (isNew && remain>0) ? `<span class="new-mark" style="animation-delay:${remain}ms">NEW</span>` : "";
-    const liClass = (playSlide && !REDUCE_MOTION) ? "news-new" : "";
+    const liClass = (playSlide && MOTION_HIGH) ? "news-new" : "";
     return `<li class="${liClass}">
       <span class="tm num">${esc(n.tm||"")}</span>
       <span class="badge imp${imp}">${IMP_LABEL[imp]}</span>
@@ -1210,7 +1339,10 @@ function computeSentiment(d){
   if(!parts.length) return null;
   return {
     score: parts.reduce((a,b)=>a+b,0)/parts.length,
-    sectorSample: sectorVals.length, sectorTotal: CONFIG.sectors.length,
+    // 母数は固定枠ではなく、実際に出力されたセクター定義の数。
+    // 取得元が無いセクターはそもそも出力されないので、分母に幽霊が入らない。
+    sectorSample: sectorVals.length,
+    sectorTotal: Object.keys(d.sector_defs || sectors).length,
     holdSample: holdVals.length,
     criticalCount: (d.feed||[]).filter(n=>feedImportance(n)===4).length,
   };
@@ -1224,7 +1356,7 @@ function renderSentiment(d){
     <div class="sent-score ${cls(s.score)}">${label} <span class="num">${pc(s.score)}</span></div>
     <div class="sent-detail">セクター${s.sectorSample}/${s.sectorTotal}・保有${s.holdSample}銘柄から算出</div>
     ${s.criticalCount ? `<div class="sent-detail" style="color:var(--dn)">重大ニュース ${s.criticalCount}件（参考情報。数値には合成していない）</div>` : ""}
-    <div class="def">定義: 保有銘柄前日比の単純平均とセクター前日比の単純平均を、値が存在する方だけで平均。0や50で埋めていない。セクターは半導体以外未実装のためサンプル数を併記。</div>`;
+    <div class="def">定義: 保有銘柄前日比の単純平均とセクター前日比の単純平均を、値が存在する方だけで平均。0や50で埋めていない。対象は算出できたセクターのみで、サンプル数を併記する。</div>`;
 }
 
 /* ---- ポートフォリオ統計：本数・単純平均のみ。株数データが無いので金額換算はしない ---- */
@@ -1259,10 +1391,56 @@ function renderFreshness(d){
   const asof = d && d.market_asof;
   const n = bdaysAgo(asof);
   if(!asof || n==null || n < CONFIG.staleWarnBdays){
-    el.hidden = true; el.textContent = ""; return;
+    el.hidden = true;
+    el.textContent = "";
+    return;
   }
   el.hidden = false;
   el.textContent = `データが古い可能性: 最終更新 ${asof}（直近営業日から${n}営業日前）`;
+}
+
+/* ---- 未接続項目の一覧 ------------------------------------------------------
+   パネルを消した項目は、ここに1行ずつ集約して掲示する。
+   画面からは消しても「何が未実装か」は把握できる状態を保つための欄。 */
+function renderUnavailable(d){
+  const el = document.getElementById("unavail");
+  if(!el) return;
+  const items = (CONFIG.unavailable || []).slice();
+  // 取得に失敗した投信があればここにも出す（パネル側では行ごとに明示している）
+  (d && d.funds || []).forEach(f=>{
+    if(f.status) items.push({ label: "投信 "+(f.nm||f.code), why: f.status });
+  });
+  if(d && !d.sectors) items.push({ label: "セクター騰落率", why: "算出対象のセクターが1つも出力されていない" });
+  el.innerHTML = items.length
+    ? "未接続: " + items.map(i=>`${esc(i.label)}（${esc(i.why)}）`).join(" ／ ")
+    : "";
+  el.hidden = !items.length;
+}
+
+/* ---- 投資信託 --------------------------------------------------------------
+   株式とは別セクション。日次基準価額しか無いため RSI / MA25乖離 は出さない
+   （性質が異なる値に株式のテクニカルを当てない）。 */
+function renderFunds(funds){
+  const el = document.getElementById("funds-body");
+  if(!el) return;
+  const list = funds || [];
+  showPanel("panel-funds", list.length > 0);
+  if(!list.length) return;
+  el.innerHTML = list.map(f=>{
+    if(f.status){
+      return `<div class="fund-row"><div class="r1"><span class="nm">${esc(f.nm||f.code)}</span>
+        <span class="na">—</span></div>
+        <div class="r2"><span class="na">取得できていません</span><span class="fresh">${esc(f.status)}</span></div></div>`;
+    }
+    const key = "nav:"+f.code;
+    return `<div class="fund-row"><div class="r1">
+        <span class="nm">${esc(f.nm)}</span>
+        <span class="px num ${cls(f.chgPct)} flashable ${flashClass(key, f.nav)}"
+              data-ck="${esc(key)}" data-cv="${f.nav}" data-cd="0">${Number(f.nav).toLocaleString("ja-JP")}</span></div>
+      <div class="r2"><span class="${cls(f.chgPct)}">${pc(f.chgPct)}${f.chg!=null?`<span class="na"> (${f.chg>0?"+":""}${f.chg})</span>`:""}</span>
+        <span class="fresh">基準日 ${esc(f.asof||"—")}</span></div></div>`;
+  }).join("") + `<div class="def">基準価額（円）。単位は口数あたりで銘柄ごとに異なるため、銘柄間で金額を比較しないこと。テクニカル指標(RSI・25日移動平均乖離)は日次1本値の性質上あてはまらないため算出しない。取得元: Yahoo!ファイナンス(日本) 投信ページ。</div>`;
+  el.querySelectorAll("[data-ck]").forEach(x=>animateCount(x, x.dataset.ck, parseFloat(x.dataset.cv), 0));
 }
 
 let PAGE_LOAD_TS = performance.now();
@@ -1293,15 +1471,20 @@ function renderAll(){
   else { moodEl.className = "mood "+(mood<0?"dn":"up"); moodEl.textContent = mood<0?"リスクオフ ▼":"リスクオン ▲"; }
   renderFreshness(d);
   renderWatchlist(d.holds);
+  // 非保有ウォッチ。保有パネルとは別枠にして、ポートフォリオ統計には混ぜない。
+  showPanel("panel-watchonly", !!(d.watch && d.watch.length));
+  renderWatchlist(d.watch, "watchonly-items");
   renderChart();
+  renderFunds(d.funds);
   renderAI(d.ai);
-  renderHeat(d.sectors);
+  renderHeat(d.sectors, d.sector_defs);
   renderNewsFilters();
   renderNews(d);
   renderEarnings();
   renderAlerts(d);
   renderSentiment(d);
   renderPortfolio(d.holds);
+  renderUnavailable(d);
   renderSysInfo(d);
 }
 
