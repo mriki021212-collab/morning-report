@@ -54,6 +54,10 @@
   .qc .ch{font-size:11px;margin-top:1px}
   .up{color:var(--up)}.dn{color:var(--dn)}.flat{color:var(--flat)}
 
+  /* ---- 鮮度警告バー ---- */
+  .freshbar{border:1px solid var(--dn-dim);background:rgba(226,89,107,.10);color:var(--dn);
+            padding:6px 10px;margin-bottom:10px;font-size:11.5px;letter-spacing:.02em}
+
   /* ---- layout ---- */
   /* 各列を .col(flexの縦積み)でラップする。生グリッドの行ストレッチに任せると、
      中身が短いパネル(AIサマリー等)まで同じ行の一番高いパネルに合わせて間延びする。 */
@@ -277,6 +281,7 @@
   <div id="boot-msg" style="display:none"></div>
 
   <div id="main" style="display:none">
+    <div class="freshbar" id="freshbar" hidden></div>
     <div class="strip" id="strip"></div>
 
     <div class="cols">
@@ -396,6 +401,18 @@ const CONFIG = {
 
   quotesPollMs: 15000,   // out/quotes.json の再取得間隔
   freshWarnSec: 600,     // これより古い場中値は「更新停止」扱いで警告表示
+
+  // これより古い out/quotes.json の値は「無い」ものとして完全に捨てる。
+  // 警告を出すだけでは不十分だった: 実際に 2026-08-05 の場中値が 8/26 の画面に
+  // 残り続け、当日終値を上書きしたうえ「前日終値で割る」計算に流れ込んで
+  // 存在しない前日比(任天堂 ▼15.31%)を作っていた。値そのものを採用しないこと。
+  // 判定は日付一致ではなく ts_jst のタイムスタンプ比較で行う。
+  quoteMaxAgeSec: 6*3600,
+
+  // 価格系列(hist / holds[].s / px)の基準日が直近営業日からこれ以上離れていたら
+  // 「データが古い可能性」を明示する。ガード自体が正常値を止めないよう、
+  // 日付の文字列一致ではなく営業日差で判定し、当日/前営業日は正常とみなす。
+  staleWarnBdays: 2,
 
   // 日付つきの個別予定（決算発表日など）を後から手で追加するための置き場。
   // 現状は取得手段が無いため空。中身が増えたら events-body 側で描画対象に含める。
@@ -582,12 +599,53 @@ async function pollQuotes(){
   }
 }
 
+// 場中値は「新しいときだけ」採用する。
+// ここで年齢の上限を設けずに値を返していたのが、公開ダッシュボードに 21 日前の
+// 価格が出ていた直接の原因。古い値は表示から外すだけでなく、前日比・センチメント・
+// ポートフォリオ統計の計算にも流さない（effectiveHold が null を受けてスナップ
+// ショットにフォールバックする）。判定は ts_jst のタイムスタンプ比較のみ。
 function liveFor(code){
   if(!QUOTES || !QUOTES.quotes || !QUOTES.quotes[code]) return null;
   const q = QUOTES.quotes[code];
   if(q.price==null || !q.ts_jst) return null;
-  const ageSec = (Date.now() - Date.parse(q.ts_jst)) / 1000;
+  const t = Date.parse(q.ts_jst);
+  if(isNaN(t)) return null;                       // 時刻が読めない値は採用しない
+  const ageSec = (Date.now() - t) / 1000;
+  if(ageSec > CONFIG.quoteMaxAgeSec) return null; // 古すぎる = 無いものとして扱う
+  if(ageSec < -300) return null;                  // 未来時刻は壊れた値とみなす
   return { price: q.price, ageSec };
+}
+
+// 場中値が「あるのに古すぎて捨てた」ことを画面に出すための判定。
+// 単に消すと、更新が止まっていること自体が見えなくなる。
+function staleQuoteFor(code){
+  if(!QUOTES || !QUOTES.quotes || !QUOTES.quotes[code]) return null;
+  const q = QUOTES.quotes[code];
+  if(q.price==null || !q.ts_jst) return null;
+  const t = Date.parse(q.ts_jst);
+  if(isNaN(t)) return null;
+  const ageSec = (Date.now() - t) / 1000;
+  return ageSec > CONFIG.quoteMaxAgeSec ? { ageSec } : null;
+}
+
+// 直近営業日からの営業日差。土日のみ考慮（祝日判定は行わない=安全側に倒す）。
+// 日付文字列の一致では判定しない。一致判定は「前営業日の確定値」という正常な
+// 状態まで異常扱いにしてしまうため（過去に正常値をブロックした前例がある）。
+function bdaysAgo(isoDate){
+  if(!isoDate) return null;
+  const d = new Date(isoDate + "T00:00:00+09:00");
+  if(isNaN(d)) return null;
+  const now = new Date();
+  const jstNow = new Date(now.getTime() + (now.getTimezoneOffset()*60000) + 9*3600000);
+  let n = 0;
+  const cur = new Date(d.getTime());
+  while(cur < jstNow && n < 400){
+    cur.setDate(cur.getDate()+1);
+    if(cur > jstNow) break;
+    const w = cur.getDay();
+    if(w!==0 && w!==6) n++;
+  }
+  return n;
 }
 
 // 保有銘柄1件の「今表示すべき値」を1箇所に集約する。
@@ -603,7 +661,10 @@ function effectiveHold(h){
     const chg = prevClose ? (live.price/prevClose - 1)*100 : h.chg;
     return { px: live.price, chg, inconsistent:false, live:true, ageSec: live.ageSec };
   }
-  return { px: h.px, chg: h.chg, inconsistent:false, live:false };
+  // 場中値が無い、または古すぎて捨てた場合はスナップショット(=確定足)に戻す。
+  // 「捨てた」ことは stale で伝え、無言で古い値を出し続けない。
+  return { px: h.px, chg: h.chg, inconsistent:false, live:false,
+           stale: staleQuoteFor(h.code) };
 }
 
 /* ---- watchlist ---- */
@@ -633,6 +694,11 @@ function renderWatchlist(holds){
                      : Math.round(eff.ageSec/60)+"分前";
       const stale = eff.ageSec > CONFIG.freshWarnSec;
       freshHtml = `<span class="fresh" style="${stale?'color:var(--dn)':''}">${stale?'更新停止 ':''}${ageTxt}</span>`;
+    } else if (eff.stale) {
+      // 古すぎる場中値は採用しなかった。何が起きているかを画面に残す。
+      const mins = Math.round(eff.stale.ageSec/60);
+      const ageTxt = mins >= 1440 ? Math.floor(mins/1440)+"日以上前" : mins+"分前";
+      freshHtml = `<span class="fresh" style="color:var(--dn)">場中更新は停止中（最終 ${ageTxt}）— 確定足を表示</span>`;
     } else if (QUOTES && QUOTES.quotes && !(h.code in QUOTES.quotes)) {
       freshHtml = '<span class="fresh" style="color:var(--dn)">場中更新: 取得できていません</span>';
     }
@@ -1182,6 +1248,23 @@ function renderPortfolio(holds){
 }
 
 /* ---- システム情報：実測できる値のみ ---- */
+/* ---- 鮮度ガード -----------------------------------------------------------
+   価格系列(holds[].hist / holds[].s / px)の基準日が直近営業日から離れていたら
+   明示する。ここで大事なのは「正常値をブロックしないこと」。
+   前営業日の確定終値は寄り付き前レポートでは正常なので、日付の一致では判定せず
+   営業日差で見て CONFIG.staleWarnBdays 以上のときだけ警告する。 */
+function renderFreshness(d){
+  const el = document.getElementById("freshbar");
+  if(!el) return;
+  const asof = d && d.market_asof;
+  const n = bdaysAgo(asof);
+  if(!asof || n==null || n < CONFIG.staleWarnBdays){
+    el.hidden = true; el.textContent = ""; return;
+  }
+  el.hidden = false;
+  el.textContent = `データが古い可能性: 最終更新 ${asof}（直近営業日から${n}営業日前）`;
+}
+
 let PAGE_LOAD_TS = performance.now();
 let FETCH_MS = null;
 function renderSysInfo(d){
@@ -1208,6 +1291,7 @@ function renderAll(){
   const moodEl = document.getElementById("mood");
   if(mood==null){ moodEl.className="mood na"; moodEl.textContent="判定不能"; }
   else { moodEl.className = "mood "+(mood<0?"dn":"up"); moodEl.textContent = mood<0?"リスクオフ ▼":"リスクオン ▲"; }
+  renderFreshness(d);
   renderWatchlist(d.holds);
   renderChart();
   renderAI(d.ai);
