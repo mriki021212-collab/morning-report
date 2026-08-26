@@ -81,6 +81,10 @@
   .fund-row .fresh{font-size:9.5px;color:var(--mut-dim)}
   .col{display:flex;flex-direction:column;gap:12px;min-width:0}
   .panel{border:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;min-height:0}
+  /* .panel の display:flex は UA の [hidden]{display:none} を上書きしてしまう。
+     これが無いと showPanel() で隠したはずのパネルがヘッダだけの空箱として
+     残る（実際 AIサマリーが 49px の空枠として公開画面に出ていた）。 */
+  .panel[hidden]{display:none}
   .panel h2{margin:0;font-size:10.5px;letter-spacing:.1em;color:var(--mut);background:var(--panel2);
             border-bottom:1px solid var(--line);padding:7px 10px;text-transform:uppercase;
             display:flex;justify-content:space-between;align-items:center}
