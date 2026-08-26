@@ -136,6 +136,28 @@
   .stat-row{display:flex;gap:16px;margin-top:8px;flex-wrap:wrap;font-size:11px;color:var(--mut)}
   .stat-row b{color:var(--txt);font-weight:600}
 
+  /* ---- セクター内訳（左カラム） ---- */
+  /* 左カラムが他のカラムより高くなるとページ全体が伸びる。空白を埋めるのが目的で
+     コンテンツを下に伸ばすことではないので、パネル内スクロールに閉じ込める。
+     銘柄は間引かない（スクロールで全部に届く）。 */
+  #sectorbd-body{max-height:186px;overflow-y:auto}
+  #sectorbd-body::-webkit-scrollbar{width:6px}
+  #sectorbd-body::-webkit-scrollbar-thumb{background:var(--line)}
+  .sb-grp{margin-bottom:7px}
+  .sb-grp:last-of-type{margin-bottom:0}
+  .sb-hd{display:flex;justify-content:space-between;align-items:baseline;gap:6px;
+         border-bottom:1px solid var(--line);padding-bottom:2px;margin-bottom:3px}
+  .sb-hd .nm{font-size:10.5px;font-weight:600;color:var(--txt);min-width:0;
+             overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .sb-hd .av{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:11px;flex:none}
+  .sb-hd .cnt{color:var(--mut-dim);font-size:9px;flex:none}
+  .sb-row{display:flex;justify-content:space-between;align-items:baseline;gap:6px;padding:1px 0;font-size:10.5px}
+  .sb-row .cd{color:var(--mut-dim);font-family:var(--mono);font-size:9.5px;flex:none;width:34px}
+  .sb-row .nm{color:var(--mut);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+  .sb-row.own .nm{color:var(--txt);font-weight:600}
+  .sb-row .hold{color:var(--accent);font-size:8.5px;flex:none}
+  .sb-row .pc{font-family:var(--mono);font-variant-numeric:tabular-nums;flex:none}
+
   /* ---- 比較チャート / マトリクス ---- */
   .mini-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
   .toggles{display:flex;gap:4px}
@@ -362,6 +384,10 @@
         <div class="panel" id="panel-portfolio">
           <h2>ポートフォリオ統計<span class="note">保有のみ・本数・単純平均</span></h2>
           <div class="body" id="portfolio-body"></div>
+        </div>
+        <div class="panel" id="panel-sectorbd" hidden>
+          <h2>セクター内訳<span class="note">構成銘柄の前日比</span></h2>
+          <div class="body" id="sectorbd-body"></div>
         </div>
       </div>
 
@@ -1842,6 +1868,52 @@ function redrawCenter(){
   renderMatrix();
 }
 
+/* ---- セクター内訳 -------------------------------------------------------
+   sector_defs の構成銘柄と、その前日比をそのまま並べる。
+   セクター値(sectors)は構成銘柄の単純平均なので、その内訳が見えるようにする。
+   取得できなかった構成銘柄は平均の母数から外れているので、行にも明示する。
+   ここは新しい算出を一切していない（dashboard.json の値をそのまま出すだけ）。 */
+function renderSectorBreakdown(d){
+  const defs = (d && d.sector_defs) || {};
+  const sectors = (d && d.sectors) || {};
+  const names = Object.keys(defs);
+  showPanel("panel-sectorbd", names.length > 0);
+  if(!names.length) return;
+
+  // 保有銘柄はセクター内でも一目で分かるようにする（5803はフジクラ=保有）
+  const held = new Set(((d.holds)||[]).map(h=>h.code));
+
+  document.getElementById("sectorbd-body").innerHTML = names.map(name=>{
+    const def = defs[name] || {};
+    const avg = sectors[name];
+    const members = def.members || [];
+    const rows = members.map(m=>{
+      const own = held.has(m.code);
+      const code4 = String(m.code||"").replace(".T","");
+      if(m.status){
+        return `<div class="sb-row${own?" own":""}">
+          <span class="cd">${esc(code4)}</span>
+          <span class="nm">${esc(m.nm||m.code)}</span>
+          <span class="pc na" style="font-family:var(--sans);font-size:9px">取得できていません</span></div>`;
+      }
+      return `<div class="sb-row${own?" own":""}">
+        <span class="cd">${esc(code4)}</span>
+        <span class="nm">${esc(m.nm||m.code)}</span>
+        ${own?'<span class="hold">保有</span>':""}
+        <span class="pc ${cls(m.chg)}">${pc(m.chg)}</span></div>`;
+    }).join("");
+    const cnt = (def.n_used!=null && def.n_total!=null) ? `${def.n_used}/${def.n_total}銘柄` : "";
+    return `<div class="sb-grp">
+      <div class="sb-hd">
+        <span class="nm" title="${esc(name)}">${esc(name)}</span>
+        <span class="cnt">${esc(cnt)}</span>
+        <span class="av ${avg==null?"na":cls(avg)}">${avg==null?"算出不可":pc(avg)}</span>
+      </div>${rows}</div>`;
+  }).join("")
+  + `<div class="def">セクター値=構成銘柄の前日比の単純平均（加重ではない）。n/n が母数で、`
+  + `取得できなかった銘柄は分母から外している。</div>`;
+}
+
 /* ---- top-level paint ---- */
 function renderAll(){
   const d = STATE.data;
@@ -1861,6 +1933,7 @@ function renderAll(){
   renderFunds(d.funds);
   renderAI(d.ai);
   renderHeat(d.sectors, d.sector_defs);
+  renderSectorBreakdown(d);
   renderNewsFilters();
   renderNews(d);
   renderEarnings();
