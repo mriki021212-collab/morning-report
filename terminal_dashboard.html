@@ -82,7 +82,7 @@
   .col{display:flex;flex-direction:column;gap:12px;min-width:0}
   .panel{border:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;min-height:0}
   /* .panel の display:flex は UA の [hidden]{display:none} を上書きしてしまう。
-     これが無いと showPanel() で隠したはずのパネルがヘッダだけの空箱として
+     これが無いと showPanel() で隠したはずのパネルがヘッダだけの空箱として residual に
      残る（実際 AIサマリーが 49px の空枠として公開画面に出ていた）。 */
   .panel[hidden]{display:none}
   .panel h2{margin:0;font-size:10.5px;letter-spacing:.1em;color:var(--mut);background:var(--panel2);
@@ -91,6 +91,10 @@
   .panel h2 .note{font-size:9.5px;color:var(--mut-dim);text-transform:none;letter-spacing:0}
   .panel .body{padding:8px 10px;overflow:auto}
   .full{grid-column:1/-1}
+  /* 中央カラム下部。チャートの下に2枚を横に並べて、空白を縦に伸ばさずに埋める。
+     どちらか一方が hidden になっても 1fr が残りを吸うので崩れない。 */
+  .center-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:start}
+  @media(max-width:1500px){.center-row{grid-template-columns:minmax(0,1fr)}}
   .stack{display:flex;flex-direction:column;gap:12px;margin-top:12px}
 
   @keyframes panelIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
@@ -131,6 +135,33 @@
              padding:4px 8px;font-size:10.5px;color:var(--txt);white-space:nowrap;display:none}
   .stat-row{display:flex;gap:16px;margin-top:8px;flex-wrap:wrap;font-size:11px;color:var(--mut)}
   .stat-row b{color:var(--txt);font-weight:600}
+
+  /* ---- 比較チャート / マトリクス ---- */
+  .mini-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+  .toggles{display:flex;gap:4px}
+  .toggles button{background:var(--panel2);border:1px solid var(--line);color:var(--mut);
+                  font-size:10px;padding:2px 7px;cursor:pointer;font-family:var(--sans)}
+  .toggles button.on{color:var(--accent);border-color:var(--accent-dim)}
+  .cmp-box svg{display:block;width:100%;height:196px}
+  .cmp-legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px;font-size:10px;color:var(--mut)}
+  .cmp-legend .it{display:inline-flex;align-items:center;gap:5px;cursor:pointer;user-select:none}
+  .cmp-legend .it.off{opacity:.35}
+  .cmp-legend .sw{width:14px;height:0;border-top-width:2px;border-top-style:solid;display:inline-block}
+  .cmp-legend .end{font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--txt)}
+
+  /* ---- 騰落率マトリクス ---- */
+  table.mx{width:100%;border-collapse:collapse;font-size:10.5px}
+  table.mx th,table.mx td{padding:3px 5px;border-bottom:1px solid var(--line-soft);white-space:nowrap}
+  table.mx thead th{color:var(--mut);font-weight:500;font-size:9.5px;letter-spacing:.04em;text-align:right}
+  table.mx thead th:first-child{text-align:left}
+  table.mx td{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+  table.mx td:first-child{text-align:left;font-family:var(--sans)}
+  table.mx tbody tr:last-child td{border-bottom:none}
+  table.mx .kind{color:var(--mut-dim);font-size:9px;margin-left:4px}
+  table.mx td.na{color:var(--mut-dim);font-family:var(--sans)}
+  .mx-scale{display:flex;align-items:center;gap:0;margin-top:8px;font-size:9px;color:var(--mut-dim)}
+  .mx-scale i{width:22px;height:9px;display:inline-block}
+  .mx-scale span{margin:0 5px}
 
   /* ---- ai panel ---- */
   .ai-lines{margin:0 0 8px;padding-left:16px}
@@ -349,6 +380,26 @@
             <div class="stat-row" id="chart-stats"></div>
           </div>
         </div>
+
+        <div class="center-row">
+          <div class="panel" id="panel-compare" hidden>
+            <h2>相対パフォーマンス<span class="note">期間開始日=100・保有+ウォッチ</span></h2>
+            <div class="body">
+              <div class="mini-head">
+                <div class="chart-sub" id="cmp-sub"></div>
+                <div class="toggles" id="cmp-scale"></div>
+              </div>
+              <div class="cmp-box" id="cmp-box"></div>
+              <div class="cmp-legend" id="cmp-legend"></div>
+              <div class="def" id="cmp-def"></div>
+            </div>
+          </div>
+
+          <div class="panel" id="panel-matrix" hidden>
+            <h2>騰落率・リスク指標<span class="note">終値ベース・配当調整なし</span></h2>
+            <div class="body" id="matrix-body"></div>
+          </div>
+        </div>
       </div>
 
       <div class="col col-right">
@@ -504,6 +555,14 @@ function showPanel(id, visible){
   return visible;
 }
 function fmt2(n){ return Number(n).toLocaleString("ja-JP",{minimumFractionDigits:2,maximumFractionDigits:2}); }
+// 出来高のような大きな整数を短く出す。丸めであって推定ではない。
+function compactNum(v){
+  if(v==null || isNaN(v)) return "—";
+  const a = Math.abs(v);
+  if(a >= 1e8) return (v/1e8).toFixed(2)+"億";
+  if(a >= 1e4) return (v/1e4).toFixed(1)+"万";
+  return Number(v).toLocaleString("ja-JP");
+}
 function cls(v){ return v>0?"up":v<0?"dn":"flat"; }
 function arw(v){ return v>0?"▲":v<0?"▼":"■"; }
 function pc(v){ return (v==null||isNaN(v)) ? "—" : arw(v)+Math.abs(v).toFixed(2)+"%"; }
@@ -879,14 +938,22 @@ document.addEventListener("keydown", ev=>{
 function renderPeriods(hist){
   const n = hist && hist.c ? hist.c.length : 0;
   document.getElementById("periods").innerHTML = CONFIG.chartPeriods.map(p=>{
-    const disabled = n < 2;
+    // その期間ぶんの実データが無いボタンは押せなくする。
+    // 以前は「系列が2本以上あるか」しか見ておらず、1年分に満たない銘柄でも
+    // 1年ボタンが押せて、押すと「全期間を表示」に化けていた。
+    // データが無いことを黙って別のもので代用しない、が本来の意図。
+    const short = n < p.n;
+    const disabled = n < 2 || short;
     const on = p===STATE.period;
-    return `<button data-n="${p.n}" ${disabled?"disabled":""} class="${on?"on":""}">${esc(p.label)}</button>`;
+    const why = n < 2 ? "価格履歴がありません"
+              : short ? `この期間には ${p.n} 営業日必要ですが、実データは ${n} 営業日ぶんしかありません`
+              : `${p.n} 営業日を表示`;
+    return `<button data-n="${p.n}" ${disabled?"disabled":""} class="${on?"on":""}" title="${esc(why)}">${esc(p.label)}</button>`;
   }).join("");
   document.querySelectorAll("#periods button").forEach(btn=>{
     btn.addEventListener("click", ()=>{
       STATE.period = CONFIG.chartPeriods.find(p=>String(p.n)===btn.dataset.n);
-      renderChart();
+      redrawCenter();
     });
   });
 }
@@ -942,6 +1009,13 @@ function renderChart(){
     return;
   }
 
+  // 既定の選択期間が実データより長い場合、収まる中で最長のものに落とす。
+  // 「1年」を選んだまま260本しか無い銘柄に切り替えたとき、押せないボタンが
+  // 選択状態のまま残るのを防ぐ。
+  if(STATE.period.n > hist.c.length){
+    const fit = CONFIG.chartPeriods.filter(p=>p.n <= hist.c.length);
+    if(fit.length) STATE.period = fit[fit.length-1];
+  }
   renderPeriods(hist);
 
   const wantN = STATE.period.n;
@@ -970,7 +1044,15 @@ function renderChart(){
   const maSlice = ma25Full.slice(-n);
   const maValid = maSlice.some(v=>v!=null);
 
+  // 出来高。hist.v はサーバ側で d/c と同じ長さが保証されている時だけ出力される。
+  // 無い銘柄では帯そのものを描かない（0の棒を並べて「出来高ゼロ」に見せない）。
+  const vols = (hist.v && hist.v.length === hist.c.length) ? hist.v.slice(-n) : null;
+
   const W=560,Hh=220,padR=10,padT=10,padB=20;
+  // 出来高帯。価格の描画ジオメトリ(padL/x())には一切触らず、下に足すだけにする。
+  // 同じSVG・同じ x() を使うので X軸は構造的に共有される。
+  const VGAP=10, VH=vols?44:0, VT=Hh+VGAP, VB=VT+VH;
+  const totalH = vols ? VB+8 : Hh;
   const domain = closes.concat(maValid ? maSlice.filter(v=>v!=null) : []);
   const mn=Math.min(...domain), mx=Math.max(...domain), rng=(mx-mn)||1;
   const yTicks=4;
@@ -994,11 +1076,31 @@ function renderChart(){
       `<text x="${padL-6}" y="${yy+3}" text-anchor="end" font-size="9" fill="#7a8494">${tickLabels[i]}</text>`;
   });
 
-  box.innerHTML = `<svg viewBox="0 0 ${W} ${Hh}" preserveAspectRatio="none">
+  // 出来高の棒。色は前日比の向きで分けるが、価格ラインより彩度を落とす
+  // （出来高は主役ではないので、抑制的なトーンを崩さない）。
+  let volSvg = "";
+  if(vols){
+    const vmax = Math.max(...vols) || 1;
+    const step = (W-padL-padR)/Math.max(1, vols.length);
+    const bw = Math.max(0.6, step*0.72);
+    volSvg = `<line x1="${padL}" x2="${W-padR}" y1="${VB}" y2="${VB}" stroke="#1a2029" stroke-width="1"/>`
+      + vols.map((v,i)=>{
+          const hgt = Math.max(0.5, VH * (v/vmax));
+          const prev = i>0 ? closes[i-1] : closes[i];
+          const c = closes[i] >= prev ? "#2f6f52" : "#743640";
+          return `<rect x="${(x(i)-bw/2).toFixed(1)}" y="${(VB-hgt).toFixed(1)}" width="${bw.toFixed(1)}" height="${hgt.toFixed(1)}" fill="${c}"/>`;
+        }).join("")
+      + `<text x="${padL-6}" y="${(VT+8).toFixed(1)}" text-anchor="end" font-size="8.5" fill="#4a5462">${esc(compactNum(vmax))}</text>`
+      + `<text x="${padL-6}" y="${(VB).toFixed(1)}" text-anchor="end" font-size="8.5" fill="#4a5462">0</text>`
+      + `<text x="${W-padR}" y="${(VT-2).toFixed(1)}" text-anchor="end" font-size="8.5" fill="#4a5462">出来高（株・期間内最大を上端）</text>`;
+  }
+
+  box.innerHTML = `<svg viewBox="0 0 ${W} ${totalH}" preserveAspectRatio="none">
       ${gridLines.join("")}
+      ${volSvg}
       ${maValid ? `<polyline class="ma25-line" points="${maPts}"/>` : ""}
       <polyline class="price-line" fill="none" stroke="${col}" stroke-width="1.6" points="${pts}"/>
-      <line class="xhair-line" x1="0" y1="${padT}" x2="0" y2="${Hh-padB}" style="display:none"/>
+      <line class="xhair-line" x1="0" y1="${padT}" x2="0" y2="${vols?VB:Hh-padB}" style="display:none"/>
       <circle class="xhair-dot" r="3" cx="0" cy="0" style="display:none"/>
     </svg><div class="chart-tip" id="chart-tip"></div>`;
 
@@ -1039,7 +1141,8 @@ function renderChart(){
     tip.style.display="block";
     tip.style.left = Math.min(rect.width-120, Math.max(0,(ev.clientX-rect.left+8)))+"px";
     tip.style.top = (ev.clientY-rect.top-28)+"px";
-    tip.innerHTML = `${dates[i]}<br><b class="num">${fmt2(closes[i])}</b>`;
+    tip.innerHTML = `${dates[i]}<br><b class="num">${fmt2(closes[i])}</b>`
+      + (vols ? `<br><span style="color:var(--mut)">出来高 </span><span class="num">${esc(compactNum(vols[i]))}</span>` : "");
     // M4: 縦線とドットの移動はtransform(SVG座標系)のみ。CSS側のtransitionで80ms追従する
     xhLine.style.display=""; xhDot.style.display="";
     xhLine.setAttribute("transform", `translate(${px} 0)`);
@@ -1051,13 +1154,20 @@ function renderChart(){
   });
 
   const periodChg = ((closes[closes.length-1]/closes[0])-1)*100;
+  // 期間高値/安値は「終値の」高安。mx/mn はMA25を含む描画用ドメインなので使わない
+  // （MA線が終値より上に出た区間があると、実際には付いていない高値が表示される）。
+  const cHi = Math.max(...closes), cLo = Math.min(...closes);
+  // RSI(14) と 25MA乖離 は定義上「直近14日/25日」の固定窓の指標であり、選択期間には
+  // 追随しない。以前は無印で並べていたため期間依存だと誤読しうる形になっていた。
+  // 期間依存の値と当日固定の値を、区切りとラベルで見た目にも分ける。
   statRow.innerHTML = `
-    <span>期間高値 <b class="num">${fmt2(mx)}</b></span>
-    <span>期間安値 <b class="num">${fmt2(mn)}</b></span>
-    <span>期間騰落 <b class="num ${cls(periodChg)}">${pc(periodChg)}</b></span>
-    <span>RSI <b class="num">${h.rsi!=null?h.rsi.toFixed(1):"—"}</b></span>
-    <span>25MA乖離 <b class="num">${h.ma25!=null?h.ma25.toFixed(1)+"%":"—"}</b></span>
-    <span>出来高 <b class="num">${esc(h.vol||"—")}</b></span>
+    <span>期間高値(終値) <b class="num">${fmt2(cHi)}</b></span>
+    <span>期間安値(終値) <b class="num">${fmt2(cLo)}</b></span>
+    <span title="表示している窓の始点(${dates[0]})の終値と末尾の終値の比。下段のマトリクスの列は『n営業日前との比』なので、区間が1本ぶんずれて値も僅かに異なる。">期間騰落(始点${dates[0]}比) <b class="num ${cls(periodChg)}">${pc(periodChg)}</b></span>
+    <span style="color:var(--mut-dim)">｜</span>
+    <span>RSI(14) 当日 <b class="num">${h.rsi!=null?h.rsi.toFixed(1):"—"}</b></span>
+    <span>25MA乖離 当日 <b class="num">${h.ma25!=null?h.ma25.toFixed(1)+"%":"—"}</b></span>
+    <span>出来高 当日 <b class="num">${esc(h.vol||"—")}</b></span>
     ${maValid ? '<span style="color:var(--accent)">— MA25(表示用・簡易計算)</span>' : ""}`;
 }
 
@@ -1473,6 +1583,265 @@ function renderSysInfo(d){
   el.textContent = parts.join(" ・ ");
 }
 
+
+/* ==========================================================================
+   相対パフォーマンス比較 / 騰落率・リスク指標
+   すべて holds[].hist（実際の取引日と終値）だけから算出する。
+   系列に無い期間は算出せず「—」を出す。外挿も内挿もしない。
+   ========================================================================== */
+
+// 保有=実線 / ウォッチ=破線。色は既存トーンの範囲で、彩度を上げない。
+const CMP_COLORS = ["#c9a15a", "#5b9bd5", "#3fbf80", "#b07aa1", "#7a8494"];
+const CMP = { scale: "log", off: new Set() };
+
+// マトリクス用: hist の有無に関わらず保有+ウォッチの全銘柄を返す。
+// 履歴が無い銘柄も行としては出し、セルを「取得できていません」にする。
+function allTracked(){
+  const d = STATE.data || {};
+  return [].concat(
+    ((d.holds)||[]).map(h=>({row:h, held:true})),
+    ((d.watch)||[]).map(h=>({row:h, held:false})));
+}
+
+function cmpSeries(){
+  const d = STATE.data || {};
+  const rows = [];
+  ((d.holds)||[]).forEach(h=>rows.push({row:h, held:true}));
+  ((d.watch)||[]).forEach(h=>rows.push({row:h, held:false}));
+  return rows.filter(r=>r.row.hist && r.row.hist.c && r.row.hist.c.length >= 2);
+}
+
+// 選択期間の実データ本数。銘柄ごとに長さが違いうるので、比較は
+// 「各銘柄が持っている範囲の中で、全銘柄に共通して存在する末尾N本」で行う。
+// 長さの違う系列を無理に揃えるために値を作らない。
+function cmpWindow(list){
+  const want = STATE.period.n;
+  const shortest = Math.min(...list.map(r=>r.row.hist.c.length));
+  return Math.max(2, Math.min(want, shortest));
+}
+
+function renderCompare(){
+  const list = cmpSeries();
+  const ok = list.length >= 1;
+  showPanel("panel-compare", ok);
+  if(!ok) return;
+
+  const box = document.getElementById("cmp-box");
+  const n = cmpWindow(list);
+  const ref = list[0].row.hist.d.slice(-n);
+
+  // 期間開始日を100として正規化。基準日の終値が0/欠損なら、その銘柄は描かない。
+  const series = list.map((r,i)=>{
+    const c = r.row.hist.c.slice(-n);
+    const base = c[0];
+    if(!base) return null;
+    return {
+      code: r.row.code, nm: r.row.nm, held: r.held,
+      color: CMP_COLORS[i % CMP_COLORS.length],
+      vals: c.map(v=>v/base*100),
+    };
+  }).filter(Boolean).filter(x=>!CMP.off.has(x.code));
+
+  document.getElementById("cmp-sub").textContent =
+    ref.length ? `${ref[0]} 〜 ${ref[ref.length-1]}（${n}営業日）` : "";
+
+  // 尺度トグル
+  document.getElementById("cmp-scale").innerHTML =
+    ["log","linear"].map(k=>
+      `<button data-k="${k}" class="${CMP.scale===k?"on":""}" title="${k==="log"
+        ? "対数軸。同じ垂直距離が同じ変化率を表す。桁の違う銘柄を並べても潰れない"
+        : "線形軸。値の差をそのまま高さにする"}">${k==="log"?"対数":"線形"}</button>`).join("");
+  document.querySelectorAll("#cmp-scale button").forEach(b=>{
+    b.addEventListener("click", ()=>{ CMP.scale = b.dataset.k; renderCompare(); });
+  });
+
+  if(!series.length){
+    box.innerHTML = '<div class="empty">表示する銘柄が選択されていません（凡例から戻せます）</div>';
+    renderCmpLegend(list, n);
+    return;
+  }
+
+  const tf = v => CMP.scale === "log" ? Math.log10(v) : v;
+  const flat = series.flatMap(s=>s.vals.map(tf));
+  let mn = Math.min(...flat), mx = Math.max(...flat);
+  if(mx === mn){ mx = mn + 1; }
+  const pad = (mx-mn)*0.06; mn -= pad; mx += pad;
+
+  const W=560, H=200, padT=8, padB=18, padR=8;
+  // 100(=基準)のラベルが必ず入るように左余白を決める
+  const ticks = 4;
+  const tickVals = Array.from({length:ticks+1}, (_,i)=> mn + (mx-mn)*i/ticks);
+  const inv = t => CMP.scale === "log" ? Math.pow(10,t) : t;
+  const tickLabels = tickVals.map(t=>inv(t).toFixed(0));
+  const padL = Math.max(30, 10 + Math.max(...tickLabels.map(l=>l.length))*6.4);
+
+  const x = i => padL + (W-padL-padR) * i/(n-1);
+  const y = v => padT + (H-padT-padB) * (1-(tf(v)-mn)/(mx-mn));
+
+  const grid = tickVals.map((t,i)=>{
+    const yy = padT + (H-padT-padB) * (1-(t-mn)/(mx-mn));
+    return `<line x1="${padL}" x2="${W-padR}" y1="${yy.toFixed(1)}" y2="${yy.toFixed(1)}" stroke="#1a2029"/>`
+         + `<text x="${padL-5}" y="${(yy+3).toFixed(1)}" text-anchor="end" font-size="8.5" fill="#7a8494">${tickLabels[i]}</text>`;
+  }).join("");
+
+  // 基準線100
+  let baseLine = "";
+  if(100 >= inv(mn) && 100 <= inv(mx)){
+    const yy = y(100);
+    baseLine = `<line x1="${padL}" x2="${W-padR}" y1="${yy.toFixed(1)}" y2="${yy.toFixed(1)}" stroke="#4a5462" stroke-dasharray="3 3"/>`;
+  }
+
+  const paths = series.map(sr=>{
+    const pts = sr.vals.map((v,i)=>`${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
+    const dash = sr.held ? "" : ` stroke-dasharray="4 3"`;
+    return `<polyline fill="none" stroke="${sr.color}" stroke-width="1.5"${dash} points="${pts}"/>`;
+  }).join("");
+
+  box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${grid}${baseLine}${paths}</svg>`;
+  renderCmpLegend(list, n);
+
+  document.getElementById("cmp-def").textContent =
+    "定義: 期間開始日(" + (ref[0]||"—") + ")の終値を100として各銘柄を正規化し、重ねて描いている。"
+    + "銘柄間の株価水準そのものは比較していない（100は各銘柄それぞれの出発点）。"
+    + "実線=保有 / 破線=ウォッチ(非保有)。"
+    + (CMP.scale==="log" ? "縦軸は対数で、同じ垂直距離が同じ変化率を表す。" : "縦軸は線形。")
+    + "終値ベース・配当調整なし。投資信託は基準価額が口数あたりで意味が異なるため含めていない。";
+}
+
+function renderCmpLegend(list, n){
+  const el = document.getElementById("cmp-legend");
+  el.innerHTML = list.map((r,i)=>{
+    const c = r.row.hist.c.slice(-n);
+    const base = c[0];
+    const end = base ? (c[c.length-1]/base*100) : null;
+    const color = CMP_COLORS[i % CMP_COLORS.length];
+    const off = CMP.off.has(r.row.code);
+    const style = r.held ? `border-top-style:solid` : `border-top-style:dashed`;
+    return `<span class="it ${off?"off":""}" data-code="${esc(r.row.code)}" title="クリックで表示/非表示">`
+      + `<i class="sw" style="border-top-color:${color};${style}"></i>`
+      + `${esc(r.row.nm)}<span class="na" style="font-size:9px">${r.held?"保有":"ウォッチ"}</span>`
+      + `<b class="end">${end==null?"—":end.toFixed(1)}</b></span>`;
+  }).join("");
+  el.querySelectorAll(".it").forEach(it=>{
+    it.addEventListener("click", ()=>{
+      const c = it.dataset.code;
+      if(CMP.off.has(c)) CMP.off.delete(c); else CMP.off.add(c);
+      renderCompare();
+    });
+  });
+}
+
+/* ---- 騰落率マトリクス + リスク指標 ---- */
+const MX_COLS = [
+  {label:"1D", k:1},   {label:"1W", k:5},   {label:"1M", k:21},
+  {label:"3M", k:63},  {label:"6M", k:126}, {label:"1Y", k:252},
+];
+
+// k営業日前の終値からの騰落率。系列が足りなければ null（0や直近値で埋めない）。
+function retOver(c, k){
+  if(!c || c.length < k+1) return null;
+  const a = c[c.length-1-k], b = c[c.length-1];
+  if(!a) return null;
+  return (b/a - 1) * 100;
+}
+
+// 年率換算ボラティリティ: 日次対数リターンの標本標準偏差 × sqrt(252)。
+function annVol(c){
+  if(!c || c.length < 21) return null;   // 20リターン未満は出さない
+  const r = [];
+  for(let i=1;i<c.length;i++){ if(c[i-1]>0 && c[i]>0) r.push(Math.log(c[i]/c[i-1])); }
+  if(r.length < 20) return null;
+  const m = r.reduce((a,b)=>a+b,0)/r.length;
+  const v = r.reduce((a,b)=>a+(b-m)*(b-m),0)/(r.length-1);  // 不偏分散
+  return Math.sqrt(v) * Math.sqrt(252) * 100;
+}
+
+// 最大ドローダウン: 期間内の各時点で、それまでの最高値からの下落率の最悪値。
+function maxDD(c){
+  if(!c || c.length < 2) return null;
+  let peak = c[0], worst = 0;
+  for(const v of c){ if(v > peak) peak = v; if(peak > 0) worst = Math.min(worst, v/peak - 1); }
+  return worst * 100;
+}
+
+// 0を中心とした対称配色。閾値は凡例に出す（色だけで語らない）。
+const MX_STOPS = [1, 3, 7];
+function mxCell(v){
+  if(v == null) return `<td class="na" title="この期間ぶんの実データがありません">—</td>`;
+  const a = Math.abs(v);
+  const lvl = a >= MX_STOPS[2] ? 3 : a >= MX_STOPS[1] ? 2 : a >= MX_STOPS[0] ? 1 : 0;
+  const alpha = [0, 0.10, 0.20, 0.32][lvl];
+  const rgb = v >= 0 ? "63,191,128" : "226,89,107";
+  const bg = lvl ? `background:rgba(${rgb},${alpha})` : "";
+  return `<td class="${cls(v)}" style="${bg}">${pc(v)}</td>`;
+}
+
+function renderMatrix(){
+  const list = allTracked();
+  showPanel("panel-matrix", list.length > 0);
+  if(!list.length) return;
+
+  // リスク指標の窓は銘柄ごとに独立して取る。
+  // 全銘柄で最短の系列に合わせると、履歴の短い銘柄が1つ混ざっただけで
+  // 他の銘柄の年率ボラ・最大DDまで意味を失う（実際にそうなっていた）。
+  const want = STATE.period.n;
+  const periodTxt = `選択期間 ${want}営業日ぶん（銘柄ごとに、実データがある範囲まで）`;
+
+  const head = `<tr><th>銘柄</th>${MX_COLS.map(c=>`<th title="${c.k}営業日前の終値との比較">${c.label}</th>`).join("")}`
+    + `<th title="日次対数リターンの標本標準偏差 × sqrt(252)">年率ボラ</th>`
+    + `<th title="期間内の高値からの最大下落率">最大DD</th>`
+    + `<th title="当日終値の25日単純移動平均からの乖離。選択期間には依存しない">25MA乖離</th></tr>`;
+
+  const body = list.map(r=>{
+    const hist = r.row.hist || {};
+    const full = (hist.c && hist.c.length) ? hist.c : null;
+    const nameCell = `<td>${esc(r.row.nm)}<span class="kind">${r.held?"保有":"ウォッチ"}</span></td>`;
+    if(!full || full.length < 2){
+      // 履歴が無い銘柄も行は残す（行=保有+ウォッチ）。値は作らない。
+      return `<tr>${nameCell}`
+        + MX_COLS.map(()=>`<td class="na">—</td>`).join("")
+        + `<td class="na" colspan="3" style="text-align:left">価格履歴を取得できていません</td></tr>`;
+    }
+    const win = full.slice(-Math.min(want, full.length));      // 銘柄ごとの窓
+    const wd  = (hist.d || []).slice(-win.length);
+    const wtxt = wd.length ? `${wd[0]} 〜 ${wd[wd.length-1]}（${win.length}営業日）` : `${win.length}営業日`;
+    const vol = annVol(win), dd = maxDD(win);
+    return `<tr>
+      ${nameCell}
+      ${MX_COLS.map(c=>mxCell(retOver(full, c.k))).join("")}
+      ${vol==null ? `<td class="na" title="日次リターンが20本未満のため算出しない（${esc(wtxt)}）">算出不可</td>`
+                  : `<td title="${esc(wtxt)}">${vol.toFixed(1)}%</td>`}
+      ${dd==null ? `<td class="na">算出不可</td>` : `<td class="dn" title="${esc(wtxt)}">${dd.toFixed(1)}%</td>`}
+      ${r.row.ma25==null ? `<td class="na">—</td>`
+                         : `<td class="${cls(r.row.ma25)}">${(r.row.ma25>0?"+":"")+r.row.ma25.toFixed(1)}%</td>`}
+    </tr>`;
+  }).join("");
+
+  const scale = `<div class="mx-scale">
+      <span>色:</span>
+      <i style="background:rgba(226,89,107,.32)"></i><i style="background:rgba(226,89,107,.20)"></i><i style="background:rgba(226,89,107,.10)"></i>
+      <i style="background:transparent;border:1px solid var(--line)"></i>
+      <i style="background:rgba(63,191,128,.10)"></i><i style="background:rgba(63,191,128,.20)"></i><i style="background:rgba(63,191,128,.32)"></i>
+      <span>-7%以下 / -3% / -1% ｜ 0 ｜ +1% / +3% / +7%以上（0を中心に対称）</span>
+    </div>`;
+
+  document.getElementById("matrix-body").innerHTML =
+    `<table class="mx"><thead>${head}</thead><tbody>${body}</tbody></table>${scale}`
+    + `<div class="def">騰落率: 各列は「n営業日前の終値」からの変化率で、全履歴（最大260営業日）から算出する。`
+    + `実データがその日数に満たない列は「—」にし、値を作らない。`
+    + `年率ボラ・最大DDの対象期間は${periodTxt}。実際に使った期間は各セルにカーソルを当てると出る。`
+    + `年率ボラ = 日次対数リターンの標本標準偏差(不偏) × sqrt(252)。最大DD = 期間内の高値からの最大下落率。`
+    + `25MA乖離だけは当日終値の固定窓指標で、選択期間には依存しない。`
+    + `終値ベース・配当調整なし（yfinance auto_adjust=False。分割調整の有無は未確認）。</div>`;
+}
+
+// 期間ボタンや銘柄選択で中央カラム全体を描き直す
+function redrawCenter(){
+  renderChart();
+  renderCompare();
+  renderMatrix();
+}
+
 /* ---- top-level paint ---- */
 function renderAll(){
   const d = STATE.data;
@@ -1487,6 +1856,8 @@ function renderAll(){
   showPanel("panel-watchonly", !!(d.watch && d.watch.length));
   renderWatchlist(d.watch, "watchonly-items");
   renderChart();
+  renderCompare();
+  renderMatrix();
   renderFunds(d.funds);
   renderAI(d.ai);
   renderHeat(d.sectors, d.sector_defs);
