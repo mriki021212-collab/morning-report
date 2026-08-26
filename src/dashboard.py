@@ -19,15 +19,31 @@ def _spark_from(df, n=40):
 
 
 def _chart_hist(df, n=260):
-    """中央チャート用: 実際の取引日付+終値を最大n営業日ぶん返す。期間ボタンはこの配列を
-    クライアント側でスライスするだけで、存在しない期間のデータを作り出さない。"""
+    """中央チャート用: 実際の取引日付+終値+出来高を最大n営業日ぶん返す。期間ボタンはこの
+    配列をクライアント側でスライスするだけで、存在しない期間のデータを作り出さない。
+
+    キー:
+      d = 取引日 (YYYY-MM-DD)
+      c = 終値。auto_adjust=False で取得しているため配当は未調整（素の終値）。
+          2026-08-26 の実測では 7974.T で Close と Adj Close が 260日中158日ずれる。
+          騰落率を出す側はこの前提をUIに明記すること。
+      v = 出来高。取れなかった場合はキーごと出さない（0で埋めない）。
+          d/c と同じ長さであることを保証し、長さが違えば v を出さない。
+    """
     if df is None or df.empty:
         return {"d": [], "c": []}
     tail = df.tail(n)
-    return {
+    out = {
         "d": [ts.strftime("%Y-%m-%d") for ts in tail.index],
         "c": [round(float(x), 2) for x in tail["Close"].tolist()],
     }
+    if "Volume" in tail.columns:
+        vols = tail["Volume"].tolist()
+        # NaN を 0 に潰さない。出来高が欠けた足がある系列は v ごと出さず、
+        # HTML側は「出来高データがありません」でサブチャートを出さない挙動になる。
+        if len(vols) == len(out["d"]) and not any(v != v or v is None for v in vols):
+            out["v"] = [int(v) for v in vols]
+    return out
 
 
 def _rows(group: dict, hist: dict) -> list[dict]:
