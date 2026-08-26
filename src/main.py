@@ -11,6 +11,7 @@ import yaml
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 import analogs, collect, dashboard, earnings, jquants, news, notify, render, tdnet  # noqa: E402
+import yahoo_jp  # noqa: E402
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 JST = dt.timezone(dt.timedelta(hours=9))
@@ -38,9 +39,15 @@ def session_close_check(facts: dict) -> dict:
     """
     today = dt.datetime.now(JST).date().isoformat()
     confirmed, pending = [], []
-    for group in ("holdings", "sector", "macro"):
+    for group in ("holdings", "watch", "sector", "macro"):
         for code, s in facts.get(group, {}).items():
             if s.get("status") or not collect.is_asia(code):
+                continue
+            # yfinance日足以外のソース(TOPIX=Yahoo!ファイナンス日本)は更新タイミングが
+            # 異なる。ここで一緒に判定すると、正常な株価データが揃っていても TOPIX の
+            # 反映待ちだけで後場レポートの公開が止まる。このチェックはあくまで
+            # 「yfinanceの日足が当日分に更新されたか」を見るものなので対象外にする。
+            if s.get("source"):
                 continue
             (confirmed if s.get("as_of") == today else pending).append(
                 {"code": code, "name": s.get("name"), "as_of": s.get("as_of")})
@@ -122,6 +129,16 @@ def morning_vs_actual(facts: dict, out_dir: pathlib.Path) -> dict:
     return out
 
 
+def _tracked_codes(cfg: dict) -> list[str]:
+    """保有 + ウォッチ。ニュース/開示/信用/アナログの対象範囲。
+
+    保有から外れた銘柄(6740)も分析対象には残す。保有パネルとポートフォリオ統計だけが
+    holdings に限定され、それ以外の分析は連続性を優先する。
+    """
+    return ([h["code"] for h in cfg.get("holdings") or []]
+            + [w["code"] for w in cfg.get("watch") or []])
+
+
 def build_facts(cfg: dict, session: str = "morning") -> dict:
     now = dt.datetime.now(JST)
     facts: dict = {
@@ -131,15 +148,36 @@ def build_facts(cfg: dict, session: str = "morning") -> dict:
         "sources": ["Yahoo Finance (yfinance) — 前営業日終値ベース",
                     "J-Quants API (JPX公式) — 信用/空売り",
                     "RSS: Reuters / 日経 / JPX / Yahooファイナンス"],
-        "macro": {}, "holdings": {}, "sector": {}, "overseas_semis": {},
+        "macro": {}, "holdings": {}, "watch": {}, "sector": {},
+        "overseas_semis": {}, "sector_groups": {},
     }
 
     hist: dict[str, object] = {}
-    for group in ("macro", "holdings", "sector", "overseas_semis"):
-        for it in cfg[group]:
+    for group in ("macro", "holdings", "watch", "sector", "overseas_semis"):
+        for it in cfg.get(group) or []:
             df = collect.fetch_history(it["code"])
             hist[it["code"]] = df
             facts[group][it["code"]] = collect.snapshot(it["code"], it["name"], df)
+
+    # 半導体以外の追加セクター(config.yaml の sector_groups:)。
+    # sector: と同じ「構成銘柄の前日比の単純平均」で算出できるよう、構成銘柄の
+    # スナップショットをセクター名ごとにまとめて持つ。members は sector: とは
+    # 独立なので、半導体9銘柄の定義には一切影響しない。
+    for gname, gspec in (cfg.get("sector_groups") or {}).items():
+        facts["sector_groups"][gname] = {"members": {}}
+        for it in gspec.get("members") or []:
+            code = it["code"]
+            if code not in hist:
+                hist[code] = collect.fetch_history(code)
+            facts["sector_groups"][gname]["members"][code] = collect.snapshot(
+                code, it["name"], hist[code])
+
+    # TOPIX。yfinanceに指数配信が無いため別ソース(Yahoo!ファイナンス日本)。
+    # 取得できなければ status を持ったまま macro に入る = 画面は明示欠損になる。
+    facts["macro"][yahoo_jp.TOPIX_CODE] = yahoo_jp.fetch_topix()
+
+    # 投資信託(NISA)。株式とは別枠。テクニカルは算出しない。
+    facts["funds"] = yahoo_jp.fetch_funds(cfg.get("funds"))
 
     # 日経GU/GD: CME円建先物終値 と 日経現物終値の乖離（機械計算）
     n225, niy = facts["macro"].get("^N225", {}), facts["macro"].get("NIY=F", {})
@@ -178,17 +216,19 @@ def build_facts(cfg: dict, session: str = "morning") -> dict:
     # 対SOX 60日相関
     sox = hist.get("^SOX")
     facts["correlation_vs_sox_60d"] = {"_note": "アジア市場(日本/韓国/台湾等)はSOXのD-1終値との相関(lag=1)。米国は同日(lag=0)。時差補正済み。"}
-    for code in list(facts["holdings"]) + list(facts["sector"]) + list(facts["overseas_semis"]):
+    for code in (list(facts["holdings"]) + list(facts["watch"])
+                 + list(facts["sector"]) + list(facts["overseas_semis"])):
         df = hist.get(code)
         if sox is not None and df is not None and not df.empty and not sox.empty:
             # SOXが driver、当該銘柄が follower。アジア市場なら自動で lag=1
             facts["correlation_vs_sox_60d"][code] = collect.correlation(
                 sox["Close"], df["Close"], lag=collect.market_lag("^SOX", code))
 
-    # アナログ分析（保有3銘柄 + 日経）
+    # アナログ分析（保有 + ウォッチ + 日経）
+    # ウォッチ(6740/285A)も対象に残す。保有から外れても分析の時系列を切らさないため。
     a = cfg["analog"]
     facts["analog"], facts["base_rate"] = {}, {}
-    for code in [h["code"] for h in cfg["holdings"]] + ["^N225"]:
+    for code in _tracked_codes(cfg) + ["^N225"]:
         df = hist.get(code)
         if df is not None and not df.empty:
             facts["analog"][code] = analogs.find_analogs(
@@ -219,15 +259,15 @@ def build_facts(cfg: dict, session: str = "morning") -> dict:
     facts["data_quality"] = {
         c: {"history_days": len(hist[c]) if hist.get(c) is not None else 0,
             "analog_available": facts["analog"].get(c, {}).get("status") is None}
-        for c in [h["code"] for h in cfg["holdings"]] + ["^N225"]
+        for c in _tracked_codes(cfg) + ["^N225"]
     }
 
-    facts["margin_short"] = jquants.margin_and_short([h["code"] for h in cfg["holdings"]])
+    facts["margin_short"] = jquants.margin_and_short(_tracked_codes(cfg))
     facts["trades_spec"] = jquants.trades_spec()
     # B層+C層: 個別ニュース+マクロ地合い（取得失敗と該当なしを区別）
     facts["news"] = news.fetch(cfg["rss"])
     # A層: 保有銘柄の適時開示（一次情報・最優先）
-    facts["tdnet"] = tdnet.fetch([h["code"] for h in cfg["holdings"]])
+    facts["tdnet"] = tdnet.fetch(_tracked_codes(cfg))
     facts["sentiment"] = {"status": "現時点では確認できない（X API/掲示板は未接続）"}
     facts["orderbook"] = {"status": "現時点では確認できない（リアルタイム板は取得範囲外）"}
     facts["events"] = {"status": "web_searchで確認すること"}

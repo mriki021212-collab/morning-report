@@ -17,9 +17,12 @@ import urllib.parse
 import feedparser
 
 # B層: 銘柄 -> Googleニュース検索クエリ（正式名・別名でOR検索）
+# 保有 + ウォッチ。6740/285A は非保有だが、分析の時系列を切らさないため残す
+# （config.yaml の watch: と対応。ここを消すと過去との記事継続性が失われる）。
 HOLDING_QUERIES = {
-    "ジャパンディスプレイ": "ジャパンディスプレイ OR JDI",
     "任天堂": "任天堂 OR Nintendo",
+    "フジクラ": "フジクラ OR Fujikura",
+    "ジャパンディスプレイ": "ジャパンディスプレイ OR JDI",
     "キオクシア": "キオクシア OR Kioxia",
 }
 SECTOR_QUERIES = {
@@ -32,6 +35,10 @@ SECTOR_QUERIES = {
     "信越化学": "信越化学",
     "SUMCO": "SUMCO",
     "半導体セクター": "半導体 株",
+    # 電線・データセンター関連セクター（config.yaml の sector_groups:）
+    "古河電工": "古河電気工業",
+    "住友電工": "住友電気工業",
+    "電線セクター": "電線 データセンター 需要",
 }
 
 GNEWS = "https://news.google.com/rss/search?q={q}&hl=ja&gl=JP&ceid=JP:ja"
