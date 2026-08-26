@@ -27,8 +27,11 @@ JST = dt.timezone(dt.timedelta(hours=9))
 
 
 def load_codes() -> list[str]:
+    """保有 + ウォッチ。ダッシュボードは両方の行で場中値を使うため、
+    holdings だけにするとウォッチ側が永久に「取得できていません」になる。"""
     cfg = yaml.safe_load((ROOT / "config.yaml").read_text(encoding="utf-8"))
-    return [h["code"] for h in cfg["holdings"]]
+    return ([h["code"] for h in cfg.get("holdings") or []]
+            + [w["code"] for w in cfg.get("watch") or []])
 
 
 def fetch_once(codes: list[str]) -> dict:

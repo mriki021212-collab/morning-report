@@ -444,7 +444,13 @@ const CONFIG = {
   ],
 
   quotesPollMs: 15000,   // out/quotes.json の再取得間隔
-  freshWarnSec: 600,     // これより古い場中値は「更新停止」扱いで警告表示
+  // これより古い場中値は「更新停止」扱いで警告表示。
+  // 2026-08-26 の実測で yfinance の1分足自体が 15〜16分遅れて返ることを確認した
+  // (取得時刻 15:23 に対し ts_jst は 15:07〜15:08)。取得間隔が15分なので、
+  // 正常運転でも画面上の経過時間は 15〜31分になる。600秒(10分)のままだと
+  // 「更新停止」が常時点灯して警告として機能しなくなるため、2回連続で取得を
+  // 落とした時に初めて光る 45分 に設定する。
+  freshWarnSec: 2700,
 
   // これより古い out/quotes.json の値は「無い」ものとして完全に捨てる。
   // 警告を出すだけでは不十分だった: 実際に 2026-08-05 の場中値が 8/26 の画面に
@@ -768,10 +774,12 @@ const STATE = { data:null, selectedCode:null, period:CONFIG.chartPeriods[CONFIG.
 let _chartSig = null; // M3: 直前に描画した「銘柄|期間|終値系列」の署名。同じなら描画アニメを再生しない
 
 // M11: 鮮度による減衰。演出ではなく経過時間の状態表現なので毎回再計算してよい（アニメーションではない）
+// 値の「くすみ」段階。しきい値は freshWarnSec と揃える。
+// ここが厳しすぎると正常運転の値が常に色あせて見え、本当に古い値と区別できなくなる。
 function decayClass(ageSec){
   if(ageSec==null) return "";
-  if(ageSec <= 1800) return "decay-1";
-  if(ageSec <= 10800) return "decay-2";
+  if(ageSec <= CONFIG.freshWarnSec) return "decay-1";   // 正常。くすませない
+  if(ageSec <= 4*CONFIG.freshWarnSec) return "decay-2";
   return "decay-3";
 }
 

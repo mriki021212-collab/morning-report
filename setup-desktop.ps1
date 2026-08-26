@@ -1,7 +1,10 @@
 # ============================================================
 #  setup-desktop.ps1
 #  Run this ON THE DESKTOP PC (the one that is on at 08:30).
-#  Sets up the repo + a Windows Scheduled Task that runs every weekday 08:30 JST.
+#  Sets up the repo + Windows Scheduled Tasks:
+#    MorningReport        weekdays 08:30        pre-open report
+#    MorningReport-PM     weekdays 16:00        post-close review
+#    MorningReport-Quotes weekdays 09:00-15:30  intraday prices every 15 min
 #  ASCII only. Do NOT add Japanese: PowerShell 5.1 reads .ps1 as Shift-JIS.
 #
 #  Usage:
@@ -224,6 +227,48 @@ foreach ($p in $plan) {
     Write-Host ("  task '" + $p.Name + "' registered (" + $p.At + " " + $p.Session + ")") -Fore Green
 }
 
+
+# Intraday prices. Separate task because the cadence is completely different:
+# every 15 minutes while the Tokyo market is open, instead of once a day.
+#
+# run-quotes.ps1 is NOT generated here - it is committed in the repo and arrives
+# with the clone/pull above. Generating a second copy would let the two drift.
+#
+# PowerShell 5.1 cannot put -RepetitionInterval on a -Weekly trigger directly,
+# so build a throwaway -Once trigger and lift its Repetition onto the weekly one.
+$QuotesTask = "$TaskName-Quotes"
+$quotesRunner = "$Dest\run-quotes.ps1"
+if (-not (Test-Path $quotesRunner)) {
+    Write-Host "  run-quotes.ps1 missing - skipping the intraday task" -Fore Yellow
+} else {
+    Unregister-ScheduledTask -TaskName $QuotesTask -Confirm:$false -ErrorAction SilentlyContinue
+
+    # No -WakeToRun here on purpose. Waking the machine every 15 minutes all day
+    # is not worth an intraday price; if the PC is asleep the dashboard falls back
+    # to the confirmed close and says the intraday feed has stopped.
+    $qSettings = New-ScheduledTaskSettingsSet `
+        -StartWhenAvailable `
+        -DontStopIfGoingOnBatteries `
+        -ExecutionTimeLimit (New-TimeSpan -Minutes 10) `
+        -MultipleInstances IgnoreNew
+
+    $qAction = New-ScheduledTaskAction -Execute "powershell.exe" `
+        -Argument ("-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$quotesRunner`"") `
+        -WorkingDirectory $Dest
+
+    $qTrigger = New-ScheduledTaskTrigger -Weekly `
+        -DaysOfWeek Monday,Tuesday,Wednesday,Thursday,Friday -At "09:00"
+    $rep = (New-ScheduledTaskTrigger -Once -At "09:00" `
+        -RepetitionInterval (New-TimeSpan -Minutes 15) `
+        -RepetitionDuration (New-TimeSpan -Hours 6 -Minutes 30)).Repetition
+    $qTrigger.Repetition = $rep
+
+    Register-ScheduledTask -TaskName $QuotesTask -Action $qAction -Trigger $qTrigger `
+        -Settings $qSettings `
+        -Description "Intraday prices for the dashboard (weekdays 09:00-15:30 JST, every 15 min)" | Out-Null
+    Write-Host "  task '$QuotesTask' registered (weekdays 09:00-15:30, every 15 min)" -Fore Green
+}
+
 Write-Host "`n=== DONE ===" -Fore Cyan
 foreach ($p in $plan) {
     Get-ScheduledTask -TaskName $p.Name | Format-List TaskName, State
@@ -240,3 +285,7 @@ Write-Host "  Get-Content $Dest\out\task.log -Tail 20" -Fore Green
 Write-Host "Remove them later:" -Fore Green
 Write-Host "  Unregister-ScheduledTask -TaskName $TaskName -Confirm:`$false" -Fore Green
 Write-Host "  Unregister-ScheduledTask -TaskName $TaskName-PM -Confirm:`$false" -Fore Green
+Write-Host "  Unregister-ScheduledTask -TaskName $TaskName-Quotes -Confirm:`$false" -Fore Green
+Write-Host "" 
+Write-Host "Intraday prices stop as soon as this PC sleeps or is off." -Fore Yellow
+Write-Host "That is expected: the dashboard then shows the confirmed close and says so." -Fore Yellow
