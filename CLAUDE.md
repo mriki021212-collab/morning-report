@@ -5,7 +5,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## What this is
 
 A Python system that posts a pre-market stock report to Discord every JST weekday morning, covering
-held stocks (6740 Japan Display / 7974 Nintendo / 285A Kioxia) and the Japanese semiconductor sector.
+held stocks (7974 Nintendo / 5803 Fujikura) plus a non-held watch list (6740 Japan Display /
+285A Kioxia) and the Japanese semiconductor sector.
 Runs on a schedule via both GitHub Actions and a Windows Scheduled Task on a desktop PC.
 
 ## The core design: two/three-layer separation (read this before changing anything)
@@ -46,7 +47,7 @@ python src/main.py --force        # --force runs even outside JST trading hours/
 python src/score.py 30            # scores the last 30 out/report_*.md files
 
 # Connectivity checks (must be run from a real machine — sandboxes have RSS/network blocked)
-.\.venv\Scripts\python.exe -c "import src.tdnet as t; import json; print(json.dumps(t.fetch(['6740.T','7974.T','285A.T']), ensure_ascii=False, indent=1))"
+.\.venv\Scripts\python.exe -c "import src.tdnet as t; import json; print(json.dumps(t.fetch(['7974.T','5803.T','6740.T','285A.T']), ensure_ascii=False, indent=1))"
 ```
 
 There is no test suite, linter, or type checker configured in this repo — validate changes by running
@@ -69,6 +70,11 @@ Collector modules (`src/collect.py`, `src/jquants.py`, `src/news.py`, `src/tdnet
   is decided by timezone (`is_asia()`), never by ticker suffix pattern-matching.
 - **`jquants.py`** — J-Quants API (margin ratio, short positions, investor-type flows). Requires
   `JQ_REFRESH_TOKEN`; returns the "unavailable" sentinel dict when absent rather than raising.
+- **`yahoo_jp.py`** — the two things yfinance cannot supply: the TOPIX index (yfinance 404s on every
+  TOPIX symbol; `1306.T` is an ETF, not the index) and Japanese mutual-fund NAVs. This is HTML
+  scraping of Yahoo!ファイナンス(日本) and will break if their page structure changes — when it does,
+  it must return a `status` string, never a previous or plausible-looking value. The module docstring
+  records every source that was tried and why it was rejected; read it before swapping the source.
 - **`news.py`** — two independently-queried layers: per-holding/per-sector Google News RSS search (layer
   B) and macro newspaper RSS filtered by keyword (layer C). Always distinguishes fetch failure from
   "no matching articles" in its `status` field — don't collapse that distinction when editing.
@@ -91,20 +97,27 @@ Output modules:
   for events/news only) and `audit()` (a second, different-model call that cross-checks every number in
   the narrative against `facts` and returns `OK` or a list of discrepancies — this result is surfaced in
   the Discord embed color/footer).
-- **`dashboard.py`** — writes `out/dashboard.json`, consumed by `dashboard.html` / `terminal_dashboard.html`
-  for a browser view. Falls back to demo data client-side if the JSON is missing.
+- **`dashboard.py`** — writes `out/dashboard.json`, consumed by `terminal_dashboard.html` (the page
+  published to GitHub Pages as both `/` and `/terminal_dashboard.html`). There is NO demo/simulated
+  fallback: if the JSON is missing the page says so and renders nothing. The older `dashboard.html`
+  still exists in the repo but is deliberately excluded from the published site because it does have
+  a seed-data demo path. Do not re-add it to `pages.yml`.
+  `sectors` is a name-to-number map and must stay that shape; per-sector member lists and the
+  averaging method live in the separate `sector_defs` key. `holds` (held) and `watch` (not held)
+  share one row shape but must never be merged — only `holds` feeds the portfolio statistics.
 - **`notify.py`** — Discord webhook posting: builds embed fields/color from `facts`, chunks the long
   report body under Discord's message-length limit, and has separate code paths for holiday/error
   notifications so that "market closed," "cron didn't fire," and "crashed" are never indistinguishable
   silence (see `main.py`'s holiday branch comment — this was a deliberate fix after a real missed-alert incident).
 
-`config.yaml` defines the tracked instruments (`holdings`, `sector`, `macro`, `overseas_semis`), the
+`config.yaml` defines the tracked instruments (`holdings`, `watch`, `sector`, `sector_groups`,
+`funds`, `macro`, `overseas_semis`), the
 `peer_proxy` substitution for stocks with too little history, `analog` search parameters, the RSS
 source list for layer C, and the Claude model/max_tokens used.
 
 `prompts/system.md` is the system prompt for the narrative-writing call — it encodes the "no invented
-numbers," "separate fact from interpretation," and 285A peer-proxy-disclosure rules that mirror the
-Python-side guarantees. If you change what `build_facts()` puts in `facts`, check whether this prompt
+numbers," "separate fact from interpretation," the held-vs-watch separation, and the 285A
+peer-proxy-disclosure rules that mirror the Python-side guarantees. If you change what `build_facts()` puts in `facts`, check whether this prompt
 needs a corresponding update (e.g. a new "if this key is null, say so explicitly" rule).
 
 ## Operational notes relevant to code changes
@@ -117,5 +130,10 @@ needs a corresponding update (e.g. a new "if this key is null, say so explicitly
   so any Japanese text in a script silently corrupts on save/read (noted explicitly in `setup-desktop.ps1`).
 - `push.ps1` exists because two machines (laptop + desktop) share this repo via manual sync (not just
   scheduled pulls) — it refuses to stage `.venv/`, `out/`, `*.key`, `.env`.
+- `src/quotes.py` writes `out/quotes.json` (intraday prices) but is NOT wired to any scheduler.
+  The published file is therefore frozen at whenever it was last run by hand. The dashboard
+  guards against this: `liveFor()` discards any quote older than `CONFIG.quoteMaxAgeSec` so a
+  stale file can never overwrite the confirmed close (it did, for 21 days, before that guard).
+  If you wire it up, keep the guard.
 - `out/` accumulates daily `facts_YYYYMMDD.json` and `report_YYYYMMDD.md` — these are real historical
   outputs (used by `score.py`), not disposable build artifacts; don't delete them as part of unrelated cleanup.

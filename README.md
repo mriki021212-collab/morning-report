@@ -1,6 +1,6 @@
 # モーニングレポート自動配信 (Discord / 平日 09:00 JST)
 
-保有銘柄（6740 / 7974 / 285A）＋日本半導体セクターの寄り付き前レポートを
+保有銘柄（7974 任天堂 / 5803 フジクラ）＋ウォッチ（6740 JDI / 285A キオクシア）＋日本半導体セクターの寄り付き前レポートを
 毎営業日 Discord に自動投稿する。
 
 ## 設計思想：2層構造（これが精度の本体）
@@ -185,7 +185,7 @@ LLMの誤りを含みうる。売買判断は自己責任で行うこと。
 ```
 TDnetの疎通確認:
 ```powershell
-.\.venv\Scripts\python.exe -c "import src.tdnet as t; import json; print(json.dumps(t.fetch(['6740.T','7974.T','285A.T']), ensure_ascii=False, indent=1))"
+.\.venv\Scripts\python.exe -c "import src.tdnet as t; import json; print(json.dumps(t.fetch(['7974.T','5803.T','6740.T','285A.T']), ensure_ascii=False, indent=1))"
 ```
 status が「取得失敗」なら、そのソースをconfig.yamlから外すか差し替える。
 「直近に開示なし」は正常（本当に開示が無い日）。

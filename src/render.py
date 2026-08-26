@@ -57,9 +57,25 @@ def render(facts: dict) -> str:
                  f"({g['implied_gap_pct']:+.2f}%)**")
         L.append(f"- 注: {g['note']}")
 
-    # ③ 保有株
+    # ③ 保有株 + ウォッチ（非保有）
+    # watch は保有から外れた銘柄だが、分析の時系列を切らさないため同じ深さで出す。
+    # 見出しで保有/非保有を必ず区別する（金額判断に直結するので混ぜてはいけない）。
     L.append(_sec("③ 保有株テクニカル"))
-    for code, s in facts["holdings"].items():
+    _stock_block(L, facts, facts.get("holdings", {}))
+    watch = facts.get("watch") or {}
+    if watch:
+        L.append(_sec("③-2 ウォッチ（非保有・参考）"))
+        L.append("> 以下は保有していない。ポートフォリオ統計には含まれない。")
+        _stock_block(L, facts, watch)
+
+    # ④ セクター
+    _sector_section(L, facts)
+    _funds_section(L, facts)
+    return _rest_of_morning(L, facts)
+
+
+def _stock_block(L: list, facts: dict, group: dict) -> None:
+    for code, s in group.items():
         if s.get("status"):
             L.append(f"\n### {code}\n{s['status']}")
             continue
@@ -97,7 +113,7 @@ def render(facts: dict) -> str:
         else:
             L.append(f"\n信用倍率・空売り残: {ms.get('margin_status') or ms.get('status') or '取得不可'}")
 
-    # ④ セクター
+def _sector_section(L: list, facts: dict) -> None:
     L.append(_sec("④ 半導体セクター"))
     L.append("| 銘柄 | 終値 | 前日比 | RSI | 25日乖離 | 対SOX相関60日(lag1) |")
     L.append("|---|---:|---:|---:|---:|---:|")
@@ -108,6 +124,47 @@ def render(facts: dict) -> str:
                  f"{_n(s['rsi14'],'',1)} | {_arrow(s['dev_ma25_pct'])} | "
                  f"{_n(facts.get('correlation_vs_sox_60d',{}).get(code),'',2)} |")
 
+    # ④-2 半導体以外のセクター（config.yaml の sector_groups:）。
+    # 半導体の表とは分けて出す。定義も算出母数も別のものなので混ぜない。
+    for gname, g in (facts.get("sector_groups") or {}).items():
+        members = (g.get("members") or {})
+        L.append(_sec(f"④-2 {gname}"))
+        L.append("| 銘柄 | 終値 | 前日比 | RSI | 25日乖離 |")
+        L.append("|---|---:|---:|---:|---:|")
+        vals = []
+        for code, s in members.items():
+            if s.get("status"):
+                L.append(f"| {code} | 取得不可 | ― | ― | ― |")
+                continue
+            vals.append(s["chg_pct"])
+            L.append(f"| {s['name']}（{code}） | {_n(s['close'],'円')} | {_arrow(s['chg_pct'])} | "
+                     f"{_n(s['rsi14'],'',1)} | {_arrow(s['dev_ma25_pct'])} |")
+        if vals:
+            L.append(f"\nセクター騰落率 **{_arrow(sum(vals)/len(vals))}** "
+                     f"（構成銘柄の前日比の単純平均・{len(vals)}/{len(members)}銘柄で算出）")
+        else:
+            L.append("\nセクター騰落率: **算出不可**（構成銘柄を1つも取得できていない）")
+
+
+def _funds_section(L: list, facts: dict) -> None:
+    """投資信託。基準価額と前日比のみ。テクニカルは持たないので出さない。"""
+    funds = facts.get("funds") or {}
+    if not funds:
+        return
+    L.append(_sec("④-3 投資信託（NISA）"))
+    L.append("| ファンド | 基準価額 | 前日比 | 基準日 |")
+    L.append("|---|---:|---:|---|")
+    for code, f in funds.items():
+        if f.get("status"):
+            L.append(f"| {f.get('name', code)} | 取得不可 | ― | ― |")
+            continue
+        L.append(f"| {f['name']}（{code}） | {_n(f['nav'],'円',0)} | "
+                 f"{_arrow(f.get('chg_pct'))} | {f['as_of']} |")
+    L.append("\n_基準価額は口数あたりで銘柄ごとに単位が異なるため、ファンド間で金額を比較しない。"
+             "日次1本値のためRSI・移動平均乖離は算出していない。_")
+
+
+def _rest_of_morning(L: list, facts: dict) -> str:
     # ⑦ アナログ
     L.append(_sec("⑦ 過去チャート類似局面（実測頻度／予測ではない）"))
     for code, a in facts.get("analog", {}).items():
