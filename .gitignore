@@ -6,10 +6,13 @@ __pycache__/
 
 # 生成物（毎日増える。Actionsのartifactで保管する）
 # dashboard.json / quotes.json / earnings.json だけは例外: GitHub Pagesで配信するためコミットする
+# posted.json も例外: デスクトップのタスクと GitHub Actions が「今日はもう投稿したか」を
+# 共有する唯一のチャンネルがこのリポジトリなので、コミットしないと二重投稿が止まらない。
 out/*
 !out/dashboard.json
 !out/quotes.json
 !out/earnings.json
+!out/posted.json
 
 # ローカル専用スクリプト
 run.ps1

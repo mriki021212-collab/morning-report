@@ -253,3 +253,29 @@ def post_error(msg: str) -> None:
     if not url:
         return
     requests.post(url, json={"content": f"⚠ レポート生成失敗\n```\n{msg[:1800]}\n```"}, timeout=30)
+
+def post_late_skip(session: str, now, window: str) -> None:
+    """定時から大きくずれて起動した回の通知。レポート本体の代わりに1行だけ出す。
+
+    寄り付き前レポートを大引け後に配ると、内容はエラーを出さないまま嘘になる。
+    かといって黙って終わると「休場」「cron不発」「クラッシュ」がまた同じ無音に
+    戻ってしまう。だから本体は出さず、ずれたという事実だけを出す。
+
+    実測の背景: GitHubのscheduleが 2026-08-27 以降 5〜12時間ずれて発火し、
+    朝レポートが 16:00 JST に、後場レポートが翌土曜 04:10 JST に走っていた。
+    """
+    url = os.getenv("DISCORD_WEBHOOK_URL")
+    if not url:
+        return
+    kind = "アフタヌーンレポート" if session == "afternoon" else "モーニングレポート"
+    requests.post(url, json={
+        "embeds": [{
+            "title": f"{kind} ― 定時に発火せず",
+            "description": (
+                f"この実行は **{now:%Y/%m/%d %H:%M} JST**。想定時間帯は {window}。\n"
+                f"時間帯を外れているため、レポート本体は投稿していません"
+                f"（古い前提のまま配ると内容が静かに嘘になるため）。\n"
+                f"スケジューラ側の遅延を確認してください。"
+            ),
+            "color": ORANGE,
+        }]}, timeout=30)

@@ -11,6 +11,7 @@ import yaml
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 import analogs, collect, dashboard, earnings, jquants, news, notify, render, tdnet  # noqa: E402
+import postguard  # noqa: E402
 import yahoo_jp  # noqa: E402
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -289,17 +290,42 @@ def main() -> None:
     # 大引け後の「本日の振り返り＋明日の予測」モード。無指定なら従来どおり寄り付き前レポート。
     session = "afternoon" if "--afternoon" in sys.argv else "morning"
     today = dt.datetime.now(JST).date()
-    if not is_trading_day(today) and "--force" not in sys.argv:
+    out = ROOT / "out"
+    out.mkdir(exist_ok=True)
+    force = "--force" in sys.argv
+    posting = "--no-post" not in sys.argv
+
+    # 投稿ガード。Discordに投げる回にだけ効かせる。
+    # --force は既存の逃げ道なので素通りさせる（手動実行を殺さない）。
+    # --no-post はそもそも投稿しないので、マーカーで止める意味が無い
+    #（数値だけ作り直したい時にガードで弾かれると使えなくなる）。
+    # 詳しい経緯は postguard.py のモジュールdocstring。
+    if posting and not force:
+        prev = postguard.already_notified(out, session, today)
+        if prev:
+            # デスクトップのタスクと GitHub Actions は互いを知らない。
+            # 共有マーカーが無かったため 2026-08-28 に朝レポートが2回出ていた。
+            print(f"{today} の{session}は既に通知済み（{prev}）。二重投稿を避けてスキップ。")
+            return
+        if not postguard.in_window(session):
+            # 想定時間帯を外れた回。レポート本体は出さないが、無音にはしない。
+            now = dt.datetime.now(JST)
+            print(f"想定時間帯({postguard.window_text(session)})外の実行: {now:%H:%M} JST。"
+                  f"レポート本体は投稿しない。")
+            notify.post_late_skip(session, now, postguard.window_text(session))
+            postguard.record(out, session, today, "late")
+            return
+
+    if not is_trading_day(today) and not force:
         # 休場日も必ず1行投げる。
         # これをしないと「休場」「cron不発」「クラッシュ」が全部同じ"無音"になり、
         # 届かないことに気づけない。無音 = 異常、と意味を1つに固定する。
         print(f"{today} は東証休場。スキップ。")
         notify.post_holiday(today, session=session)
+        postguard.record(out, session, today, "holiday")
         return
     try:
         facts, hist = build_facts(cfg, session=session)
-        out = ROOT / "out"
-        out.mkdir(exist_ok=True)
         dashboard.write(facts, hist, out)
         # 決算カレンダーはレポート本体とは独立。落ちてもレポートは止めない。
         # ただし握りつぶさず、失敗はログに出して earnings.json の failed に残す。
@@ -344,6 +370,12 @@ def main() -> None:
             return
         notify.post(report, verdict, facts)
         print(f"posted ({session}). audit =", verdict)
+        # 後場の未確定回はマーカーを立てない。立てると 16:20/16:40 の取り直しが
+        # スキップされ、その日が不完全なレポートで終わる（afternoon.yml と同じ判断）。
+        if session == "afternoon" and not facts.get("session_close", {}).get("confirmed"):
+            print("当日終値が未確定のためマーカーは立てない（後続の回で取り直す）")
+        else:
+            postguard.record(out, session, today, "report")
     except Exception:
         if "--no-post" not in sys.argv:
             notify.post_error(traceback.format_exc())

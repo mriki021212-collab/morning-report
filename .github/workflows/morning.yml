@@ -16,6 +16,10 @@ on:
 # GitHubは60日間コミットが無いリポジトリのscheduleを自動停止する。
 # 停止時はメール通知が来るので、何かpushするかActions画面で再有効化する。
 
+# out/posted.json（投稿済みマーカー）を自分でコミットするため書き込み権限が要る
+permissions:
+  contents: write
+
 concurrency:
   group: morning-report
   cancel-in-progress: false
@@ -77,6 +81,25 @@ jobs:
         with:
           path: .posted
           key: posted-${{ steps.d.outputs.today }}
+
+      # 投稿済みマーカーを共有する。
+      # このキャッシュのマーカー(.posted)はActions内でしか見えないので、
+      # デスクトップのタスクとは共有できない。実測で 2026-08-28 に
+      # デスクトップ 08:30 と Actions 16:00 が同じ朝レポートを2回投稿していた。
+      # out/posted.json はリポジトリに入るので両者が読める。
+      - name: Commit post marker
+        if: success() && steps.go.outputs.run == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add out/posted.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "no marker change"
+          else
+            git commit -m "posted: $(TZ=Asia/Tokyo date '+%Y-%m-%d %H:%M') (morning)"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
 
       # Pythonに依存しない失敗通知。
       # pip installで落ちても、YAML読み込みで落ちても、ここは必ず動く。

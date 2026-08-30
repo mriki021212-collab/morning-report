@@ -124,16 +124,31 @@ needs a corresponding update (e.g. a new "if this key is null, say so explicitly
 
 - Scheduling runs both in GitHub Actions (`.github/workflows/morning.yml`, three staggered cron times
   as a hedge against GitHub's scheduler sometimes not firing at all) and via a Windows Scheduled Task
-  on a desktop PC (`setup-desktop.ps1` registers it; `run-daily.ps1` is the generated runner). Both call
-  the same `src/main.py` with no special flags — keep default (no-flag) behavior safe to run unattended.
+  on a desktop PC (`setup-desktop.ps1` registers it; `run-daily.ps1` is the generated runner — edit the
+  here-string in `setup-desktop.ps1`, not just the committed copy, or the next setup run reverts you).
+  Both call the same `src/main.py`; the morning run takes no flags, the afternoon run takes `--afternoon`
+  — keep default (no-flag) behavior safe to run unattended.
+- **The two schedulers do not know about each other, so `src/postguard.py` enforces "one notification per
+  session per day" for both.** The shared state is `out/posted.json`, committed to the repo because the
+  repository is the only channel the desktop task and the Actions runners have in common. It also holds
+  the per-session time windows: a run that fires far outside its window posts a one-line "定時に発火せず"
+  notice instead of the report, because a pre-open report delivered after the close is silently wrong.
+  This was not theoretical — on 2026-08-28 the desktop posted the morning report at 08:30 JST and Actions
+  posted it again at 16:00 JST, and the afternoon workflow fired at 04:10 JST on Saturday and sent holiday
+  notices. `--force` bypasses both guards (manual runs must stay usable); `--no-post` skips them entirely.
+  The afternoon run deliberately does NOT set the marker when the close is unconfirmed, so the 16:20/16:40
+  retries can still take over — same rule as `afternoon.yml`.
 - `.ps1` scripts in the repo root must stay ASCII-only — PowerShell 5.1 reads `.ps1` files as Shift-JIS,
   so any Japanese text in a script silently corrupts on save/read (noted explicitly in `setup-desktop.ps1`).
 - `push.ps1` exists because two machines (laptop + desktop) share this repo via manual sync (not just
   scheduled pulls) — it refuses to stage `.venv/`, `out/`, `*.key`, `.env`.
-- `src/quotes.py` writes `out/quotes.json` (intraday prices) but is NOT wired to any scheduler.
-  The published file is therefore frozen at whenever it was last run by hand. The dashboard
-  guards against this: `liveFor()` discards any quote older than `CONFIG.quoteMaxAgeSec` so a
-  stale file can never overwrite the confirmed close (it did, for 21 days, before that guard).
-  If you wire it up, keep the guard.
+- `src/quotes.py` writes `out/quotes.json` (intraday prices). The wiring EXISTS — `run-quotes.ps1` is
+  committed and `setup-desktop.ps1` registers a `MorningReport-Quotes` task (weekdays 09:00-15:30, every
+  15 min) — but the task is not actually registered on the desktop, because `setup-desktop.ps1` has not
+  been re-run since that commit (2026-08-26). Measured 2026-08-31: `out/quotes.json` is still frozen at
+  2026-08-26 15:20 JST while the 08:30/16:00 tasks kept running normally through 8/28. **The fix is to
+  run `setup-desktop.ps1` once on the desktop, not to write more code.** The dashboard guards against the
+  stale file regardless: `liveFor()` discards any quote older than `CONFIG.quoteMaxAgeSec` (6h) so it can
+  never overwrite the confirmed close (it did, for 21 days, before that guard). Keep the guard.
 - `out/` accumulates daily `facts_YYYYMMDD.json` and `report_YYYYMMDD.md` — these are real historical
   outputs (used by `score.py`), not disposable build artifacts; don't delete them as part of unrelated cleanup.
