@@ -101,11 +101,27 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add out/dashboard.json out/earnings.json out/quotes.json 2>/dev/null || true
+          git add out/dashboard.json out/earnings.json out/quotes.json out/posted.json 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "no dashboard changes"
           else
             git commit -m "data: $(TZ=Asia/Tokyo date +%Y-%m-%d) 大引け後の値に更新"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+
+      # 終値が未確定で上のコミットがスキップされた回でも、投稿済みマーカーだけは
+      # 共有しておく。休場通知・遅延通知はここでしか push されない。
+      - name: Commit post marker (fallback)
+        if: success() && steps.go.outputs.run == 'true' && steps.closed.outputs.confirmed != 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add out/posted.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "no marker change"
+          else
+            git commit -m "posted: $(TZ=Asia/Tokyo date '+%Y-%m-%d %H:%M') (afternoon)"
             git pull --rebase origin main
             git push origin HEAD:main
           fi
