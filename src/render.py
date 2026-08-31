@@ -39,6 +39,10 @@ def render(facts: dict) -> str:
             L.append(f"| {code} | 取得不可 | ― | ― |")
             continue
         L.append(f"| {s['name']} | {_n(s['close'])} | {_arrow(s['chg_pct'])} | {s['as_of']} |")
+    # 前日比を「―」にした理由は必ず書く。無言の空欄は取得失敗と区別がつかない。
+    for m in facts["macro"].values():
+        if not m.get("status") and m.get("prev_gap_warning"):
+            L.append(f"> ⚠️ **{m['name']}: {m['prev_gap_warning']}**")
 
     # ② 日経ギャップ
     L.append(_sec("② 日経平均の寄り付き示唆（先物-現物の機械計算）"))
@@ -85,6 +89,8 @@ def _stock_block(L: list, facts: dict, group: dict) -> None:
             L.append(f"> ⚠️ **{s['stale_warning']}**")
         if s.get("split_warning"):
             L.append(f"> 🔀 **{s['split_warning']}**")
+        if s.get("prev_gap_warning"):
+            L.append(f"> ⚠️ **{s['prev_gap_warning']}**")
         L.append(f"終値 **{_n(s['close'],'円')}** / {_arrow(s['chg_pct'])} / "
                  f"出来高 {_n(s['volume'],'',0)}（20日平均比 {_arrow(s['volume_vs_20d_avg_pct'])}）")
         L.append("")
@@ -371,6 +377,10 @@ def render_afternoon(facts: dict) -> str:
             L.append(f"| {code} | 取得不可 | ― | ― |")
             continue
         L.append(f"| {s['name']} | {_n(s['close'])} | {_arrow(s['chg_pct'])} | {s['as_of']} |")
+    # 前日比を「―」にした理由は必ず書く。無言の空欄は取得失敗と区別がつかない。
+    for m in facts["macro"].values():
+        if not m.get("status") and m.get("prev_gap_warning"):
+            L.append(f"> ⚠️ **{m['name']}: {m['prev_gap_warning']}**")
 
     L.extend(_earnings_section(facts))
 

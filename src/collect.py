@@ -8,6 +8,7 @@ import math
 import numpy as np
 import pandas as pd
 import yfinance as yf
+import jpholiday
 
 JST = dt.timezone(dt.timedelta(hours=9))
 
@@ -86,6 +87,21 @@ def support_resistance(df: pd.DataFrame, lookback: int = 120, bins: int = 40):
     return sup, res
 
 
+def _is_jp(code: str) -> bool:
+    """東証カレンダーで動く銘柄か。連休明けの誤検知を避けるためだけに使う。"""
+    return code.endswith(".T") or code in ("^N225", "998405.T")
+
+
+def _jp_holidays_between(start, end) -> int:
+    """[start, end) に含まれる平日の日本の祝日数。"""
+    n, d = 0, start
+    while d < end:
+        if d.weekday() < 5 and jpholiday.is_holiday(d):
+            n += 1
+        d += dt.timedelta(days=1)
+    return n
+
+
 def snapshot(code: str, name: str, df: pd.DataFrame) -> dict:
     if df.empty or len(df) < 210:
         return {"code": code, "name": name, "status": "現時点では確認できない（履歴不足）"}
@@ -103,6 +119,20 @@ def snapshot(code: str, name: str, df: pd.DataFrame) -> dict:
     today = dt.datetime.now(JST).date()
     bdays_old = int(np.busday_count(last_date, today))  # 実行日までの営業日数
     stale = bdays_old >= 2  # 前営業日ならbdays_old<=1。2以上は古い
+
+    # --- 前営業日ギャップ検知 ---
+    # yfinance は稀に途中の1営業日を丸ごと落とす(実測: 2026-08-28 の ^N225。
+    # 同日の個別株 7974/5803/7735/8035 には全てバーがあり東証は開いていた)。
+    # 最終バーが当日なら stale は False のままなので、上の鮮度チェックは
+    # これを構造的に捕まえられない。prev_close が黙って2営業日前にずれ、
+    # 「前日比」が符号ごと反転する(実測: 真値 -0.30% を +0.12% と表示)。
+    # 間違った数字より見える空白を選ぶ(H1)。ギャップ検知時は chg_pct を出さない。
+    prev_date = df.index[-2].date()
+    gap_bdays = int(np.busday_count(prev_date, last_date))
+    if _is_jp(code):
+        # 東証の休日を引かないと連休明けが毎回誤検知になる
+        gap_bdays -= _jp_holidays_between(prev_date, last_date)
+    prev_gap = gap_bdays > 1
 
     # --- 株式分割の疑い検知 ---
     # 前日比が±30%を超える急変は、実際の暴騰暴落か「株式分割の未調整」の可能性。
@@ -127,9 +157,13 @@ def snapshot(code: str, name: str, df: pd.DataFrame) -> dict:
         "split_warning": ("前日比または移動平均乖離が異常に大きい。株式分割の未調整の可能性があり、"
                           "移動平均・乖離率・アナログ分析が汚染されている恐れがある。要確認。"
                           if split_suspect else None),
+        "prev_gap_bdays": gap_bdays,
+        "prev_gap_warning": (f"直前のバーが{prev_date}で、{last_date}との間に"
+                             f"{gap_bdays - 1}営業日ぶんの欠損がある。前日比は前営業日との"
+                             "比較にならないため算出しない。" if prev_gap else None),
         "close": _f(c.iloc[-1]),
         "prev_close": _f(c.iloc[-2]),
-        "chg_pct": _f((c.iloc[-1] / c.iloc[-2] - 1) * 100),
+        "chg_pct": None if prev_gap else _f((c.iloc[-1] / c.iloc[-2] - 1) * 100),
         "open": _f(df["Open"].iloc[-1]),
         "high": _f(df["High"].iloc[-1]),
         "low": _f(df["Low"].iloc[-1]),
