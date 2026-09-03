@@ -105,8 +105,13 @@ Output modules:
   `sectors` is a name-to-number map and must stay that shape; per-sector member lists and the
   averaging method live in the separate `sector_defs` key. `holds` (held) and `watch` (not held)
   share one row shape but must never be merged — only `holds` feeds the portfolio statistics.
-- **`notify.py`** — Discord webhook posting: builds embed fields/color from `facts`, chunks the long
-  report body under Discord's message-length limit, and has separate code paths for holiday/error
+- **`notify.py`** — Discord webhook posting: **exactly one message per run** — an embed built from
+  `facts` (holdings / macro / gap / news headlines / factcheck / dashboard link, colour encoding the
+  worst active condition) plus the full report attached as a `.md` file. It deliberately does NOT
+  re-post the report body as chunked code blocks any more: that produced six messages a run, the ```
+  fences killed every link, and the detail is already in the attachment and the dashboard. Keep the
+  embed under Discord's limits (1024 chars per field value, 6000 per embed, 25 fields) — `_news_field`
+  truncates and says so rather than silently dropping rows. Separate code paths exist for holiday/error
   notifications so that "market closed," "cron didn't fire," and "crashed" are never indistinguishable
   silence (see `main.py`'s holiday branch comment — this was a deliberate fix after a real missed-alert incident).
 

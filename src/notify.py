@@ -6,7 +6,6 @@ import json
 import requests
 
 JST = dt.timezone(dt.timedelta(hours=9))
-LIMIT = 1900
 
 GREEN = 0x2ECC71
 RED = 0xE74C3C
@@ -16,18 +15,6 @@ PURPLE = 0x8E44AD  # ファクトチェック不一致専用。地合いの赤/�
 
 DASHBOARD_URL = "https://mriki021212-collab.github.io/morning-report/terminal_dashboard.html"
 MOVER_ALERT_PCT = 3.0  # 保有株の前日比がこれ以上なら結論行で警告する
-
-
-def _chunks(text: str) -> list[str]:
-    out, buf = [], ""
-    for line in text.split("\n"):
-        if len(buf) + len(line) + 1 > LIMIT:
-            out.append(buf)
-            buf = ""
-        buf += line + "\n"
-    if buf.strip():
-        out.append(buf)
-    return out
 
 
 def _pct(v):
@@ -146,7 +133,37 @@ def _factcheck_field(audit_result: str) -> dict:
 
 def _dashboard_field() -> dict:
     return {"name": "🔗 ライブダッシュボード",
-            "value": f"[ターミナル表示を開く]({DASHBOARD_URL})", "inline": False}
+            "value": f"[ターミナル表示を開く]({DASHBOARD_URL})\n全文レポートは下の .md 添付に",
+            "inline": False}
+
+
+def _news_field(facts: dict) -> dict:
+    """見出しだけを埋め込みに出す。本文・リンク・全件は添付の .md と facts_*.json にある。
+    「取得できなかった」と「報道が無かった」は別の状態なので、必ず書き分ける。"""
+    nw = (facts or {}).get("news", {}) or {}
+    if str(nw.get("status", "")).startswith("全ソース取得失敗"):
+        n_err = len(nw.get("errors") or [])
+        return {"name": "📰 主要ニュース",
+                "value": f"⚠️ 取得失敗 — RSSに到達できていない（エラー{n_err}件）。報道ゼロではない。",
+                "inline": False}
+    rows = (nw.get("holdings") or [])[:4] + (nw.get("macro") or [])[:4]
+    if not rows:
+        return {"name": "📰 主要ニュース", "value": "該当する報道は直近24時間なし。", "inline": False}
+    lines = []
+    for n in rows:
+        tag = f"[{'・'.join(n['matched'])}] " if n.get("matched") else ""
+        lines.append(f"・{tag}{n.get('title', '')}")
+    # embedのfield.valueは1024字上限。入りきらない分は落とすが、落としたと明示する。
+    kept, total = [], 0
+    for ln in lines:
+        if total + len(ln) + 1 > 930:
+            break
+        kept.append(ln)
+        total += len(ln) + 1
+    body = "\n".join(kept)
+    if len(kept) < len(lines):
+        body += f"\n… 残り{len(lines) - len(kept)}件は添付の .md に"
+    return {"name": "📰 主要ニュース", "value": body, "inline": False}
 
 
 def _holdings_field(facts: dict) -> dict:
@@ -209,6 +226,7 @@ def post(report: str, audit_result: str = "OK", facts: dict | None = None) -> No
             fields.append(_gap_field(facts))
         fields.append(_factcheck_field(audit_result))
         fields.append(_macro_field(facts))
+        fields.append(_news_field(facts))
     fields.append(_dashboard_field())
 
     prefix = "afternoon" if afternoon else "morning"
@@ -229,10 +247,10 @@ def post(report: str, audit_result: str = "OK", facts: dict | None = None) -> No
     }
     r = requests.post(url, data={"payload_json": json.dumps(payload)},
                       files=files, timeout=30)
+    # レポート本文はコードブロックに分割して連投していたが、Discordでは6通に膨れて
+    # スクロールが苦痛になるうえ、``` で囲むためリンクも効かなかった。数値は上の
+    # embed に、全文は同時に添付している .md にあるので、本文の連投はしない。
     r.raise_for_status()
-
-    for c in _chunks(report):
-        requests.post(url, json={"content": f"```\n{c}\n```"[:1990]}, timeout=30).raise_for_status()
 
 
 def post_holiday(d, session: str = "morning") -> None:
