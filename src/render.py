@@ -231,6 +231,10 @@ def _rest_of_morning(L: list, facts: dict) -> str:
             L.append(f"- [{i['company']}] {i['title']} — {i['time']}  [PDF]({i['url']})")
 
     # ⑥-B 個別ニュース（保有株・セクター）
+    # 記事URLは本文に出さない。notify.post() がレポートを ``` で囲んで投げるため
+    # Discord ではリンクが機能せず、Google News RSS の 300 字級 URL が読む邪魔に
+    # なるだけだった。リンクは facts_*.json の news.*.link と dashboard.json に
+    # 残っているので、出典は失われていない。
     L.append(_sec("⑥-B 保有株・セクター関連ニュース（RSS）"))
     nw = facts.get("news", {})
     if nw.get("status", "").startswith("全ソース取得失敗"):
@@ -241,10 +245,10 @@ def _rest_of_morning(L: list, facts: dict) -> str:
         if not h and not se:
             L.append("保有株・セクターに該当する報道は直近24時間なし。")
         for n in h[:10]:
-            L.append(f"- **[{'・'.join(n['matched'])}]** [{n['title']}]({n['link']}) "
+            L.append(f"- **[{'・'.join(n['matched'])}]** {n['title']} "
                      f"— {n['source']} / {n['published']}")
         for n in se[:8]:
-            L.append(f"- [{'・'.join(n['matched'])}] [{n['title']}]({n['link']}) "
+            L.append(f"- [{'・'.join(n['matched'])}] {n['title']} "
                      f"— {n['source']} / {n['published']}")
         if nw.get("errors"):
             L.append(f"\n_一部ソース取得失敗: {len(nw['errors'])}件_")
@@ -255,7 +259,7 @@ def _rest_of_morning(L: list, facts: dict) -> str:
     if not mc:
         L.append("マクロ関連の該当記事は直近24時間なし。")
     for n in mc[:8]:
-        L.append(f"- [{n['title']}]({n['link']}) — {n['source']} / {n['published']}")
+        L.append(f"- {n['title']} — {n['source']} / {n['published']}")
 
     # 欠損一覧
     L.append(_sec("データ欠損一覧"))
@@ -408,7 +412,7 @@ def render_afternoon(facts: dict) -> str:
             L.append("該当する報道は直近24時間なし。")
         for n in rows:
             tag = f"**[{'・'.join(n['matched'])}]** " if n.get("matched") else ""
-            L.append(f"- {tag}[{n['title']}]({n['link']}) — {n['source']} / {n['published']}")
+            L.append(f"- {tag}{n['title']} — {n['source']} / {n['published']}")
 
     L.append(_sec("データ欠損一覧"))
     for k in ("orderbook", "sentiment"):
