@@ -71,7 +71,12 @@
   tbody tr:last-child td{border-bottom:none}
   td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
 
-  ul.news{list-style:none;margin:16px 0 0;padding:0;display:flex;flex-direction:column;gap:9px}
+  .cat{margin-top:22px}
+  .cat-head{font-family:var(--serif);font-size:16px;font-weight:600;margin:0;padding-bottom:5px;
+    border-bottom:1px solid var(--hair);display:flex;align-items:baseline;gap:9px}
+  .cat-n{font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--steel);
+    background:var(--steel-soft);border-radius:2px;padding:1px 6px}
+  ul.news{list-style:none;margin:11px 0 0;padding:0;display:flex;flex-direction:column;gap:7px}
   ul.news li{background:var(--surface);border:1px solid var(--hair);border-radius:4px;padding:12px 15px}
   ul.news a{color:inherit;text-decoration:none;font-weight:700;line-height:1.55}
   ul.news a:hover{color:var(--shu)}
@@ -126,7 +131,7 @@
 
     <section>
       <div class="sec-head"><span class="sec-num">03</span><h2>見出し</h2></div>
-      <p class="sec-note">日経・産経・読売のRSSから直近24時間。並びは配信の新しい順です。</p>
+      <p class="sec-note" id="news-note"></p>
       <div id="news-body"></div>
     </section>
 
@@ -212,25 +217,58 @@ function renderJgb(j){
     + `<tbody><tr><td style="font-weight:700">利回り(%)</td>${body}</tr></tbody></table></div>${warn}`;
 }
 
+const CAT_ORDER = ["主要・速報", "マーケット・経済", "企業・ビジネス", "テクノロジー", "国際・政治"];
+
+function newsItem(n){
+  const t = esc(n.title);
+  const link = n.link ? `<a href="${esc(n.link)}" target="_blank" rel="noopener noreferrer">${t}</a>`
+                      : `<span style="font-weight:700">${t}</span>`;
+  const when = n.published ? String(n.published).slice(5).replace("T", " ") : "";
+  return `<li>${link}<span class="meta">${esc(n.source || "")}　${esc(when)}</span></li>`;
+}
+
 function renderNews(h){
   const el = $("news-body");
+  const note = $("news-note");
+
   if (!h || String(h.status || "").startsWith("全ソース取得失敗")){
-    const n = h && h.errors ? h.errors.length : 0;
+    note.textContent = "";
     el.innerHTML = `<div class="note bad"><h3>取得失敗</h3>`
-      + `<p style="margin:0">RSSに到達できていません（エラー${n}件）。<b>報道がゼロだったのではありません。</b></p></div>`;
+      + `<p style="margin:0">どのRSSにも到達できていません（${h ? h.feeds_total : "?"}本すべて失敗）。`
+      + `<b>報道がゼロだったのではありません。</b></p></div>`;
     return;
   }
+
+  const hrs = h.window_hours || 24;
+  note.innerHTML = `直近${hrs}時間に配信された <b>${h.total}本</b>`
+    + `（${h.feeds_ok}/${h.feeds_total}媒体から取得）。見出しをクリックすると元記事に飛びます。`;
+
   if (!h.items || !h.items.length){
-    el.innerHTML = `<div class="note"><h3>該当なし</h3>`
-      + `<p style="margin:0">直近24時間に該当する報道はありませんでした。取得は成功しています。</p></div>`;
+    el.innerHTML = `<div class="note"><h3>記事なし</h3>`
+      + `<p style="margin:0">直近${hrs}時間に配信された記事がありませんでした。`
+      + `<b>取得自体は成功しています</b>（${h.feeds_ok}/${h.feeds_total}媒体）。</p></div>`;
     return;
   }
-  el.innerHTML = `<ul class="news">` + h.items.map(n => {
-    const t = esc(n.title);
-    const link = n.link ? `<a href="${esc(n.link)}" target="_blank" rel="noopener noreferrer">${t}</a>`
-                        : `<span style="font-weight:700">${t}</span>`;
-    return `<li>${link}<span class="meta">${esc(n.source || "")}　${esc(n.published || "")}</span></li>`;
-  }).join("") + `</ul>`;
+
+  const by = h.by_category || {};
+  // CAT_ORDER に無いカテゴリが将来増えても落とさない
+  const cats = CAT_ORDER.filter(c => by[c] && by[c].length)
+    .concat(Object.keys(by).filter(c => !CAT_ORDER.includes(c)));
+
+  el.innerHTML = cats.map(c => {
+    const rows = by[c] || [];
+    return `<div class="cat">`
+      + `<h3 class="cat-head">${esc(c)}<span class="cat-n">${rows.length}</span></h3>`
+      + `<ul class="news">${rows.map(newsItem).join("")}</ul></div>`;
+  }).join("");
+
+  const bad = (h.feeds || []).filter(f => f.status !== "ok");
+  if (bad.length){
+    el.insertAdjacentHTML("afterbegin",
+      `<div class="note bad"><h3>取得できなかった媒体</h3><ul>`
+      + bad.map(f => `<li><b>${esc(f.label)}</b> — ${esc(f.status)}</li>`).join("")
+      + `</ul></div>`);
+  }
 }
 
 function renderAge(genIso){
