@@ -71,11 +71,22 @@
   tbody tr:last-child td{border-bottom:none}
   td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
 
-  .cat{margin-top:22px}
+  .cat{margin-top:24px}
   .cat-head{font-family:var(--serif);font-size:16px;font-weight:600;margin:0;padding-bottom:5px;
-    border-bottom:1px solid var(--hair);display:flex;align-items:baseline;gap:9px}
+    border-bottom:1px solid var(--hair);display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
   .cat-n{font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--steel);
     background:var(--steel-soft);border-radius:2px;padding:1px 6px}
+  .tier-desc{font-family:var(--sans);font-size:11.5px;font-weight:400;color:var(--faint)}
+  /* 重要度は左の罫の色で見分ける。高だけを強い色にして、中と低は静かに置く。 */
+  .tier-高 .cat-head{border-bottom-color:var(--shu)}
+  .tier-高 .cat-n{color:var(--shu);background:var(--shu-soft)}
+  li.t-高{border-left:3px solid var(--shu)}
+  li.t-中{border-left:3px solid var(--amber)}
+  li.t-低{border-left:3px solid var(--hair)}
+  .cat-chip{font-family:var(--sans);font-size:10.5px;color:var(--muted);
+    background:var(--surface-2);border:1px solid var(--hair);border-radius:2px;padding:0 5px}
+  .hits{display:block;margin-top:3px;font-family:var(--mono);font-size:10.5px;color:var(--faint)}
+  .hits::before{content:"根拠 "}
   ul.news{list-style:none;margin:11px 0 0;padding:0;display:flex;flex-direction:column;gap:7px}
   ul.news li{background:var(--surface);border:1px solid var(--hair);border-radius:4px;padding:12px 15px}
   ul.news a{color:inherit;text-decoration:none;font-weight:700;line-height:1.55}
@@ -217,14 +228,23 @@ function renderJgb(j){
     + `<tbody><tr><td style="font-weight:700">利回り(%)</td>${body}</tr></tbody></table></div>${warn}`;
 }
 
-const CAT_ORDER = ["主要・速報", "マーケット・経済", "企業・ビジネス", "テクノロジー", "国際・政治"];
+const TIER_ORDER = ["高", "中", "低"];
+const TIER_DESC = {
+  "高": "相場を直接動かしうるもの（金融政策・金利・為替・指数・決算・追跡銘柄）",
+  "中": "企業や産業の動き",
+  "低": "経済一般。関連はあるが直接の材料ではないもの",
+};
 
 function newsItem(n){
   const t = esc(n.title);
   const link = n.link ? `<a href="${esc(n.link)}" target="_blank" rel="noopener noreferrer">${t}</a>`
                       : `<span style="font-weight:700">${t}</span>`;
   const when = n.published ? String(n.published).slice(5).replace("T", " ") : "";
-  return `<li>${link}<span class="meta">${esc(n.source || "")}　${esc(when)}</span></li>`;
+  const hits = (n.hits && n.hits.length)
+    ? `<span class="hits">${n.hits.map(esc).join("・")}</span>` : "";
+  return `<li class="t-${esc(n.tier)}">${link}`
+       + `<span class="meta">${esc(n.source || "")}　${esc(when)}`
+       + `　<span class="cat-chip">${esc(n.category || "")}</span>${hits}</span></li>`;
 }
 
 function renderNews(h){
@@ -240,25 +260,27 @@ function renderNews(h){
   }
 
   const hrs = h.window_hours || 24;
-  note.innerHTML = `直近${hrs}時間に配信された <b>${h.total}本</b>`
-    + `（${h.feeds_ok}/${h.feeds_total}媒体から取得）。見出しをクリックすると元記事に飛びます。`;
+  note.innerHTML = `直近${hrs}時間に${h.feeds_ok}/${h.feeds_total}媒体から集めた <b>${h.collected}本</b>のうち、`
+    + `株に関係する <b>${h.total}本</b>を重要度別に並べています`
+    + `（${h.dropped}本はスポーツ・災害・芸能などとして除外）。`
+    + `<b>重要度はキーワード照合による機械分類</b>で、記事の中身を読んで判断したものではありません。`
+    + `各見出しの下に判定根拠の語を出しています。`;
 
   if (!h.items || !h.items.length){
-    el.innerHTML = `<div class="note"><h3>記事なし</h3>`
-      + `<p style="margin:0">直近${hrs}時間に配信された記事がありませんでした。`
-      + `<b>取得自体は成功しています</b>（${h.feeds_ok}/${h.feeds_total}媒体）。</p></div>`;
+    el.innerHTML = `<div class="note"><h3>該当なし</h3>`
+      + `<p style="margin:0">直近${hrs}時間に株関連の記事がありませんでした。`
+      + `<b>取得自体は成功しています</b>（${h.feeds_ok}/${h.feeds_total}媒体・収集${h.collected}本）。</p></div>`;
     return;
   }
 
-  const by = h.by_category || {};
-  // CAT_ORDER に無いカテゴリが将来増えても落とさない
-  const cats = CAT_ORDER.filter(c => by[c] && by[c].length)
-    .concat(Object.keys(by).filter(c => !CAT_ORDER.includes(c)));
+  const by = h.by_tier || {};
+  const tiers = TIER_ORDER.filter(t => by[t] && by[t].length);
 
-  el.innerHTML = cats.map(c => {
-    const rows = by[c] || [];
-    return `<div class="cat">`
-      + `<h3 class="cat-head">${esc(c)}<span class="cat-n">${rows.length}</span></h3>`
+  el.innerHTML = tiers.map(t => {
+    const rows = by[t] || [];
+    return `<div class="cat tier-${esc(t)}">`
+      + `<h3 class="cat-head">重要度 ${esc(t)}<span class="cat-n">${rows.length}</span>`
+      + `<span class="tier-desc">${esc(TIER_DESC[t] || "")}</span></h3>`
       + `<ul class="news">${rows.map(newsItem).join("")}</ul></div>`;
   }).join("");
 
