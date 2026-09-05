@@ -14,7 +14,9 @@ on:
       - out/dashboard.json
       - out/quotes.json
       - out/earnings.json
+      - out/newsdash.json
       - terminal_dashboard.html
+      - news_dashboard.html
       - .github/workflows/pages.yml
   workflow_dispatch:
 
@@ -44,6 +46,11 @@ jobs:
           cp out/dashboard.json _site/out/dashboard.json
           if [ -f out/quotes.json ]; then cp out/quotes.json _site/out/quotes.json; fi
           if [ -f out/earnings.json ]; then cp out/earnings.json _site/out/earnings.json; fi
+          # ニュースダッシュボード。株のダッシュボードとは別ページ・別データで、
+          # 片方が欠けてももう片方は出る（news_dashboard.html は json が無ければ
+          # 「読めていない」と表示し、数値は一切出さない）。
+          cp news_dashboard.html _site/news_dashboard.html
+          if [ -f out/newsdash.json ]; then cp out/newsdash.json _site/out/newsdash.json; fi
 
       # 公開物が意図したファイルだけであることを毎回機械的に確認する。
       # config.yaml や .env が紛れ込んだら、Pagesに載る前にここで落とす。
@@ -51,7 +58,7 @@ jobs:
         run: |
           echo "--- _site contents ---"
           find _site -type f | sort
-          ALLOWED='_site/index.html _site/terminal_dashboard.html _site/out/dashboard.json _site/out/quotes.json _site/out/earnings.json'
+          ALLOWED='_site/index.html _site/terminal_dashboard.html _site/news_dashboard.html _site/out/dashboard.json _site/out/quotes.json _site/out/earnings.json _site/out/newsdash.json'
           rc=0
           for f in $(find _site -type f); do
             case " $ALLOWED " in

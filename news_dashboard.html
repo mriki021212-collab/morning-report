@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ニュースダッシュボード</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@600;800&family=Noto+Sans+JP:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --ground:#EDEFF1; --surface:#FFFFFF; --surface-2:#F5F7F8;
+    --ink:#101619; --muted:#59646C; --faint:#8A959C; --hair:#D2D8DC;
+    --shu:#B8342A; --shu-soft:rgba(184,52,42,.09);
+    --steel:#1B5B66; --steel-soft:rgba(27,91,102,.10);
+    --amber:#8A5A08; --amber-soft:rgba(138,90,8,.11);
+    --serif:"Shippori Mincho","Hiragino Mincho ProN","Yu Mincho",serif;
+    --sans:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ground:#0D1215; --surface:#161D21; --surface-2:#1C2429;
+      --ink:#E7EBED; --muted:#9AA6AD; --faint:#717E85; --hair:#2A343A;
+      --shu:#E8796A; --shu-soft:rgba(232,121,106,.13);
+      --steel:#63AEB8; --steel-soft:rgba(99,174,184,.13);
+      --amber:#D8A24A; --amber-soft:rgba(216,162,74,.14);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#0D1215; --surface:#161D21; --surface-2:#1C2429;
+    --ink:#E7EBED; --muted:#9AA6AD; --faint:#717E85; --hair:#2A343A;
+    --shu:#E8796A; --shu-soft:rgba(232,121,106,.13);
+    --steel:#63AEB8; --steel-soft:rgba(99,174,184,.13);
+    --amber:#D8A24A; --amber-soft:rgba(216,162,74,.14);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.8;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1040px;margin:0 auto;padding:26px 18px 80px}
+
+  .masthead{border-top:3px solid var(--ink);border-bottom:1px solid var(--hair);padding:16px 0 13px;
+    display:flex;flex-wrap:wrap;gap:12px 26px;align-items:flex-end;justify-content:space-between}
+  .masthead h1{font-family:var(--serif);font-weight:800;font-size:clamp(24px,4vw,34px);line-height:1.25;margin:0}
+  .masthead .sub{margin:5px 0 0;color:var(--muted);font-size:13px}
+  .stamp{font-family:var(--mono);font-size:12px;color:var(--muted);text-align:right;line-height:1.7}
+  .stamp b{color:var(--ink);font-weight:600}
+  #age.warn{color:var(--shu);font-weight:600}
+
+  section{margin-top:34px}
+  .sec-head{display:flex;align-items:baseline;gap:11px;border-bottom:2px solid var(--ink);padding-bottom:7px;flex-wrap:wrap}
+  .sec-num{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--surface);background:var(--ink);border-radius:2px;padding:2px 7px}
+  .sec-head h2{font-family:var(--serif);font-weight:600;font-size:20px;margin:0}
+  .sec-note{margin:9px 0 0;color:var(--muted);font-size:12.5px}
+
+  .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:10px;margin-top:16px}
+  .tile{background:var(--surface);border:1px solid var(--hair);border-radius:4px;padding:12px 14px}
+  .tile .lbl{font-size:12px;color:var(--muted);letter-spacing:.02em}
+  .tile .val{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:21px;font-weight:600;margin-top:3px;letter-spacing:-.01em}
+  .tile .chg{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13px;margin-top:2px}
+  .tile .asof{font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:5px}
+  .tile.is-stale{border-left:3px solid var(--amber)}
+  .tile.is-fail{border-left:3px solid var(--shu)}
+  .tile.is-fail .val{font-size:15px;color:var(--shu);font-weight:500}
+  .up{color:var(--steel)} .dn{color:var(--shu)} .flat{color:var(--muted)}
+
+  .tbl-wrap{overflow-x:auto;margin-top:16px;border:1px solid var(--hair);border-radius:4px;background:var(--surface)}
+  table{border-collapse:collapse;width:100%;min-width:560px;font-size:14px}
+  th,td{padding:9px 14px;text-align:left;border-bottom:1px solid var(--hair)}
+  thead th{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.08em;color:var(--muted);background:var(--surface-2);white-space:nowrap}
+  tbody tr:last-child td{border-bottom:none}
+  td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+
+  ul.news{list-style:none;margin:16px 0 0;padding:0;display:flex;flex-direction:column;gap:9px}
+  ul.news li{background:var(--surface);border:1px solid var(--hair);border-radius:4px;padding:12px 15px}
+  ul.news a{color:inherit;text-decoration:none;font-weight:700;line-height:1.55}
+  ul.news a:hover{color:var(--shu)}
+  ul.news .meta{display:block;margin-top:5px;font-family:var(--mono);font-size:11.5px;color:var(--faint)}
+
+  .note{margin-top:14px;padding:13px 15px;border-left:3px solid var(--amber);background:var(--amber-soft);border-radius:0 4px 4px 0;font-size:13.5px;line-height:1.75}
+  .note.bad{border-left-color:var(--shu);background:var(--shu-soft)}
+  .note h3{margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:.09em;color:var(--amber)}
+  .note.bad h3{color:var(--shu)}
+  .note ul{margin:0;padding-left:1.1em}
+
+  .foot{margin-top:44px;padding-top:14px;border-top:1px solid var(--hair);color:var(--faint);font-size:11.5px;line-height:1.8;font-family:var(--mono)}
+  .foot a{color:var(--steel)}
+  a:focus-visible{outline:2px solid var(--steel);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div>
+      <h1>ニュースダッシュボード</h1>
+      <p class="sub">日経ほかの見出しと市場指標／決定論のみ・判断は含みません</p>
+    </div>
+    <div class="stamp">
+      生成 <b id="gen">読み込み中…</b><br>
+      <span id="age"></span>
+    </div>
+  </header>
+
+  <div id="boot" class="note bad" hidden>
+    <h3>データを読み込めていません</h3>
+    <p id="boot-msg" style="margin:0"></p>
+  </div>
+
+  <main id="main" hidden>
+    <section>
+      <div class="sec-head"><span class="sec-num">01</span><h2>主要指標</h2></div>
+      <p class="sec-note">各タイルの右下は<b>その指標自身の基準日</b>。指標ごとに最終確定日が違うため、全体をまとめて「前営業日」とは呼びません。</p>
+      <div class="tiles" id="tiles"></div>
+      <div id="stale-note" class="note" hidden>
+        <h3>古い値</h3>
+        <ul id="stale-list"></ul>
+      </div>
+    </section>
+
+    <section>
+      <div class="sec-head"><span class="sec-num">02</span><h2>日本国債 利回り曲線</h2></div>
+      <p class="sec-note" id="jgb-note"></p>
+      <div id="jgb-body"></div>
+    </section>
+
+    <section>
+      <div class="sec-head"><span class="sec-num">03</span><h2>見出し</h2></div>
+      <p class="sec-note">日経・産経・読売のRSSから直近24時間。並びは配信の新しい順です。</p>
+      <div id="news-body"></div>
+    </section>
+
+    <section id="fail-sec" hidden>
+      <div class="sec-head"><span class="sec-num">04</span><h2>取得できなかったもの</h2></div>
+      <div class="note bad">
+        <h3>欠損</h3>
+        <ul id="fail-list"></ul>
+      </div>
+    </section>
+  </main>
+
+  <p class="foot">
+    データ: <a href="out/newsdash.json">out/newsdash.json</a>　／
+    株価・為替 yfinance、TOPIX Yahoo!ファイナンス日本、国債利回り 財務省「国債金利情報」、見出し 各社RSS<br>
+    自動生成・投資助言ではありません。数値は各出典の公表値そのままで、欠測は補間せず「取得失敗」と表示します。
+  </p>
+</div>
+
+<script>
+"use strict";
+// このページは out/newsdash.json だけを描画する。フォールバックのデモデータは持たない。
+// 取得に失敗したら、それを言う。もっともらしい数字を出すくらいなら何も出さない方がよい。
+const $ = (id) => document.getElementById(id);
+
+function fmtNum(v){
+  if (v === null || v === undefined) return "―";
+  const abs = Math.abs(v);
+  const d = abs >= 1000 ? 2 : abs >= 100 ? 2 : 3;
+  return v.toLocaleString("ja-JP", {minimumFractionDigits:d, maximumFractionDigits:d});
+}
+function fmtPct(v){
+  if (v === null || v === undefined) return {t:"―", c:"flat"};
+  const s = (v > 0 ? "+" : "") + v.toFixed(2) + "%";
+  return {t:s, c: v > 0 ? "up" : v < 0 ? "dn" : "flat"};
+}
+function mmdd(iso){ return iso ? String(iso).slice(5).replace("-","/") : "―"; }
+function esc(s){ const d = document.createElement("div"); d.textContent = s == null ? "" : String(s); return d.innerHTML; }
+
+function renderTiles(markets){
+  const stale = [];
+  $("tiles").innerHTML = markets.map(r => {
+    if (r.status){
+      return `<div class="tile is-fail"><div class="lbl">${esc(r.name)}</div>`
+           + `<div class="val">取得失敗</div><div class="asof">${esc(r.status)}</div></div>`;
+    }
+    const p = fmtPct(r.chg_pct);
+    if (r.stale) stale.push(r);
+    return `<div class="tile${r.stale ? " is-stale" : ""}">`
+         + `<div class="lbl">${esc(r.name)}</div>`
+         + `<div class="val">${fmtNum(r.close)}</div>`
+         + `<div class="chg ${p.c}">${p.t}</div>`
+         + `<div class="asof">${mmdd(r.as_of)}${r.stale ? " ⚠ 古い" : ""}</div></div>`;
+  }).join("");
+
+  if (stale.length){
+    $("stale-list").innerHTML = stale.map(r =>
+      `<li><b>${esc(r.name)}</b> — ${esc(r.stale_warning || "基準日が古い")}</li>`).join("");
+    $("stale-note").hidden = false;
+  }
+}
+
+function renderJgb(j){
+  if (!j || j.status){
+    $("jgb-note").textContent = "";
+    $("jgb-body").innerHTML = `<div class="note bad"><h3>取得できていません</h3>`
+      + `<p style="margin:0">${esc(j && j.status ? j.status : "データがありません")}</p></div>`;
+    return;
+  }
+  const tenors = Object.keys(j.curve);
+  $("jgb-note").innerHTML = `出典は財務省「国債金利情報」。<b>基準日 ${esc(j.base_date)}（${j.age_days}日前）</b>。`
+    + `公表は日次ですが当日中には載らないため、ここは常に過去日の値です。`;
+  const head = tenors.map(t => `<th style="text-align:right">${esc(t)}</th>`).join("");
+  const body = tenors.map(t => {
+    const v = j.curve[t];
+    return `<td class="num">${v === null || v === undefined ? "―" : v.toFixed(3)}</td>`;
+  }).join("");
+  const warn = j.stale
+    ? `<div class="note"><h3>更新が遅れています</h3><p style="margin:0">基準日が${j.age_days}日前です。`
+      + `財務省側の公表が止まっている可能性があります。</p></div>` : "";
+  $("jgb-body").innerHTML =
+    `<div class="tbl-wrap"><table><thead><tr><th>年限</th>${head}</tr></thead>`
+    + `<tbody><tr><td style="font-weight:700">利回り(%)</td>${body}</tr></tbody></table></div>${warn}`;
+}
+
+function renderNews(h){
+  const el = $("news-body");
+  if (!h || String(h.status || "").startsWith("全ソース取得失敗")){
+    const n = h && h.errors ? h.errors.length : 0;
+    el.innerHTML = `<div class="note bad"><h3>取得失敗</h3>`
+      + `<p style="margin:0">RSSに到達できていません（エラー${n}件）。<b>報道がゼロだったのではありません。</b></p></div>`;
+    return;
+  }
+  if (!h.items || !h.items.length){
+    el.innerHTML = `<div class="note"><h3>該当なし</h3>`
+      + `<p style="margin:0">直近24時間に該当する報道はありませんでした。取得は成功しています。</p></div>`;
+    return;
+  }
+  el.innerHTML = `<ul class="news">` + h.items.map(n => {
+    const t = esc(n.title);
+    const link = n.link ? `<a href="${esc(n.link)}" target="_blank" rel="noopener noreferrer">${t}</a>`
+                        : `<span style="font-weight:700">${t}</span>`;
+    return `<li>${link}<span class="meta">${esc(n.source || "")}　${esc(n.published || "")}</span></li>`;
+  }).join("") + `</ul>`;
+}
+
+function renderAge(genIso){
+  const gen = new Date(genIso);
+  $("gen").textContent = genIso.replace("T", " ").slice(0, 16) + " JST";
+  const mins = Math.round((Date.now() - gen.getTime()) / 60000);
+  const label = mins < 60 ? `${mins}分前`
+              : mins < 60 * 24 ? `${Math.floor(mins/60)}時間${mins%60}分前`
+              : `${Math.floor(mins/1440)}日前`;
+  const el = $("age");
+  el.textContent = "取得から " + label;
+  // 半日を超えたら赤くする。古い数字を平常時と同じ見た目で出さないため。
+  if (mins > 12 * 60) el.classList.add("warn");
+}
+
+(async function main(){
+  let d;
+  try {
+    const r = await fetch("out/newsdash.json?_=" + Date.now(), {cache: "no-store"});
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    d = await r.json();
+  } catch (e) {
+    $("boot-msg").textContent = "out/newsdash.json を読めませんでした（" + e.message
+      + "）。まだ一度も生成されていないか、公開に失敗しています。数値は表示しません。";
+    $("boot").hidden = false;
+    $("gen").textContent = "―";
+    return;
+  }
+  renderAge(d.generated_at);
+  renderTiles(d.markets || []);
+  renderJgb(d.jgb);
+  renderNews(d.headlines);
+  if (d.failed && d.failed.length){
+    $("fail-list").innerHTML = d.failed.map(x => `<li>${esc(x)}</li>`).join("");
+    $("fail-sec").hidden = false;
+  }
+  $("main").hidden = false;
+})();
+</script>
+</body>
+</html>
