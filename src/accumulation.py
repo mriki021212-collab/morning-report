@@ -520,10 +520,28 @@ def _universe_layer(cfg: dict, p: Params, out_dir: pathlib.Path, state: dict,
         meta["status"] = "ユニバース未構築（config で enabled: false）"
         return meta, []
 
-    # 土日はフル走査、平日は追跡のみ。明示指定があればそちらを優先する。
+    # 土日はフル走査、平日は追跡のみ（E）。明示指定があればそちらを優先する。
+    #
+    # ただし土日だけを条件にすると、本番では一度もフル走査が走らない。
+    # main.py は休場日に build_facts より手前で return するので、土日にこの関数まで
+    # 到達しない（実測 2026-09-06）。その結果、層2の候補が永久に作られず、
+    # 平日は「追跡対象ゼロ」を静かに出し続ける。
+    # そこで「前回フル走査からの経過日数」でも起動できるようにして、
+    # スケジューラの都合に関係なく週1回は必ず走るようにする。
+    interval = int(ucfg.get("full_scan_interval_days", 7))
+    last = state.get("last_full_scan")
     if full_scan is None:
-        full_scan = today.weekday() >= 5
+        if today.weekday() >= 5:
+            full_scan, why = True, "土日"
+        elif last is None:
+            full_scan, why = True, "フル走査の記録が無い"
+        else:
+            days = (today - dt.date.fromisoformat(last)).days
+            full_scan = days >= interval
+            why = f"前回フル走査から{days}日（閾値{interval}日）"
+        meta["scan_reason"] = why
     meta["scan_mode"] = "full" if full_scan else "tracking_only"
+    meta["last_full_scan"] = last
 
     if full_scan:
         u = universe_mod.members(cfg, out_dir)
@@ -567,6 +585,10 @@ def _universe_layer(cfg: dict, p: Params, out_dir: pathlib.Path, state: dict,
         chunk=f.get("chunk", 40), pause=f.get("pause_sec", 0.0))
 
     results = _analyze_layer(targets, frames, p, "universe", out_dir)
+    if full_scan:
+        # フル走査できた日だけ記録する。取得に失敗した回で記録すると、
+        # 次のフル走査が interval 日ぶん先送りされてしまう。
+        state["last_full_scan"] = today.isoformat()
     meta["status"] = None
     meta["n_targets"] = len(targets)
     meta["n_fetched"] = len(frames)

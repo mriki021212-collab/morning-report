@@ -203,6 +203,10 @@ accumulation:
       # フル走査日(土日)にユニバースが期限切れなら、その場で作り直す。
       # false にすると期限切れの週から層2が「未構築」のまま止まる。
       auto_rebuild: true
+      # フル走査の間隔（日）。土日に走らなかった場合の保険。
+      # main.py は休場日に早期returnするので、土日という条件だけでは
+      # 本番で一度もフル走査が走らない（2026-09-06実測）。
+      full_scan_interval_days: 7
 
       sources:
         nikkei225:
