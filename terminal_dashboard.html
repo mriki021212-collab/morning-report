@@ -314,6 +314,39 @@
   .acc-chk .lb{color:var(--mut)}
   .acc-chk .vl{color:var(--txt);font-variant-numeric:tabular-nums}
   .acc-ohlc{color:var(--mut);font-size:10px;margin-top:6px;font-variant-numeric:tabular-nums}
+
+  /* ---- スマホ: 10列の表をやめて1件=1カードに積み直す ----
+     幅375pxに840pxの表を入れると、1行読むのに横スクロールが要る。
+     列見出しは縦積みでは意味を失うので消し、代わりに各値へラベルを付ける
+     （「3.25倍」だけでは何の数字か分からなくなるため data-l を出す）。
+     PC側のCSSはこのブロックの外にあり、ここでは一切上書きしていない。 */
+  @media(max-width:680px){
+    .acc-grid{min-width:0}
+    .acc-hdr{display:none}
+    .acc-r{display:flex;flex-wrap:wrap;align-items:center;gap:3px 8px;padding:9px 8px}
+    .acc-r .dt{order:1;font-size:10.5px}
+    .acc-r .caret{order:2;margin-left:auto}
+    .acc-r .nm{order:3;flex:0 0 100%;font-size:12.5px;white-space:normal}
+    .acc-r .lay{order:4} .acc-r .knd{order:5} .acc-r .ern{order:6}
+    /* 数値は必ずタグ群の次の行から始める。タグと数字が混ざると読み取りにくい */
+    .acc-r .num[data-l="出来高"]{flex-basis:100%;margin-top:1px}
+    .acc-r .num{order:7;font-size:11px}
+    .acc-r .num[data-l]::before{content:attr(data-l) " ";color:var(--mut-dim);font-size:9.5px}
+    /* 層1のアクセントは inset shadow だと縦積みで細く見えるので左罫線にする */
+    .acc-r.core{box-shadow:none;border-left:2px solid var(--accent);padding-left:6px}
+    .acc-d{padding:10px 10px 12px}
+    .acc-d-grid{grid-template-columns:1fr;gap:12px}
+    .acc-chk li{grid-template-columns:16px 1fr;gap:4px 6px}
+    /* ラベルと値を2行に分ける。横1行だと数式が折り返して読めない */
+    .acc-chk .vl{grid-column:2}
+  }
+
+  /* リスク指標の表は列が多く、縮めると数字が潰れる。
+     スマホでは「意図した横スクロール領域」にして、パネルからのはみ出しを無くす。 */
+  @media(max-width:680px){
+    #matrix-body{overflow-x:auto}
+    table.mx{min-width:520px}
+  }
   .acc-tag{font-size:8.5px;border:1px solid var(--line);padding:0 3px;border-radius:2px;white-space:nowrap}
   .acc-tag.dist{color:var(--dn);border-color:var(--dn-dim)}
   .acc-tag.acc{color:var(--up);border-color:var(--up-dim)}
@@ -1599,13 +1632,13 @@ function accRow(x, kindTag, id){
               aria-expanded="false" aria-controls="accd-${id}">
     <span class="dt num">${esc(x.date)}</span>
     <span class="nm">${esc(x.name)}<span class="cd"> ${esc(x.code)}</span></span>
-    <span>${layerTag}</span>
-    <span>${kindTag}</span>
-    <span class="num">${accNum(x.vol_ratio)}倍</span>
-    <span class="num">${esc(crp)}</span>
-    <span class="num">${esc(chg)}</span>
-    <span>${ern}</span>
-    <span class="num">${esc(fourth)}</span>
+    <span class="lay">${layerTag}</span>
+    <span class="knd">${kindTag}</span>
+    <span class="num" data-l="出来高">${accNum(x.vol_ratio)}倍</span>
+    <span class="num" data-l="終値位置">${esc(crp)}</span>
+    <span class="num" data-l="前日比">${esc(chg)}</span>
+    <span class="ern">${ern}</span>
+    <span class="num" data-l="④">${esc(fourth)}</span>
     <span class="caret">▶</span>
   </div>
   <div class="acc-d-wrap" id="accd-${id}" hidden>${accDetail(x)}</div>`;

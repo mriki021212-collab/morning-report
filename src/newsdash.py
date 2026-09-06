@@ -198,8 +198,16 @@ def _score(title: str) -> tuple[int, list[str]]:
 
 
 def fetch_headlines(hours: int = 30) -> tuple[dict, list[str]]:
-    """新聞社RSSを集めて、株に関係する見出しだけを重要度付きで返す。"""
+    """新聞社RSSを集めて、株に関係する見出しだけを重要度付きで返す。
+
+    返す形は news_dashboard.html の renderNews() が読むものに合わせる（推測しない）:
+      status, window_hours, feeds_ok, feeds_total, collected, total, dropped,
+      items[], by_tier{高/中/低: [...]}, feeds[{label,status}]
+    by_tier であって by_category ではない。画面は重要度で並べる。
+    """
     items, failed, ok_sources = [], [], 0
+    collected, dropped = 0, 0
+    feeds: list[dict] = []
     cutoff = dt.datetime.now(dt.timezone.utc) - dt.timedelta(hours=hours)
 
     for name, path, category in SOURCES:
@@ -208,12 +216,15 @@ def fetch_headlines(hours: int = 30) -> tuple[dict, list[str]]:
             st = getattr(f, "status", 200)
             if st >= 400 or not f.entries:
                 failed.append(f"{name}: HTTP {st} / 記事0件")
+                feeds.append({"label": name, "status": f"HTTP {st} / 記事0件"})
                 continue
         except Exception as e:
             failed.append(f"{name}: {type(e).__name__}: {e}")
+            feeds.append({"label": name, "status": f"{type(e).__name__}: {e}"})
             continue
 
         ok_sources += 1
+        feeds.append({"label": name, "status": "ok"})
         for e in f.entries:
             title = (e.get("title") or "").strip()
             if not title:
@@ -222,9 +233,11 @@ def fetch_headlines(hours: int = 30) -> tuple[dict, list[str]]:
             when = dt.datetime(*t[:6], tzinfo=dt.timezone.utc) if t else None
             if when and when < cutoff:
                 continue
+            collected += 1
             score, hits = _score(title)
             if not hits:
-                continue  # 株に関係しない記事は載せない
+                dropped += 1   # 株に関係しない記事。件数は残して画面に出す
+                continue
             items.append({
                 "title": title,
                 "link": e.get("link") or "",
@@ -238,6 +251,7 @@ def fetch_headlines(hours: int = 30) -> tuple[dict, list[str]]:
 
     for name, path in KNOWN_DOWN:
         failed.append(f"{name}: 取得不可（{path} が403）")
+        feeds.append({"label": name, "status": f"取得不可（{path} が403）"})
 
     # 同じ記事が複数紙に出ることがある。題名で重複を落とす（先勝ち）。
     seen, uniq = set(), []
@@ -247,6 +261,10 @@ def fetch_headlines(hours: int = 30) -> tuple[dict, list[str]]:
         seen.add(it["title"])
         uniq.append(it)
 
+    # 画面は重要度で並べる。カテゴリは各見出しのチップとして出るだけ。
+    by_tier: dict[str, list] = {}
+    for it in uniq:
+        by_tier.setdefault(it["tier"], []).append(it)
     by_cat: dict[str, list] = {}
     for it in uniq:
         by_cat.setdefault(it["category"], []).append(it)
@@ -257,8 +275,22 @@ def fetch_headlines(hours: int = 30) -> tuple[dict, list[str]]:
         status = "該当する記事なし"
     else:
         status = "ok"
-    return {"status": status, "items": uniq, "by_category": by_cat,
-            "n_sources_ok": ok_sources, "n_sources": len(SOURCES)}, failed
+    return {
+        "status": status,
+        "window_hours": hours,
+        "feeds_ok": ok_sources,
+        "feeds_total": len(SOURCES) + len(KNOWN_DOWN),
+        "collected": collected,
+        "total": len(uniq),
+        "dropped": dropped,
+        "items": uniq,
+        "by_tier": by_tier,
+        # by_category は画面では使っていないが、Discord側(notify_news.py)が
+        # カテゴリ別にフィールドを作るので残す。
+        "by_category": by_cat,
+        "feeds": feeds,
+        "n_sources_ok": ok_sources, "n_sources": len(SOURCES),
+    }, failed
 
 
 # ---------------------------------------------------------------------------

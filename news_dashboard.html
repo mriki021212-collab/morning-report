@@ -102,6 +102,42 @@
   .foot{margin-top:44px;padding-top:14px;border-top:1px solid var(--hair);color:var(--faint);font-size:11.5px;line-height:1.8;font-family:var(--mono)}
   .foot a{color:var(--steel)}
   a:focus-visible{outline:2px solid var(--steel);outline-offset:2px}
+
+  /* ================= スマホ =================
+     この画面にはこれまでメディアクエリが1つも無く、PC用の寸法のまま縮小されていた。
+     PC側の指定はこのブロックの外にあり、ここでは上書きしていない。 */
+  @media(max-width:680px){
+    /* 左右の余白を削って本文の幅を稼ぐ。18px×2 は375pxでは大きい */
+    .wrap{padding:16px 12px 56px}
+    .masthead{padding:12px 0 10px}
+    .masthead .sub{font-size:12px}
+
+    /* 市況タイル: 178px下限だと375pxで1列になり、9個で縦に長くなりすぎる。
+       下限を下げて2列に落とす。数字は読めるサイズを保つ。 */
+    .tiles{grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}
+    .tile{padding:9px 10px}
+    .tile .lbl{font-size:11px}
+    .tile .val{font-size:17px}
+    .tile .chg{font-size:12px}
+    .tile .asof{font-size:10px;margin-top:3px}
+
+    /* 国債利回りの表は7列。横スクロールを残すと1画面で全体を見られないので、
+       余白と文字を詰めて 375px に収める（min-width を外すのが要点）。 */
+    table{min-width:0;font-size:12px;table-layout:fixed}
+    th,td{padding:7px 4px}
+    thead th{font-size:9.5px;letter-spacing:.02em}
+    th:first-child,td:first-child{width:52px}
+
+    /* 見出しカード: 余白を詰め、本文をやや小さく。行間は詰めすぎない */
+    ul.news li{padding:10px 11px}
+    ul.news a{font-size:14px;line-height:1.5}
+    ul.news .meta{font-size:10.5px}
+    .hits{font-size:10px}
+    .cat{margin-top:18px}
+    .cat-head{font-size:15px}
+    .note{padding:11px 12px;font-size:12.5px;line-height:1.65}
+    .foot{margin-top:28px;font-size:10.5px}
+  }
 </style>
 </head>
 <body>
