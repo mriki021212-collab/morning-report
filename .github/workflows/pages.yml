@@ -15,6 +15,7 @@ on:
       - out/quotes.json
       - out/earnings.json
       - out/newsdash.json
+      - out/accumulation.json
       - terminal_dashboard.html
       - news_dashboard.html
       - .github/workflows/pages.yml
@@ -51,6 +52,9 @@ jobs:
           # 「読めていない」と表示し、数値は一切出さない）。
           cp news_dashboard.html _site/news_dashboard.html
           if [ -f out/newsdash.json ]; then cp out/newsdash.json _site/out/newsdash.json; fi
+          # 買い集め検出。terminal_dashboard.html のパネルが直接 fetch する。
+          # 無ければパネルは「取得できていません」と出す（ゼロ件表示にはならない）。
+          if [ -f out/accumulation.json ]; then cp out/accumulation.json _site/out/accumulation.json; fi
 
       # 公開物が意図したファイルだけであることを毎回機械的に確認する。
       # config.yaml や .env が紛れ込んだら、Pagesに載る前にここで落とす。
@@ -58,7 +62,7 @@ jobs:
         run: |
           echo "--- _site contents ---"
           find _site -type f | sort
-          ALLOWED='_site/index.html _site/terminal_dashboard.html _site/news_dashboard.html _site/out/dashboard.json _site/out/quotes.json _site/out/earnings.json _site/out/newsdash.json'
+          ALLOWED='_site/index.html _site/terminal_dashboard.html _site/news_dashboard.html _site/out/dashboard.json _site/out/quotes.json _site/out/earnings.json _site/out/newsdash.json _site/out/accumulation.json'
           rc=0
           for f in $(find _site -type f); do
             case " $ALLOWED " in
