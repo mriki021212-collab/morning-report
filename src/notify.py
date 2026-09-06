@@ -283,7 +283,10 @@ def post(report: str, audit_result: str = "OK", facts: dict | None = None) -> No
             fields.append(_gap_field(facts))
         fields.append(_factcheck_field(audit_result))
         fields.append(_macro_field(facts))
-        fields.append(_news_field(facts))
+        # 📰主要ニュースは別チャンネル(notify_news.py)へ分離した。
+        # 株の話とニュースを分けたい、というのが分離の理由。
+        # _news_field() は消していない: 分離をやめる判断になったらここに戻すだけで済む。
+        # facts["news"] 自体は今も収集していて、添付の .md とダッシュボードには載る。
     fields.append(_dashboard_field())
 
     prefix = "afternoon" if afternoon else "morning"

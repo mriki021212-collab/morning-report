@@ -290,6 +290,42 @@ if (-not (Test-Path $quotesRunner)) {
     Write-Host "  task '$QuotesTask' registered (weekdays 09:00-15:30, every 15 min)" -Fore Green
 }
 
+# --- newspaper digest to the news Discord channel ---------------------------
+# Separate task, separate webhook, separate channel from the stock report.
+# The webhook lives in the NEWS_DISCORD_WEBHOOK_URL *user* environment variable.
+# It is deliberately NOT in this repository: the repo is public and a committed
+# webhook cannot be removed from git history.
+$NewsTask = "$TaskName-News"
+$newsRunner = "$Dest\run-news.ps1"
+if (-not (Test-Path $newsRunner)) {
+    Write-Host "  run-news.ps1 not found - skipping '$NewsTask'" -Fore Yellow
+} else {
+    if (-not [Environment]::GetEnvironmentVariable("NEWS_DISCORD_WEBHOOK_URL", "User")) {
+        Write-Host "  WARNING: NEWS_DISCORD_WEBHOOK_URL is not set (User scope)." -Fore Yellow
+        Write-Host "           The task will register but will exit without posting." -Fore Yellow
+    }
+    $nSettings = New-ScheduledTaskSettingsSet `
+        -StartWhenAvailable `
+        -DontStopIfGoingOnBatteries `
+        -ExecutionTimeLimit (New-TimeSpan -Minutes 20) `
+        -MultipleInstances IgnoreNew
+
+    $nAction = New-ScheduledTaskAction -Execute "powershell.exe" `
+        -Argument ("-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$newsRunner`"") `
+        -WorkingDirectory $Dest
+
+    # Three times per weekday: before the open, over lunch, after the close.
+    $days = "Monday","Tuesday","Wednesday","Thursday","Friday"
+    $nT1 = New-ScheduledTaskTrigger -Weekly -DaysOfWeek $days -At "09:30"
+    $nT2 = New-ScheduledTaskTrigger -Weekly -DaysOfWeek $days -At "12:35"
+    $nT3 = New-ScheduledTaskTrigger -Weekly -DaysOfWeek $days -At "15:45"
+
+    Register-ScheduledTask -TaskName $NewsTask -Action $nAction -Trigger $nT1,$nT2,$nT3 `
+        -Settings $nSettings -Force `
+        -Description "Newspaper digest to Discord (weekdays 09:30/12:35/15:45 JST)" | Out-Null
+    Write-Host "  task '$NewsTask' registered (weekdays 09:30 / 12:35 / 15:45)" -Fore Green
+}
+
 Write-Host "`n=== DONE ===" -Fore Cyan
 foreach ($p in $plan) {
     Get-ScheduledTask -TaskName $p.Name | Format-List TaskName, State

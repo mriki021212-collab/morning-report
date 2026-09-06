@@ -73,6 +73,17 @@ export ANTHROPIC_API_KEY=sk-ant-...
 export DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...
 python src/main.py --force      # 休場日でも強制実行
 ```
+
+新聞まとめは**別チャンネル・別Webhook**に出す（株の話とニュースを分けるため）。
+`DISCORD_WEBHOOK_URL` とは別に、以下を User 環境変数に置く:
+
+```powershell
+[Environment]::SetEnvironmentVariable('NEWS_DISCORD_WEBHOOK_URL','https://discord.com/api/webhooks/...','User')
+.\run-news.ps1 -Force           # 週末でも強制実行（平日は 09:30/12:35/15:45 に自動）
+```
+
+Webhookは**リポジトリに絶対に書かない**。このリポジトリはpublicで、一度コミットした
+Webhookはgitの履歴から消せない。`src/notify_news.py` は環境変数からしか読まない。
 `out/facts_YYYYMMDD.json` を目で見て、値が入っているか・null が何かを確認する。
 **ここで facts に無いものは、レポートにも絶対に出ない**（これが正しい挙動）。
 
