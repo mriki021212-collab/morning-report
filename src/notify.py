@@ -205,10 +205,17 @@ def _accumulation_field(facts: dict) -> dict | None:
         f = x.get("followup", {})
         lines.append(f"⏳ 候補追跡中[{_lt(x)}] {x['name']} {x['date']} "
                      f"({f.get('elapsed')}/{f.get('needed')}営業日)")
-    om = sum((a.get("universe_rows_omitted") or {}).values())
-    extra = len(dist) + len(acc) + len(trk) - len(lines) + om
-    if extra > 0:
-        lines.append(f"… 他{extra}件は添付の .md とダッシュボードに")
+    # 「埋め込みに入りきらなかった行」と「出力上限で捨てられた行」は別物。
+    # 前者は .md とダッシュボードで読めるが、後者はどこにも存在しない。
+    # まとめて「他N件は添付に」と書くと、存在しないものを在ると言うことになる。
+    not_shown = len(dist) + len(acc) + len(trk) - len(lines)
+    dropped = sum((a.get("universe_rows_omitted") or {}).values())
+    tail = []
+    if not_shown > 0:
+        tail.append(f"… 他{not_shown}件は添付の .md とダッシュボードに")
+    if dropped > 0:
+        tail.append(f"（層2はさらに{dropped}件が出力上限で未集計。該当ゼロではない）")
+    lines += tail
     return {"name": "🏦 買い集め/売り抜け検出", "value": "\n".join(lines)[:1024],
             "inline": False}
 
