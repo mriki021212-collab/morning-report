@@ -197,6 +197,12 @@ accumulation:
       mode: "nikkei225"
       cache_hours: 24        # 日経225リストのキャッシュ
       jpx_cache_hours: 168   # JPX一覧は週1更新なので長めでよい
+      # 構築済みユニバース(out/universe_jpx_filtered.json)の有効期限。
+      # 構成銘柄は毎週入れ替わるものではないので長めでよい。
+      universe_ttl_hours: 720   # 30日
+      # フル走査日(土日)にユニバースが期限切れなら、その場で作り直す。
+      # false にすると期限切れの週から層2が「未構築」のまま止まる。
+      auto_rebuild: true
 
       sources:
         nikkei225:

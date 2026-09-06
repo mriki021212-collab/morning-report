@@ -509,6 +509,20 @@ def _universe_layer(cfg: dict, p: Params, out_dir: pathlib.Path, state: dict,
 
     if full_scan:
         u = universe_mod.members(cfg, out_dir)
+        # フル走査日にユニバースが古い/未構築なら、その場で作り直す。
+        # ここで作り直さないと、ユニバースのTTLが切れた週から層2が黙って止まり、
+        # 画面は「未構築」を出し続ける（間違った値は出ないが、機能が死んでいることに
+        # 気づくのが遅れる）。重い処理なのでフル走査日だけに限る。
+        if (u.get("members") is None and ucfg.get("mode") == "jpx_filtered"
+                and ucfg.get("auto_rebuild", True)):
+            meta["rebuilt"] = True
+            meta["rebuild_reason"] = u.get("status")
+            try:
+                universe_mod.build_jpx_universe(cfg, out_dir, verbose=False)
+                u = universe_mod.members(cfg, out_dir)
+            except Exception as e:
+                u = {"status": f"ユニバースの再構築に失敗: {type(e).__name__}: {e}",
+                     "members": None}
         if u.get("members") is None:
             # 取得できなければ層1のみで動作する（Cのとおり）。ゼロ件にはしない。
             meta["status"] = u.get("status") or "ユニバースを取得できていません"
