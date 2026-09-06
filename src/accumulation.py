@@ -650,8 +650,11 @@ def build(cfg: dict, hist: dict, out_dir: pathlib.Path, fetch=None,
         for r in all_results:
             for sp in r.get("spikes", []):
                 if str(sp.get("kind", "")).startswith(kind_prefix):
+                    # ③U/D比は銘柄単位の値だが、画面の詳細表示で根拠として併記したい。
+                    # 行に持たせないと、画面側が results を引き直す必要が出る
+                    # （層2の results は件数の都合でJSONに出していない）。
                     row = {"code": r["code"], "name": r["name"],
-                           "layer": r["layer"], **sp}
+                           "layer": r["layer"], "ud": r.get("ud"), **sp}
                     (core_rows if r["layer"] == "core" else uni_rows).append(row)
         for rows in (core_rows, uni_rows):
             rows.sort(key=lambda x: (x["date"], x["code"]), reverse=True)
