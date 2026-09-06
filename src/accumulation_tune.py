@@ -102,7 +102,9 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--layer", default="universe", choices=["core", "universe", "both"])
     ap.add_argument("--period", default="10y")
-    ap.add_argument("--horizon", type=int, default=20)
+    # 既定を60にする。20営業日は集積の評価には短すぎることが実測で分かった
+    # (20日 -0.63pt / 60日 +2.12pt / 120日 +4.55pt)。docs/accumulation.md 参照。
+    ap.add_argument("--horizon", type=int, default=60)
     ap.add_argument("--json", default="out/accumulation_tune.json")
     args = ap.parse_args()
 
