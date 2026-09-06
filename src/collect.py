@@ -214,6 +214,56 @@ def market_lag(driver: str, follower: str) -> int:
     return 1 if (not is_asia(driver) and is_asia(follower)) else 0
 
 
+def fetch_ohlcv_batch(codes: list[str], period: str = "3y", chunk: int = 40,
+                      pause: float = 0.0) -> tuple[dict[str, pd.DataFrame], dict[str, str]]:
+    """複数銘柄のOHLCV日足をまとめて取る。
+
+    fetch_history() は1銘柄1リクエストで2004年から全部取る。層1の13銘柄ならそれでよいが、
+    数百銘柄でそれをやるとリクエスト数がそのまま数百になり、時間もレート制限も現実的でない。
+    yf.download() は1リクエストで複数銘柄を返せるので、こちらを使う。
+
+    period は「買い集め判定に要る長さ」だけあればよい（min_history_days=300営業日）。
+    3y ≒ 730営業日で、300営業日の要件に対して十分な余裕がある。
+
+    返り値: ({code: DataFrame}, {code: 失敗理由})
+    取れなかった銘柄は空DataFrameで埋めず、失敗辞書に理由付きで入れる
+    （「データが無い」と「取りに行って失敗した」を呼び出し側で区別できるようにするため）。
+    """
+    import time
+
+    out: dict[str, pd.DataFrame] = {}
+    failed: dict[str, str] = {}
+    for i in range(0, len(codes), chunk):
+        batch = codes[i:i + chunk]
+        try:
+            raw = yf.download(batch, period=period, auto_adjust=False, group_by="ticker",
+                              threads=True, progress=False, actions=False)
+        except Exception as e:
+            for c in batch:
+                failed[c] = f"{type(e).__name__}: {e}"
+            continue
+
+        for c in batch:
+            try:
+                # 1銘柄だけのバッチでは MultiIndex にならないことがある
+                df = raw[c] if isinstance(raw.columns, pd.MultiIndex) else raw
+            except KeyError:
+                failed[c] = "応答に含まれていない"
+                continue
+            if df is None or df.empty or "Close" not in df.columns:
+                failed[c] = "空の応答"
+                continue
+            df = df.dropna(subset=["Close"])
+            if df.empty:
+                failed[c] = "終値が全てNaN"
+                continue
+            df.index = pd.to_datetime(df.index).tz_localize(None)
+            out[c] = df
+        if pause:
+            time.sleep(pause)
+    return out, failed
+
+
 def live_quote(code: str) -> dict | None:
     """
     分足で「現在値」と「その値がいつのものか」を取る。

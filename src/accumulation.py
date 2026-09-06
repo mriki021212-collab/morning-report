@@ -427,15 +427,135 @@ def core_targets(cfg: dict, p: Params) -> list[dict]:
     return out
 
 
-def build(cfg: dict, hist: dict, out_dir: pathlib.Path,
-          fetch=None, today: dt.date | None = None) -> dict:
-    """層1を判定して out/accumulation.json の中身を作る。
+def _needs_earnings(d: pd.DataFrame, p: Params) -> bool:
+    """この銘柄の決算日をTDnetに照会する必要があるか。
+
+    照会が要るのは「画面に出るスパイク」を持つ銘柄だけ。出来高が2倍でも終値位置が
+    中間(0.3〜0.7)の日は候補にも逆アラートにもならないので、決算かどうかを問う意味が無い。
+    層2(数百銘柄)ではこの1条件で照会数が減る（225銘柄で実測 174→141）。
+    """
+    s = max(p.vol_sma_days + 1, len(d) - p.scan_days)
+    w = d.iloc[s:]
+    m = w["vol_ratio"] >= p.vol_spike_ratio
+    if not bool(m.any()):
+        return False
+    crp = w["crp"][m]
+    return bool(((crp >= p.crp_high) | (crp <= p.crp_low)).any())
+
+
+def _analyze_layer(targets: list[dict], frames: dict, p: Params, layer: str,
+                   out_dir: pathlib.Path) -> list[dict]:
+    """1つの層ぶんの判定。決算日の照会もここで層単位にまとめる。"""
+    import earnings as earnings_mod
+
+    prepared: dict[str, pd.DataFrame] = {}
+    want_earn: list[str] = []
+    need = {"Open", "High", "Low", "Close", "Volume"}
+    for t in targets:
+        df = frames.get(t["code"])
+        if df is None or df.empty or len(df) < p.min_history_days:
+            continue
+        if not need.issubset(df.columns):
+            continue
+        d = prepare(df, p)
+        prepared[t["code"]] = d
+        if _needs_earnings(d, p):
+            want_earn.append(t["code"])
+
+    earn_map: dict[str, dict] = {}
+    if want_earn:
+        try:
+            earn_map = earnings_mod.past_announcements(
+                want_earn, out_dir=out_dir,
+                cache_hours=p.earn_cache_hours, limit=p.earn_tdnet_limit)
+        except Exception as e:
+            # 決算日が取れなくても判定自体は続ける。ただし全スパイクが「判別不可」になる。
+            earn_map = {c: {"status": f"取得失敗: {type(e).__name__}: {e}",
+                            "announcements": None, "covers_from": None} for c in want_earn}
+    # 照会しなかった銘柄は「取得失敗」ではなく「取りに行く必要が無かった」。
+    # 同じ文言にすると、決算日が取れていない銘柄と見分けがつかなくなる。
+    skipped = {"status": "判別対象のスパイクが無いため決算日は照会していない",
+               "announcements": None, "covers_from": None}
+
+    return [analyze(t["code"], t["name"], frames.get(t["code"]),
+                    earn_map.get(t["code"], skipped), p, layer,
+                    prepared=prepared.get(t["code"])) for t in targets]
+
+
+def _universe_layer(cfg: dict, p: Params, out_dir: pathlib.Path, state: dict,
+                    today: dt.date, full_scan: bool | None) -> tuple[dict, list[dict]]:
+    """層2。週1回はユニバース全体、平日は候補フラグが立っている銘柄だけを追跡する。
+
+    数百銘柄を毎朝 yfinance で叩くと失敗しやすいので二段構えにする（Eのとおり）。
+    候補フラグは out/accumulation_state.json に永続化してあり、翌営業日以降も引き継げる。
+    """
+    import collect
+    import universe as universe_mod
+
+    ucfg = p.layers["universe"]
+    meta = {"label": ucfg["label"], "note": ucfg.get("note"),
+            "enabled": bool(ucfg.get("enabled")), "mode": ucfg.get("mode"),
+            "filters": ucfg.get("filters"), "results": [], "n_targets": 0}
+
+    if not ucfg.get("enabled"):
+        # 「該当ゼロ」ではなく「未構築」。空配列だけで表現すると画面で区別がつかない。
+        meta["status"] = "ユニバース未構築（config で enabled: false）"
+        return meta, []
+
+    # 土日はフル走査、平日は追跡のみ。明示指定があればそちらを優先する。
+    if full_scan is None:
+        full_scan = today.weekday() >= 5
+    meta["scan_mode"] = "full" if full_scan else "tracking_only"
+
+    if full_scan:
+        u = universe_mod.members(cfg, out_dir)
+        if u.get("members") is None:
+            # 取得できなければ層1のみで動作する（Cのとおり）。ゼロ件にはしない。
+            meta["status"] = u.get("status") or "ユニバースを取得できていません"
+            return meta, []
+        targets = [{"code": m["code"], "name": m["name"]} for m in u["members"]]
+        meta["source"] = u.get("source")
+        meta["universe_as_of"] = u.get("as_of")
+        # 日経の構成銘柄一覧は著作物なので、母集団の中身は公開JSONに出さない。
+        meta["members_published"] = bool(u.get("publishable"))
+    else:
+        codes = tracking_codes(state)
+        names = {c["code"]: c["name"] for c in state.get("candidates", {}).values()}
+        targets = [{"code": c, "name": names.get(c, c)} for c in codes]
+        meta["source"] = "out/accumulation_state.json の候補フラグ"
+        if not targets:
+            meta["status"] = None
+            meta["n_targets"] = 0
+            meta["note_today"] = "追跡中の候補なし（週1回のフル走査で候補が立つ）"
+            return meta, []
+
+    f = ucfg.get("fetch") or {}
+    frames, failed = collect.fetch_ohlcv_batch(
+        [t["code"] for t in targets], period=f.get("period", "3y"),
+        chunk=f.get("chunk", 40), pause=f.get("pause_sec", 0.0))
+
+    results = _analyze_layer(targets, frames, p, "universe", out_dir)
+    meta["status"] = None
+    meta["n_targets"] = len(targets)
+    meta["n_fetched"] = len(frames)
+    meta["fetch_failed"] = [{"code": c, "name": next((t["name"] for t in targets
+                                                      if t["code"] == c), c), "error": why}
+                            for c, why in failed.items()]
+    # 層2は数百銘柄になるので results 全件はJSONに出さない（ファイルが肥大化し、
+    # ダッシュボードの読み込みが重くなる）。シグナルになった行は下の集計に載る。
+    meta["results"] = []
+    meta["results_omitted"] = len(results)
+    return meta, results
+
+
+def build(cfg: dict, hist: dict, out_dir: pathlib.Path, fetch=None,
+          today: dt.date | None = None, full_scan: bool | None = None) -> dict:
+    """層1＋層2を判定して out/accumulation.json の中身を作る。
 
     hist: main.py が既に取得済みの {code: OHLCV DataFrame}。使い回して再取得を避ける。
     fetch: hist に無い銘柄を取りに行く関数（collect.fetch_history）。
+    full_scan: 層2をフル走査するか。None なら土日だけフル走査（Eのとおり）。
     """
-    import earnings as earnings_mod
-
     p = Params(cfg)
     today = today or dt.datetime.now(JST).date()
     targets = core_targets(cfg, p)
@@ -453,70 +573,45 @@ def build(cfg: dict, hist: dict, out_dir: pathlib.Path,
                 df = None
         frames[t["code"]] = df
 
-    # 決算日は「スパイクが1本でもある銘柄」だけ取りに行く。層2で数百銘柄になった時に
-    # 毎回全銘柄ぶんTDnetを叩かないための順序（先に安い計算で絞る）。
-    # ここで作った prepared は analyze に渡して使い回す（同じ計算を2回しない）。
-    prepared: dict[str, pd.DataFrame] = {}
-    has_spike: list[str] = []
-    for t in targets:
-        df = frames.get(t["code"])
-        if df is None or df.empty or len(df) < p.min_history_days:
-            continue
-        if not {"Open", "High", "Low", "Close", "Volume"}.issubset(df.columns):
-            continue
-        d = prepare(df, p)
-        prepared[t["code"]] = d
-        scan_from = max(p.vol_sma_days + 1, len(d) - p.scan_days)
-        if bool((d["vol_ratio"].iloc[scan_from:] >= p.vol_spike_ratio).any()):
-            has_spike.append(t["code"])
-
-    earn_map: dict[str, dict] = {}
-    if has_spike:
-        try:
-            earn_map = earnings_mod.past_announcements(
-                has_spike, out_dir=out_dir,
-                cache_hours=p.earn_cache_hours, limit=p.earn_tdnet_limit)
-        except Exception as e:
-            # 決算日が取れなくても判定自体は続ける。ただし全スパイクが「判別不可」になる。
-            earn_map = {c: {"status": f"取得失敗: {type(e).__name__}: {e}",
-                            "announcements": None, "covers_from": None} for c in has_spike}
-    # スパイクが無い銘柄は「取得失敗」ではなく「取りに行く必要が無かった」。
-    # 同じ文言にすると、決算日が取れていない銘柄と見分けがつかなくなる。
-    skipped = {"status": "スパイクが無いため決算日は照会していない（判別対象のスパイクなし）",
-               "announcements": None, "covers_from": None}
-
-    results = [analyze(t["code"], t["name"], frames.get(t["code"]),
-                       earn_map.get(t["code"], skipped), p, "core",
-                       prepared=prepared.get(t["code"])) for t in targets]
+    core_results = _analyze_layer(targets, frames, p, "core", out_dir)
 
     state = load_state(out_dir)
-    state = update_state(state, results, p, today)
+    uni_meta, uni_results = _universe_layer(cfg, p, out_dir, state, today, full_scan)
+
+    all_results = core_results + uni_results
+    state = update_state(state, all_results, p, today)
     save_state(state, out_dir)
 
-    def _collect(kind_prefix: str) -> list[dict]:
-        rows = []
-        for r in results:
+    # 公開するシグナル行の上限。理由は2つ:
+    #   1) 層2が数百銘柄になると1リストが100件超になり、ダッシュボードが読む
+    #      accumulation.json が肥大化する（225銘柄の時点で92KB）。
+    #   2) ユニバースの出典によっては、母集団の大部分を並べること自体が
+    #      銘柄一覧の再配布に近づく（日経225の構成銘柄一覧は日経の著作物）。
+    # 層1は保有・監視の13銘柄なので常に全件出す。切るのは層2だけ。
+    max_rows = int((p.raw.get("publish") or {}).get("max_universe_rows", 20))
+    truncated: dict[str, int] = {}
+
+    def _collect(kind_prefix: str, key: str) -> list[dict]:
+        core_rows, uni_rows = [], []
+        for r in all_results:
             for sp in r.get("spikes", []):
                 if str(sp.get("kind", "")).startswith(kind_prefix):
-                    rows.append({"code": r["code"], "name": r["name"],
-                                 "layer": r["layer"], **sp})
-        rows.sort(key=lambda x: (x["date"], x["code"]), reverse=True)
-        return rows
+                    row = {"code": r["code"], "name": r["name"],
+                           "layer": r["layer"], **sp}
+                    (core_rows if r["layer"] == "core" else uni_rows).append(row)
+        for rows in (core_rows, uni_rows):
+            rows.sort(key=lambda x: (x["date"], x["code"]), reverse=True)
+        kept_uni = uni_rows[:max_rows]
+        # 「上限で切った」と「該当がそれだけだった」を区別できるよう件数を残す。
+        truncated[key] = len(uni_rows) - len(kept_uni)
+        return core_rows + kept_uni
 
+    # 日数不足は層1だけ列挙する。層2は数百銘柄あり、上場が新しい銘柄が毎回大量に並ぶと
+    # 「保有株の判定が落ちている」という重要な情報が埋もれる。層2は件数だけ持つ。
     insufficient = [{"code": r["code"], "name": r["name"], "layer": r["layer"],
                      "reason": r["status"], "history_days": r.get("history_days")}
-                    for r in results if r.get("status")]
-
-    ucfg = p.layers["universe"]
-    universe = {
-        "label": ucfg["label"],
-        "enabled": bool(ucfg.get("enabled")),
-        # enabled が false のうちは「該当ゼロ」ではなく「未構築」。ここを空配列だけで
-        # 表現すると、画面上でゼロ件と区別がつかなくなる。
-        "status": None if ucfg.get("enabled") else "ユニバース未構築（Step3未実施）",
-        "results": [], "n_targets": 0,
-        "filters": ucfg.get("filters"), "source": ucfg.get("source"),
-    }
+                    for r in core_results if r.get("status")]
+    uni_meta["n_insufficient"] = sum(1 for r in uni_results if r.get("status"))
 
     return {
         "as_of": dt.datetime.now(JST).isoformat(timespec="seconds"),
@@ -531,20 +626,24 @@ def build(cfg: dict, hist: dict, out_dir: pathlib.Path,
                 "status": None,
                 "n_targets": len(targets),
                 "fetch_failed": fetch_failed,
-                "results": results,
+                "results": core_results,
             },
-            "universe": universe,
+            "universe": uni_meta,
         },
-        "accumulation": _collect("集積"),
-        "distribution": _collect("売り抜け"),
-        "tracking": _collect("候補（追跡中）"),
+        "accumulation": _collect("集積", "accumulation"),
+        "distribution": _collect("売り抜け", "distribution"),
+        "tracking": _collect("候補（追跡中）", "tracking"),
+        # 層2で上限を超えて出さなかった件数。0 と「そもそも該当ゼロ」は別物。
+        "universe_rows_omitted": truncated,
+        "max_universe_rows": max_rows,
         "insufficient": insufficient,
         "candidates_tracked": len(state.get("candidates", {})),
     }
 
 
-def write(cfg: dict, hist: dict, out_dir: pathlib.Path, fetch=None) -> dict:
-    data = build(cfg, hist, out_dir, fetch=fetch)
+def write(cfg: dict, hist: dict, out_dir: pathlib.Path, fetch=None,
+          full_scan: bool | None = None) -> dict:
+    data = build(cfg, hist, out_dir, fetch=fetch, full_scan=full_scan)
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "accumulation.json").write_text(
         json.dumps(data, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
@@ -560,11 +659,17 @@ if __name__ == "__main__":
 
     ROOT = pathlib.Path(__file__).resolve().parents[1]
     cfg = yaml.safe_load((ROOT / "config.yaml").read_text(encoding="utf-8"))
-    data = write(cfg, {}, ROOT / "out", fetch=collect.fetch_history)
-    print(f"targets={data['layers']['core']['n_targets']} "
-          f"accumulation={len(data['accumulation'])} "
+    # --full / --tracking で層2の走査モードを明示できる（既定は土日だけフル走査）
+    fs = True if "--full" in sys.argv else False if "--tracking" in sys.argv else None
+    data = write(cfg, {}, ROOT / "out", fetch=collect.fetch_history, full_scan=fs)
+    u = data["layers"]["universe"]
+    print(f"層1 targets={data['layers']['core']['n_targets']} / "
+          f"層2 {u.get('scan_mode') or '-'} targets={u.get('n_targets', 0)} "
+          f"status={u.get('status')}")
+    print(f"accumulation={len(data['accumulation'])} "
           f"distribution={len(data['distribution'])} "
           f"tracking={len(data['tracking'])} "
-          f"insufficient={len(data['insufficient'])}")
+          f"insufficient(層1)={len(data['insufficient'])} "
+          f"candidates={data['candidates_tracked']}")
     for r in data["insufficient"]:
         print(f"  除外 {r['code']} {r['name']}: {r['reason']}")

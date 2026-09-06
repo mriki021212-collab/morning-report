@@ -173,6 +173,12 @@ accumulation:
     # 1銘柄あたりTDnetから何件の開示を遡るか。ここで届かない過去は「判別不可」にする。
     tdnet_limit: 300
 
+  # 公開する accumulation.json の行数上限（層2のみに適用。層1は常に全件）。
+  # ダッシュボードの読み込みを軽く保つため、および出典によっては母集団の大部分を
+  # 並べること自体が銘柄一覧の再配布に近づくため。切った件数はJSONに残す。
+  publish:
+    max_universe_rows: 20
+
   # ===== 2層構成 =====
   # 層1と層2は目的が違う。混ぜて1つのランキングにしないこと。
   layers:
@@ -184,18 +190,45 @@ accumulation:
     universe:
       label: "層2 攻め（発掘ユニバース）"
       note: "本来スクリーナーである手法を成立させるための母集団。週1回フル走査する。"
-      # Step3 で構築するまでは false。false の間、画面には「未構築」と出る（ゼロ件ではない）。
-      enabled: false
+      # false の間、画面には「未構築」と出る（ゼロ件ではない）。
+      enabled: true
+      # nikkei225    … Step2。約225銘柄で一括取得と処理時間を確認するための規模テスト用
+      # jpx_filtered … Step3。JPX上場銘柄一覧にサイズ・流動性フィルタを掛けた本番ユニバース
+      mode: "nikkei225"
+      cache_hours: 24        # 日経225リストのキャッシュ
+      jpx_cache_hours: 168   # JPX一覧は週1更新なので長めでよい
+
+      sources:
+        nikkei225:
+          name: "日経平均株価 構成銘柄ウエート (日本経済新聞社)"
+          # HTMLの構成銘柄ページは Cloudflare のボット判定で中身が返らない(2026-09-06実測)。
+          # このCSVは直接取得できる。文字コードは cp932。
+          url: "https://indexes.nikkei.co.jp/nkave/archives/file/nikkei_stock_average_weight_jp.csv"
+          # 日経の著作物。構成銘柄の一覧そのものを公開物(out/accumulation.json・
+          # ダッシュボード)に出さないこと。判定結果の個別行を出すのは再配布ではない。
+          redistributable: false
+        jpx_listed:
+          name: "JPX 上場銘柄一覧"
+          # 拡張子は .xlsx。.xls のURLは404になる(2026-09-06実測)。
+          url: "https://www.jpx.co.jp/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_j.xlsx"
+          redistributable: true
+
       filters:
         market_cap_min_oku: 300     # 億円。小さすぎると個人の単発注文でスパイクが立つ
         market_cap_max_oku: 5000    # 億円。大きすぎると機関の買いが出来高に痕跡を残さない
-        avg_turnover_min_oku: 3     # 億円。直近20日の平均売買代金
+        avg_turnover_min_oku: 3     # 億円。直近20日の平均売買代金（終値×出来高の実測）
         avg_turnover_days: 20
         min_listed_bdays: 300       # min_history_days と揃える（④の計算に必要な履歴長）
-        exclude_keywords: ["ETF", "ETN", "REIT", "投資法人", "整理", "内国株預託証券"]
-      source:
-        name: "JPX 上場銘柄一覧 (Excel)"
-        url: "https://www.jpx.co.jp/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_j.xls"
+        # JPXの規模区分での一次足切り。時価総額300〜5,000億円の帯に入りえない区分を落とす。
+        # Core30/Large70 は明らかに5,000億円超なので、価格データを取りに行く前に外す。
+        exclude_sizes: ["TOPIX Core30", "TOPIX Large70"]
+        # 株式以外(ETF/REIT/PRO Market/外国株)は universe.py の _EXCLUDE_SEGMENTS で落とす。
+
+      # 一括取得の設定。数百銘柄を1銘柄1リクエストで取るとレート制限に当たる。
+      fetch:
+        period: "3y"   # min_history_days=300営業日に対して十分な余裕
+        chunk: 40      # yf.download 1回あたりの銘柄数
+        pause_sec: 0.0
 
 # ===== アナログ（過去チャート類似）検索 =====
 analog:
