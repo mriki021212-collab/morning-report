@@ -194,7 +194,7 @@ accumulation:
       enabled: true
       # nikkei225    … Step2。約225銘柄で一括取得と処理時間を確認するための規模テスト用
       # jpx_filtered … Step3。JPX上場銘柄一覧にサイズ・流動性フィルタを掛けた本番ユニバース
-      mode: "nikkei225"
+      mode: "jpx_filtered"
       cache_hours: 24        # 日経225リストのキャッシュ
       jpx_cache_hours: 168   # JPX一覧は週1更新なので長めでよい
       # 構築済みユニバース(out/universe_jpx_filtered.json)の有効期限。

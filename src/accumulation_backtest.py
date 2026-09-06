@@ -119,12 +119,31 @@ def main() -> None:
     ap.add_argument("--horizon", type=int, default=20,
                     help="シグナル確定日から何営業日後の騰落率を見るか")
     ap.add_argument("--codes", default=None, help="カンマ区切り。既定は層1の全銘柄")
+    ap.add_argument("--layer", default="core", choices=["core", "universe", "both"],
+                    help="検証対象の層。universe は層2ユニバース全体（重い）")
     ap.add_argument("--json", default=None, help="結果をこのパスにJSONで書き出す")
+    ap.add_argument("--period", default="10y",
+                    help="一括取得する期間（31銘柄以上のとき使う）。長いほど検証は厚いが遅い")
     args = ap.parse_args()
 
     cfg = yaml.safe_load((ROOT / "config.yaml").read_text(encoding="utf-8"))
     p = acc.Params(cfg)
-    targets = acc.core_targets(cfg, p)
+
+    targets = []
+    if args.layer in ("core", "both"):
+        targets += acc.core_targets(cfg, p)
+    if args.layer in ("universe", "both"):
+        import universe as universe_mod
+        cfg["accumulation"]["layers"]["universe"]["enabled"] = True
+        u = universe_mod.members(cfg, ROOT / "out")
+        if u.get("members") is None:
+            print(f"層2を取得できていません: {u.get('status')}")
+            if args.layer == "universe":
+                return
+        else:
+            have = {t["code"] for t in targets}
+            targets += [{"code": m["code"], "name": m["name"]}
+                        for m in u["members"] if m["code"] not in have]
     if args.codes:
         want = {c.strip() for c in args.codes.split(",")}
         targets = [t for t in targets if t["code"] in want]
@@ -134,8 +153,15 @@ def main() -> None:
           f"閾値 vol>={p.vol_spike_ratio} CRP>={p.crp_high} N={p.followup_days} "
           f"U/D>={p.ud_min}\n")
 
+    # 銘柄数が多い時は一括取得に切り替える。1銘柄1リクエストだと数百銘柄で現実的でない。
+    batch: dict = {}
+    if len(targets) > 30:
+        batch, bfail = collect.fetch_ohlcv_batch(
+            [t["code"] for t in targets], period=args.period, chunk=40)
+        print(f"一括取得({args.period}): 成功{len(batch)} / 失敗{len(bfail)}\n")
+
     for t in targets:
-        df = collect.fetch_history(t["code"])
+        df = batch.get(t["code"]) if batch else collect.fetch_history(t["code"])
         if df is None or df.empty:
             excluded.append({"code": t["code"], "name": t["name"],
                              "reason": "株価データを取得できていません"})

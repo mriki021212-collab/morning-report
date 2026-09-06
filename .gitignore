@@ -23,6 +23,10 @@ out/*
 # 過去の決算発表日のキャッシュ。過去日は変わらないので共有してよく、
 # 共有するぶんだけ TDnet API を叩く回数が減る。
 !out/earnings_past.json
+# 構築済みの層2ユニバース。JPXの公開データ由来で再配布に制約は無い。
+# コミットしないと GitHub Actions 側で層2が「未構築」のまま動かない。
+# universe_jpx_listed.json(786KB) はその素材キャッシュなので上げない。
+!out/universe_jpx_filtered.json
 # 検証スクリプトの出力は再現可能なので上げない（300KB超・毎回変わる）
 out/accumulation_backtest.json
 

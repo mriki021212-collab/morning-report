@@ -1,0 +1,5069 @@
+{
+ "status": "ok",
+ "source": "JPX 上場銘柄一覧",
+ "url": "https://www.jpx.co.jp/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_j.xlsx",
+ "as_of": "20260831",
+ "built_at": "2026-09-06T16:48:48+09:00",
+ "elapsed_sec": 704.6,
+ "filters": {
+  "market_cap_min_oku": 300,
+  "market_cap_max_oku": 5000,
+  "avg_turnover_min_oku": 3,
+  "avg_turnover_days": 20,
+  "min_listed_bdays": 300,
+  "exclude_sizes": [
+   "TOPIX Core30",
+   "TOPIX Large70"
+  ]
+ },
+ "funnel": {
+  "listed_total": 4441,
+  "after_primary": 3601,
+  "primary_dropped": {
+   "segment": 734,
+   "not_4char_code": 7,
+   "size": 99
+  },
+  "price_fetched": 3601,
+  "price_fetch_failed": 0,
+  "after_liquidity": 1039,
+  "after_market_cap": 718
+ },
+ "rejected_sample": {
+  "141A.T": "時価総額 5,096億円 > 5000億円",
+  "150A.T": "時価総額 42億円 < 300億円",
+  "1605.T": "時価総額 43,932億円 > 5000億円",
+  "1721.T": "時価総額 6,199億円 > 5000億円",
+  "1801.T": "時価総額 20,686億円 > 5000億円"
+ },
+ "n": 718,
+ "members": [
+  {
+   "code": "1332.T",
+   "name": "ニッスイ",
+   "industry": "水産・農林業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3728.7
+  },
+  {
+   "code": "1333.T",
+   "name": "Ｕｍｉｏｓ",
+   "industry": "水産・農林業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 1935.1
+  },
+  {
+   "code": "1377.T",
+   "name": "サカタのタネ",
+   "industry": "水産・農林業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1836.2
+  },
+  {
+   "code": "1407.T",
+   "name": "ウエストホールディングス",
+   "industry": "建設業",
+   "size": "-",
+   "market_cap_oku": 937.1
+  },
+  {
+   "code": "1414.T",
+   "name": "ショーボンドホールディングス",
+   "industry": "建設業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2537.1
+  },
+  {
+   "code": "1417.T",
+   "name": "ミライト・ワン",
+   "industry": "建設業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3094.1
+  },
+  {
+   "code": "1419.T",
+   "name": "タマホーム",
+   "industry": "建設業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 829.9
+  },
+  {
+   "code": "1514.T",
+   "name": "住石ホールディングス",
+   "industry": "鉱業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 391.6
+  },
+  {
+   "code": "1515.T",
+   "name": "日鉄鉱業",
+   "industry": "鉱業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2643.7
+  },
+  {
+   "code": "1518.T",
+   "name": "三井松島ホールディングス",
+   "industry": "その他製品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 847.6
+  },
+  {
+   "code": "1662.T",
+   "name": "石油資源開発",
+   "industry": "鉱業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 4800.0
+  },
+  {
+   "code": "1663.T",
+   "name": "Ｋ＆Ｏエナジーグループ",
+   "industry": "鉱業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1056.2
+  },
+  {
+   "code": "166A.T",
+   "name": "タスキホールディングス",
+   "industry": "不動産業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 681.4
+  },
+  {
+   "code": "167A.T",
+   "name": "リョーサン菱洋ホールディングス",
+   "industry": "卸売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1281.2
+  },
+  {
+   "code": "1719.T",
+   "name": "安藤・間",
+   "industry": "建設業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3005.9
+  },
+  {
+   "code": "1720.T",
+   "name": "東急建設",
+   "industry": "建設業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1243.4
+  },
+  {
+   "code": "1723.T",
+   "name": "日本電技",
+   "industry": "建設業",
+   "size": "-",
+   "market_cap_oku": 1481.8
+  },
+  {
+   "code": "1815.T",
+   "name": "鉄建建設",
+   "industry": "建設業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 622.7
+  },
+  {
+   "code": "1820.T",
+   "name": "西松建設",
+   "industry": "建設業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2217.8
+  },
+  {
+   "code": "1833.T",
+   "name": "奥村組",
+   "industry": "建設業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2075.3
+  },
+  {
+   "code": "1835.T",
+   "name": "東鉄工業",
+   "industry": "建設業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1369.1
+  },
+  {
+   "code": "1852.T",
+   "name": "淺沼組",
+   "industry": "建設業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 712.6
+  },
+  {
+   "code": "1860.T",
+   "name": "戸田建設",
+   "industry": "建設業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4485.0
+  },
+  {
+   "code": "1861.T",
+   "name": "熊谷組",
+   "industry": "建設業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2193.9
+  },
+  {
+   "code": "186A.T",
+   "name": "アストロスケールホールディングス",
+   "industry": "サービス業",
+   "size": "-",
+   "market_cap_oku": 1449.0
+  },
+  {
+   "code": "1870.T",
+   "name": "矢作建設工業",
+   "industry": "建設業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 922.8
+  },
+  {
+   "code": "1879.T",
+   "name": "新日本建設",
+   "industry": "建設業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 1329.5
+  },
+  {
+   "code": "1882.T",
+   "name": "東亜道路工業",
+   "industry": "建設業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 743.5
+  },
+  {
+   "code": "1885.T",
+   "name": "東亜建設工業",
+   "industry": "建設業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1613.9
+  },
+  {
+   "code": "1893.T",
+   "name": "五洋建設",
+   "industry": "建設業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3907.6
+  },
+  {
+   "code": "1899.T",
+   "name": "福田組",
+   "industry": "建設業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 729.0
+  },
+  {
+   "code": "1909.T",
+   "name": "日本ドライケミカル",
+   "industry": "機械",
+   "size": "-",
+   "market_cap_oku": 990.8
+  },
+  {
+   "code": "1926.T",
+   "name": "ライト工業",
+   "industry": "建設業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1562.1
+  },
+  {
+   "code": "1934.T",
+   "name": "ユアテック",
+   "industry": "建設業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1779.0
+  },
+  {
+   "code": "1941.T",
+   "name": "中電工",
+   "industry": "建設業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2721.2
+  },
+  {
+   "code": "1945.T",
+   "name": "東京エネシス",
+   "industry": "建設業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 697.2
+  },
+  {
+   "code": "1946.T",
+   "name": "トーエネック",
+   "industry": "建設業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 2080.5
+  },
+  {
+   "code": "1950.T",
+   "name": "日本電設工業",
+   "industry": "建設業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2333.6
+  },
+  {
+   "code": "1952.T",
+   "name": "新日本空調",
+   "industry": "建設業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1428.0
+  },
+  {
+   "code": "1961.T",
+   "name": "三機工業",
+   "industry": "建設業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 3657.2
+  },
+  {
+   "code": "1965.T",
+   "name": "テクノ菱和",
+   "industry": "建設業",
+   "size": "-",
+   "market_cap_oku": 1398.3
+  },
+  {
+   "code": "1968.T",
+   "name": "太平電業",
+   "industry": "建設業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1571.3
+  },
+  {
+   "code": "1975.T",
+   "name": "朝日工業社",
+   "industry": "建設業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1000.1
+  },
+  {
+   "code": "1979.T",
+   "name": "大氣社",
+   "industry": "建設業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2428.6
+  },
+  {
+   "code": "1980.T",
+   "name": "ダイダン",
+   "industry": "建設業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 3541.1
+  },
+  {
+   "code": "1982.T",
+   "name": "日比谷総合設備",
+   "industry": "建設業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 1234.6
+  },
+  {
+   "code": "2001.T",
+   "name": "ニップン",
+   "industry": "食料品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2441.1
+  },
+  {
+   "code": "2121.T",
+   "name": "ＭＩＸＩ",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2387.1
+  },
+  {
+   "code": "2124.T",
+   "name": "ジェイエイシーリクルートメント",
+   "industry": "サービス業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1544.4
+  },
+  {
+   "code": "2127.T",
+   "name": "日本Ｍ＆Ａセンターホールディングス",
+   "industry": "サービス業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2094.3
+  },
+  {
+   "code": "212A.T",
+   "name": "フィットイージー",
+   "industry": "サービス業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 483.6
+  },
+  {
+   "code": "2146.T",
+   "name": "ＵＴグループ",
+   "industry": "サービス業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1285.9
+  },
+  {
+   "code": "2154.T",
+   "name": "オープンアップグループ",
+   "industry": "サービス業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1689.0
+  },
+  {
+   "code": "2157.T",
+   "name": "コシダカホールディングス",
+   "industry": "サービス業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 851.1
+  },
+  {
+   "code": "215A.T",
+   "name": "タイミー",
+   "industry": "サービス業",
+   "size": "-",
+   "market_cap_oku": 1674.6
+  },
+  {
+   "code": "2160.T",
+   "name": "ジーエヌアイグループ",
+   "industry": "医薬品",
+   "size": "-",
+   "market_cap_oku": 1890.2
+  },
+  {
+   "code": "2170.T",
+   "name": "リンクアンドモチベーション",
+   "industry": "サービス業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 691.6
+  },
+  {
+   "code": "2175.T",
+   "name": "エス・エム・エス",
+   "industry": "サービス業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2066.8
+  },
+  {
+   "code": "219A.T",
+   "name": "Ｈｅａｒｔｓｅｅｄ",
+   "industry": "医薬品",
+   "size": "-",
+   "market_cap_oku": 512.0
+  },
+  {
+   "code": "2201.T",
+   "name": "森永製菓",
+   "industry": "食料品",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2121.9
+  },
+  {
+   "code": "2206.T",
+   "name": "江崎グリコ",
+   "industry": "食料品",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3028.3
+  },
+  {
+   "code": "2220.T",
+   "name": "亀田製菓",
+   "industry": "食料品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 847.5
+  },
+  {
+   "code": "2222.T",
+   "name": "寿スピリッツ",
+   "industry": "食料品",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4089.4
+  },
+  {
+   "code": "2229.T",
+   "name": "カルビー",
+   "industry": "食料品",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3699.9
+  },
+  {
+   "code": "2264.T",
+   "name": "森永乳業",
+   "industry": "食料品",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3550.7
+  },
+  {
+   "code": "2270.T",
+   "name": "雪印メグミルク",
+   "industry": "食料品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2251.2
+  },
+  {
+   "code": "2292.T",
+   "name": "Ｓ　Ｆｏｏｄｓ",
+   "industry": "食料品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 887.2
+  },
+  {
+   "code": "2296.T",
+   "name": "伊藤ハム米久ホールディングス",
+   "industry": "食料品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2860.2
+  },
+  {
+   "code": "2317.T",
+   "name": "システナ",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1619.3
+  },
+  {
+   "code": "2326.T",
+   "name": "デジタルアーツ",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 608.8
+  },
+  {
+   "code": "2353.T",
+   "name": "日本駐車場開発",
+   "industry": "不動産業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 837.0
+  },
+  {
+   "code": "2379.T",
+   "name": "ディップ",
+   "industry": "サービス業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 949.7
+  },
+  {
+   "code": "2384.T",
+   "name": "ＳＢＳホールディングス",
+   "industry": "陸運業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1997.8
+  },
+  {
+   "code": "2432.T",
+   "name": "ディー・エヌ・エー",
+   "industry": "情報・通信業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2423.8
+  },
+  {
+   "code": "2433.T",
+   "name": "博報堂ＤＹホールディングス",
+   "industry": "サービス業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4861.3
+  },
+  {
+   "code": "247A.T",
+   "name": "Ａｉロボティクス",
+   "industry": "化学",
+   "size": "-",
+   "market_cap_oku": 676.8
+  },
+  {
+   "code": "2492.T",
+   "name": "インフォマート",
+   "industry": "サービス業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1866.1
+  },
+  {
+   "code": "2531.T",
+   "name": "宝ホールディングス",
+   "industry": "食料品",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4704.7
+  },
+  {
+   "code": "255A.T",
+   "name": "ジーエルテクノホールディングス",
+   "industry": "精密機器",
+   "size": "-",
+   "market_cap_oku": 661.6
+  },
+  {
+   "code": "256A.T",
+   "name": "飛島ホールディングス",
+   "industry": "建設業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 418.6
+  },
+  {
+   "code": "2585.T",
+   "name": "ライフドリンク　カンパニー",
+   "industry": "食料品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 799.6
+  },
+  {
+   "code": "2590.T",
+   "name": "ダイドーグループホールディングス",
+   "industry": "食料品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 952.8
+  },
+  {
+   "code": "2593.T",
+   "name": "伊藤園",
+   "industry": "食料品",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3672.4
+  },
+  {
+   "code": "2602.T",
+   "name": "日清オイリオグループ",
+   "industry": "食料品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1895.0
+  },
+  {
+   "code": "2607.T",
+   "name": "不二製油",
+   "industry": "食料品",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3883.0
+  },
+  {
+   "code": "262A.T",
+   "name": "インターメスティック",
+   "industry": "小売業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 537.9
+  },
+  {
+   "code": "2659.T",
+   "name": "サンエー",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2018.0
+  },
+  {
+   "code": "2664.T",
+   "name": "カワチ薬品",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 838.7
+  },
+  {
+   "code": "2678.T",
+   "name": "アスクル",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1137.1
+  },
+  {
+   "code": "2681.T",
+   "name": "ゲオホールディングス",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 964.4
+  },
+  {
+   "code": "2685.T",
+   "name": "アンドエスティＨＤ",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1515.3
+  },
+  {
+   "code": "268A.T",
+   "name": "リガク・ホールディングス",
+   "industry": "精密機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 3680.6
+  },
+  {
+   "code": "2695.T",
+   "name": "くら寿司",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1383.1
+  },
+  {
+   "code": "2726.T",
+   "name": "パルグループホールディングス",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2687.3
+  },
+  {
+   "code": "2730.T",
+   "name": "エディオン",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2656.2
+  },
+  {
+   "code": "2737.T",
+   "name": "トーメンデバイス",
+   "industry": "卸売業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 2247.7
+  },
+  {
+   "code": "2760.T",
+   "name": "東京エレクトロン　デバイス",
+   "industry": "卸売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1211.8
+  },
+  {
+   "code": "2767.T",
+   "name": "円谷フィールズホールディングス",
+   "industry": "卸売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1553.2
+  },
+  {
+   "code": "2780.T",
+   "name": "コメ兵ホールディングス",
+   "industry": "小売業",
+   "size": "-",
+   "market_cap_oku": 527.5
+  },
+  {
+   "code": "2782.T",
+   "name": "セリア",
+   "industry": "小売業",
+   "size": "-",
+   "market_cap_oku": 2879.8
+  },
+  {
+   "code": "2784.T",
+   "name": "アルフレッサ　ホールディングス",
+   "industry": "卸売業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4049.3
+  },
+  {
+   "code": "278A.T",
+   "name": "Ｔｅｒｒａ　Ｄｒｏｎｅ",
+   "industry": "精密機器",
+   "size": "-",
+   "market_cap_oku": 1989.3
+  },
+  {
+   "code": "2805.T",
+   "name": "ヱスビー食品",
+   "industry": "食料品",
+   "size": "-",
+   "market_cap_oku": 1769.7
+  },
+  {
+   "code": "2810.T",
+   "name": "ハウス食品グループ本社",
+   "industry": "食料品",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3481.9
+  },
+  {
+   "code": "2811.T",
+   "name": "カゴメ",
+   "industry": "食料品",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2476.3
+  },
+  {
+   "code": "2815.T",
+   "name": "アリアケジャパン",
+   "industry": "食料品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1726.2
+  },
+  {
+   "code": "2874.T",
+   "name": "横浜冷凍",
+   "industry": "卸売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1278.8
+  },
+  {
+   "code": "287A.T",
+   "name": "黒田グループ",
+   "industry": "卸売業",
+   "size": "-",
+   "market_cap_oku": 491.1
+  },
+  {
+   "code": "290A.T",
+   "name": "Ｓｙｎｓｐｅｃｔｉｖｅ",
+   "industry": "情報・通信業",
+   "size": "-",
+   "market_cap_oku": 1946.2
+  },
+  {
+   "code": "2918.T",
+   "name": "わらべや日洋ホールディングス",
+   "industry": "食料品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 482.9
+  },
+  {
+   "code": "2980.T",
+   "name": "ＳＲＥホールディングス",
+   "industry": "不動産業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 391.7
+  },
+  {
+   "code": "2986.T",
+   "name": "ＬＡホールディングス",
+   "industry": "不動産業",
+   "size": "-",
+   "market_cap_oku": 648.5
+  },
+  {
+   "code": "3002.T",
+   "name": "グンゼ",
+   "industry": "繊維製品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1283.6
+  },
+  {
+   "code": "3034.T",
+   "name": "クオールホールディングス",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 855.8
+  },
+  {
+   "code": "3036.T",
+   "name": "アルコニックス",
+   "industry": "卸売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 992.0
+  },
+  {
+   "code": "3040.T",
+   "name": "ソリトンシステムズ",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 436.6
+  },
+  {
+   "code": "3046.T",
+   "name": "ジンズホールディングス",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1330.7
+  },
+  {
+   "code": "3048.T",
+   "name": "ビックカメラ",
+   "industry": "小売業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2993.5
+  },
+  {
+   "code": "3050.T",
+   "name": "ＤＣＭホールディングス",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2187.5
+  },
+  {
+   "code": "3076.T",
+   "name": "あい　ホールディングス",
+   "industry": "卸売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1600.9
+  },
+  {
+   "code": "3087.T",
+   "name": "ドトール・日レスホールディングス",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1412.0
+  },
+  {
+   "code": "3093.T",
+   "name": "トレジャー・ファクトリー",
+   "industry": "小売業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 440.7
+  },
+  {
+   "code": "3097.T",
+   "name": "物語コーポレーション",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2192.7
+  },
+  {
+   "code": "3101.T",
+   "name": "東洋紡",
+   "industry": "化学",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1443.7
+  },
+  {
+   "code": "3103.T",
+   "name": "ユニチカ",
+   "industry": "繊維製品",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 821.6
+  },
+  {
+   "code": "3104.T",
+   "name": "富士紡ホールディングス",
+   "industry": "繊維製品",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 1122.8
+  },
+  {
+   "code": "3105.T",
+   "name": "日清紡ホールディングス",
+   "industry": "電気機器",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3498.0
+  },
+  {
+   "code": "3106.T",
+   "name": "倉敷紡績",
+   "industry": "繊維製品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1724.2
+  },
+  {
+   "code": "3107.T",
+   "name": "ダイワボウホールディングス",
+   "industry": "卸売業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3250.7
+  },
+  {
+   "code": "3116.T",
+   "name": "トヨタ紡織",
+   "industry": "輸送用機器",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4093.1
+  },
+  {
+   "code": "3156.T",
+   "name": "レスター",
+   "industry": "卸売業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 1467.7
+  },
+  {
+   "code": "3167.T",
+   "name": "ＴＯＫＡＩホールディングス",
+   "industry": "卸売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1725.9
+  },
+  {
+   "code": "3176.T",
+   "name": "三洋貿易",
+   "industry": "卸売業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 670.6
+  },
+  {
+   "code": "3186.T",
+   "name": "ネクステージ",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2532.1
+  },
+  {
+   "code": "3191.T",
+   "name": "ジョイフル本田",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1344.7
+  },
+  {
+   "code": "319A.T",
+   "name": "技術承継機構",
+   "industry": "金属製品",
+   "size": "-",
+   "market_cap_oku": 1839.9
+  },
+  {
+   "code": "3222.T",
+   "name": "ユナイテッド・スーパーマーケット・ホールディングス",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1737.6
+  },
+  {
+   "code": "3245.T",
+   "name": "ディア・ライフ",
+   "industry": "不動産業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 566.2
+  },
+  {
+   "code": "3252.T",
+   "name": "地主",
+   "industry": "不動産業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 600.8
+  },
+  {
+   "code": "325A.T",
+   "name": "ＴＥＮＴＩＡＬ",
+   "industry": "繊維製品",
+   "size": "-",
+   "market_cap_oku": 408.0
+  },
+  {
+   "code": "3276.T",
+   "name": "ＪＰＭＣ",
+   "industry": "不動産業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 376.0
+  },
+  {
+   "code": "3299.T",
+   "name": "ムゲンエステート",
+   "industry": "不動産業",
+   "size": "-",
+   "market_cap_oku": 408.1
+  },
+  {
+   "code": "3350.T",
+   "name": "メタプラネット",
+   "industry": "卸売業",
+   "size": "-",
+   "market_cap_oku": 3754.2
+  },
+  {
+   "code": "3360.T",
+   "name": "シップヘルスケアホールディングス",
+   "industry": "卸売業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2191.8
+  },
+  {
+   "code": "336A.T",
+   "name": "ダイナミックマッププラットフォーム",
+   "industry": "情報・通信業",
+   "size": "-",
+   "market_cap_oku": 323.0
+  },
+  {
+   "code": "3387.T",
+   "name": "クリエイト・レストランツ・ホールディングス",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 3504.3
+  },
+  {
+   "code": "3397.T",
+   "name": "トリドールホールディングス",
+   "industry": "小売業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3770.5
+  },
+  {
+   "code": "3399.T",
+   "name": "丸千代山岡家",
+   "industry": "小売業",
+   "size": "-",
+   "market_cap_oku": 800.8
+  },
+  {
+   "code": "3401.T",
+   "name": "帝人",
+   "industry": "繊維製品",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3350.9
+  },
+  {
+   "code": "3433.T",
+   "name": "トーカロ",
+   "industry": "金属製品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1619.9
+  },
+  {
+   "code": "3443.T",
+   "name": "川田テクノロジーズ",
+   "industry": "金属製品",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 688.7
+  },
+  {
+   "code": "3445.T",
+   "name": "ＲＳ　Ｔｅｃｈｎｏｌｏｇｉｅｓ",
+   "industry": "金属製品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1492.1
+  },
+  {
+   "code": "3449.T",
+   "name": "テクノフレックス",
+   "industry": "金属製品",
+   "size": "-",
+   "market_cap_oku": 719.8
+  },
+  {
+   "code": "3465.T",
+   "name": "ケイアイスター不動産",
+   "industry": "不動産業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1016.8
+  },
+  {
+   "code": "3480.T",
+   "name": "ジェイ・エス・ビー",
+   "industry": "不動産業",
+   "size": "-",
+   "market_cap_oku": 1885.8
+  },
+  {
+   "code": "3498.T",
+   "name": "霞ヶ関キャピタル",
+   "industry": "不動産業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1835.5
+  },
+  {
+   "code": "3543.T",
+   "name": "コメダホールディングス",
+   "industry": "卸売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1320.7
+  },
+  {
+   "code": "3549.T",
+   "name": "クスリのアオキホールディングス",
+   "industry": "小売業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4005.5
+  },
+  {
+   "code": "3569.T",
+   "name": "セーレン",
+   "industry": "繊維製品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1994.1
+  },
+  {
+   "code": "3591.T",
+   "name": "ワコールホールディングス",
+   "industry": "繊維製品",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2040.8
+  },
+  {
+   "code": "3608.T",
+   "name": "ＴＳＩホールディングス",
+   "industry": "繊維製品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 709.9
+  },
+  {
+   "code": "3612.T",
+   "name": "ワールド",
+   "industry": "繊維製品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1228.4
+  },
+  {
+   "code": "3660.T",
+   "name": "アイスタイル",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 534.2
+  },
+  {
+   "code": "3661.T",
+   "name": "エムアップホールディングス",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 575.7
+  },
+  {
+   "code": "3663.T",
+   "name": "セルシス",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 544.1
+  },
+  {
+   "code": "3673.T",
+   "name": "ブロードリーフ",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 878.8
+  },
+  {
+   "code": "3687.T",
+   "name": "フィックスターズ",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 681.0
+  },
+  {
+   "code": "3692.T",
+   "name": "ＦＦＲＩセキュリティ",
+   "industry": "情報・通信業",
+   "size": "-",
+   "market_cap_oku": 498.3
+  },
+  {
+   "code": "3697.T",
+   "name": "ＳＨＩＦＴ",
+   "industry": "情報・通信業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2317.1
+  },
+  {
+   "code": "3762.T",
+   "name": "テクマトリックス",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 987.0
+  },
+  {
+   "code": "3765.T",
+   "name": "ガンホー・オンライン・エンターテイメント",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1323.3
+  },
+  {
+   "code": "3778.T",
+   "name": "さくらインターネット",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1460.9
+  },
+  {
+   "code": "3825.T",
+   "name": "リミックスポイント",
+   "industry": "小売業",
+   "size": "-",
+   "market_cap_oku": 347.5
+  },
+  {
+   "code": "3844.T",
+   "name": "コムチュア",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 421.9
+  },
+  {
+   "code": "3863.T",
+   "name": "日本製紙",
+   "industry": "パルプ・紙",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1505.9
+  },
+  {
+   "code": "3891.T",
+   "name": "ニッポン高度紙工業",
+   "industry": "パルプ・紙",
+   "size": "-",
+   "market_cap_oku": 697.1
+  },
+  {
+   "code": "3905.T",
+   "name": "データセクション",
+   "industry": "情報・通信業",
+   "size": "-",
+   "market_cap_oku": 572.8
+  },
+  {
+   "code": "3923.T",
+   "name": "ラクス",
+   "industry": "情報・通信業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3992.6
+  },
+  {
+   "code": "3932.T",
+   "name": "アカツキ",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 531.5
+  },
+  {
+   "code": "3941.T",
+   "name": "レンゴー",
+   "industry": "パルプ・紙",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3792.1
+  },
+  {
+   "code": "3946.T",
+   "name": "トーモク",
+   "industry": "パルプ・紙",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 722.2
+  },
+  {
+   "code": "3964.T",
+   "name": "オークネット",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 1229.3
+  },
+  {
+   "code": "3989.T",
+   "name": "シェアリングテクノロジー",
+   "industry": "情報・通信業",
+   "size": "-",
+   "market_cap_oku": 364.5
+  },
+  {
+   "code": "3993.T",
+   "name": "ＰＫＳＨＡ　Ｔｅｃｈｎｏｌｏｇｙ",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 990.7
+  },
+  {
+   "code": "3994.T",
+   "name": "マネーフォワード",
+   "industry": "情報・通信業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3721.7
+  },
+  {
+   "code": "4008.T",
+   "name": "住友精化",
+   "industry": "化学",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 938.8
+  },
+  {
+   "code": "4022.T",
+   "name": "ラサ工業",
+   "industry": "化学",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 766.0
+  },
+  {
+   "code": "4023.T",
+   "name": "クレハ",
+   "industry": "化学",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1737.1
+  },
+  {
+   "code": "4028.T",
+   "name": "石原産業",
+   "industry": "化学",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1161.3
+  },
+  {
+   "code": "4041.T",
+   "name": "日本曹達",
+   "industry": "化学",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2077.1
+  },
+  {
+   "code": "4043.T",
+   "name": "トクヤマ",
+   "industry": "化学",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2804.4
+  },
+  {
+   "code": "4044.T",
+   "name": "セントラル硝子",
+   "industry": "化学",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1104.5
+  },
+  {
+   "code": "4045.T",
+   "name": "東亞合成",
+   "industry": "化学",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 1938.1
+  },
+  {
+   "code": "4046.T",
+   "name": "大阪ソーダ",
+   "industry": "化学",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2405.2
+  },
+  {
+   "code": "4047.T",
+   "name": "関東電化工業",
+   "industry": "化学",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1229.1
+  },
+  {
+   "code": "4061.T",
+   "name": "デンカ",
+   "industry": "化学",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2797.2
+  },
+  {
+   "code": "4071.T",
+   "name": "プラスアルファ・コンサルティング",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 872.3
+  },
+  {
+   "code": "4078.T",
+   "name": "堺化学工業",
+   "industry": "化学",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 622.6
+  },
+  {
+   "code": "4082.T",
+   "name": "第一稀元素化学工業",
+   "industry": "化学",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 620.7
+  },
+  {
+   "code": "4092.T",
+   "name": "日本化学工業",
+   "industry": "化学",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 456.4
+  },
+  {
+   "code": "4095.T",
+   "name": "日本パーカライジング",
+   "industry": "化学",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1841.5
+  },
+  {
+   "code": "4099.T",
+   "name": "四国化成ホールディングス",
+   "industry": "化学",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 1915.9
+  },
+  {
+   "code": "4107.T",
+   "name": "伊勢化学工業",
+   "industry": "化学",
+   "size": "-",
+   "market_cap_oku": 2002.6
+  },
+  {
+   "code": "4109.T",
+   "name": "ステラ　ケミファ",
+   "industry": "化学",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 648.3
+  },
+  {
+   "code": "4114.T",
+   "name": "日本触媒",
+   "industry": "化学",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3821.5
+  },
+  {
+   "code": "4118.T",
+   "name": "カネカ",
+   "industry": "化学",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3673.7
+  },
+  {
+   "code": "4165.T",
+   "name": "プレイド",
+   "industry": "情報・通信業",
+   "size": "-",
+   "market_cap_oku": 302.8
+  },
+  {
+   "code": "417A.T",
+   "name": "ブルーゾーンホールディングス",
+   "industry": "小売業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3881.3
+  },
+  {
+   "code": "4180.T",
+   "name": "Ａｐｐｉｅｒ　Ｇｒｏｕｐ",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1543.9
+  },
+  {
+   "code": "4187.T",
+   "name": "大阪有機化学工業",
+   "industry": "化学",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 870.4
+  },
+  {
+   "code": "4189.T",
+   "name": "ＫＨネオケム",
+   "industry": "化学",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1155.3
+  },
+  {
+   "code": "4194.T",
+   "name": "ビジョナル",
+   "industry": "情報・通信業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3677.3
+  },
+  {
+   "code": "4202.T",
+   "name": "ダイセル",
+   "industry": "化学",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3702.4
+  },
+  {
+   "code": "4205.T",
+   "name": "日本ゼオン",
+   "industry": "化学",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4703.3
+  },
+  {
+   "code": "4206.T",
+   "name": "アイカ工業",
+   "industry": "化学",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2586.7
+  },
+  {
+   "code": "4208.T",
+   "name": "ＵＢＥ",
+   "industry": "化学",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3343.7
+  },
+  {
+   "code": "4220.T",
+   "name": "リケンテクノス",
+   "industry": "化学",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 1162.0
+  },
+  {
+   "code": "4259.T",
+   "name": "エクサウィザーズ",
+   "industry": "情報・通信業",
+   "size": "-",
+   "market_cap_oku": 818.3
+  },
+  {
+   "code": "4272.T",
+   "name": "日本化薬",
+   "industry": "化学",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2996.8
+  },
+  {
+   "code": "4275.T",
+   "name": "カーリット",
+   "industry": "化学",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 425.2
+  },
+  {
+   "code": "4290.T",
+   "name": "プレステージ・インターナショナル",
+   "industry": "サービス業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 855.6
+  },
+  {
+   "code": "4368.T",
+   "name": "扶桑化学工業",
+   "industry": "化学",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 3050.1
+  },
+  {
+   "code": "4369.T",
+   "name": "トリケミカル研究所",
+   "industry": "化学",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 996.0
+  },
+  {
+   "code": "4373.T",
+   "name": "シンプレクス・ホールディングス",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2697.5
+  },
+  {
+   "code": "4390.T",
+   "name": "ＩＰＳ",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 531.5
+  },
+  {
+   "code": "4392.T",
+   "name": "ＦＩＧ",
+   "industry": "情報・通信業",
+   "size": "-",
+   "market_cap_oku": 363.8
+  },
+  {
+   "code": "4401.T",
+   "name": "ＡＤＥＫＡ",
+   "industry": "化学",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4413.4
+  },
+  {
+   "code": "4413.T",
+   "name": "ボードルア",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 924.6
+  },
+  {
+   "code": "4419.T",
+   "name": "Ｆｉｎａｔｅｘｔホールディングス",
+   "industry": "情報・通信業",
+   "size": "-",
+   "market_cap_oku": 729.7
+  },
+  {
+   "code": "4431.T",
+   "name": "スマレジ",
+   "industry": "情報・通信業",
+   "size": "-",
+   "market_cap_oku": 681.9
+  },
+  {
+   "code": "4432.T",
+   "name": "ウイングアーク１ｓｔ",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1174.3
+  },
+  {
+   "code": "4443.T",
+   "name": "Ｓａｎｓａｎ",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2793.0
+  },
+  {
+   "code": "4461.T",
+   "name": "第一工業製薬",
+   "industry": "化学",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 1384.7
+  },
+  {
+   "code": "4471.T",
+   "name": "三洋化成工業",
+   "industry": "化学",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1378.2
+  },
+  {
+   "code": "4475.T",
+   "name": "ＨＥＮＮＧＥ",
+   "industry": "情報・通信業",
+   "size": "-",
+   "market_cap_oku": 518.7
+  },
+  {
+   "code": "4477.T",
+   "name": "ＢＡＳＥ",
+   "industry": "情報・通信業",
+   "size": "-",
+   "market_cap_oku": 399.6
+  },
+  {
+   "code": "4478.T",
+   "name": "フリー",
+   "industry": "情報・通信業",
+   "size": "-",
+   "market_cap_oku": 2461.4
+  },
+  {
+   "code": "4480.T",
+   "name": "メドレー",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 771.5
+  },
+  {
+   "code": "4481.T",
+   "name": "ベース",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 608.9
+  },
+  {
+   "code": "4483.T",
+   "name": "ＪＭＤＣ",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2339.6
+  },
+  {
+   "code": "4516.T",
+   "name": "日本新薬",
+   "industry": "医薬品",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2324.0
+  },
+  {
+   "code": "4521.T",
+   "name": "科研製薬",
+   "industry": "医薬品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1484.4
+  },
+  {
+   "code": "4540.T",
+   "name": "ツムラ",
+   "industry": "医薬品",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2768.6
+  },
+  {
+   "code": "4544.T",
+   "name": "Ｈ．Ｕ．グループホールディングス",
+   "industry": "サービス業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 1923.2
+  },
+  {
+   "code": "4549.T",
+   "name": "栄研化学",
+   "industry": "医薬品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 771.7
+  },
+  {
+   "code": "4553.T",
+   "name": "東和薬品",
+   "industry": "医薬品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1762.4
+  },
+  {
+   "code": "4559.T",
+   "name": "ゼリア新薬工業",
+   "industry": "医薬品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 874.1
+  },
+  {
+   "code": "4565.T",
+   "name": "ネクセラファーマ",
+   "industry": "医薬品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1041.7
+  },
+  {
+   "code": "4569.T",
+   "name": "杏林製薬",
+   "industry": "医薬品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 660.1
+  },
+  {
+   "code": "4587.T",
+   "name": "ペプチドリーム",
+   "industry": "医薬品",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 1373.6
+  },
+  {
+   "code": "4588.T",
+   "name": "オンコリスバイオファーマ",
+   "industry": "医薬品",
+   "size": "-",
+   "market_cap_oku": 1352.8
+  },
+  {
+   "code": "4592.T",
+   "name": "サンバイオ",
+   "industry": "医薬品",
+   "size": "-",
+   "market_cap_oku": 721.9
+  },
+  {
+   "code": "4593.T",
+   "name": "ヘリオス",
+   "industry": "医薬品",
+   "size": "-",
+   "market_cap_oku": 379.4
+  },
+  {
+   "code": "4613.T",
+   "name": "関西ペイント",
+   "industry": "化学",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4991.2
+  },
+  {
+   "code": "4617.T",
+   "name": "中国塗料",
+   "industry": "化学",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1750.3
+  },
+  {
+   "code": "4631.T",
+   "name": "ＤＩＣ",
+   "industry": "化学",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4599.3
+  },
+  {
+   "code": "4633.T",
+   "name": "サカタインクス",
+   "industry": "化学",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1268.5
+  },
+  {
+   "code": "4634.T",
+   "name": "ａｒｔｉｅｎｃｅ",
+   "industry": "化学",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2363.6
+  },
+  {
+   "code": "464A.T",
+   "name": "ＱＰＳホールディングス",
+   "industry": "情報・通信業",
+   "size": "-",
+   "market_cap_oku": 960.2
+  },
+  {
+   "code": "4665.T",
+   "name": "ダスキン",
+   "industry": "サービス業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2196.2
+  },
+  {
+   "code": "4666.T",
+   "name": "パーク２４",
+   "industry": "不動産業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3441.9
+  },
+  {
+   "code": "4674.T",
+   "name": "クレスコ",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 773.6
+  },
+  {
+   "code": "4680.T",
+   "name": "ラウンドワン",
+   "industry": "サービス業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3413.4
+  },
+  {
+   "code": "4681.T",
+   "name": "リゾートトラスト",
+   "industry": "サービス業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3837.2
+  },
+  {
+   "code": "4686.T",
+   "name": "ジャストシステム",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2748.8
+  },
+  {
+   "code": "4722.T",
+   "name": "フューチャー",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2169.0
+  },
+  {
+   "code": "4746.T",
+   "name": "東計電算",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 1283.3
+  },
+  {
+   "code": "4776.T",
+   "name": "サイボウズ",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1414.9
+  },
+  {
+   "code": "4784.T",
+   "name": "ＧＭＯインターネット",
+   "industry": "サービス業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 1722.0
+  },
+  {
+   "code": "4819.T",
+   "name": "デジタルガレージ",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1013.5
+  },
+  {
+   "code": "4825.T",
+   "name": "ウェザーニューズ",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 910.2
+  },
+  {
+   "code": "4849.T",
+   "name": "エン",
+   "industry": "サービス業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 619.2
+  },
+  {
+   "code": "4887.T",
+   "name": "サワイグループホールディングス",
+   "industry": "医薬品",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 1822.9
+  },
+  {
+   "code": "4894.T",
+   "name": "クオリプス",
+   "industry": "医薬品",
+   "size": "-",
+   "market_cap_oku": 443.5
+  },
+  {
+   "code": "4902.T",
+   "name": "コニカミノルタ",
+   "industry": "電気機器",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3254.2
+  },
+  {
+   "code": "4919.T",
+   "name": "ミルボン",
+   "industry": "化学",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1008.5
+  },
+  {
+   "code": "4922.T",
+   "name": "コーセーホールディングス",
+   "industry": "化学",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3260.3
+  },
+  {
+   "code": "4927.T",
+   "name": "ポーラ・オルビスホールディングス",
+   "industry": "化学",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3009.5
+  },
+  {
+   "code": "4928.T",
+   "name": "ノエビアホールディングス",
+   "industry": "化学",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1642.9
+  },
+  {
+   "code": "4966.T",
+   "name": "上村工業",
+   "industry": "化学",
+   "size": "-",
+   "market_cap_oku": 3103.5
+  },
+  {
+   "code": "4967.T",
+   "name": "小林製薬",
+   "industry": "化学",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4233.6
+  },
+  {
+   "code": "4968.T",
+   "name": "荒川化学工業",
+   "industry": "化学",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 424.4
+  },
+  {
+   "code": "4970.T",
+   "name": "東洋合成工業",
+   "industry": "化学",
+   "size": "-",
+   "market_cap_oku": 834.9
+  },
+  {
+   "code": "4971.T",
+   "name": "メック",
+   "industry": "化学",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1141.2
+  },
+  {
+   "code": "4975.T",
+   "name": "ＪＣＵ",
+   "industry": "化学",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1344.2
+  },
+  {
+   "code": "4980.T",
+   "name": "デクセリアルズ",
+   "industry": "化学",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4860.3
+  },
+  {
+   "code": "4997.T",
+   "name": "日本農薬",
+   "industry": "化学",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 1007.3
+  },
+  {
+   "code": "5027.T",
+   "name": "ＡｎｙＭｉｎｄ　Ｇｒｏｕｐ",
+   "industry": "情報・通信業",
+   "size": "-",
+   "market_cap_oku": 443.7
+  },
+  {
+   "code": "5032.T",
+   "name": "ＡＮＹＣＯＬＯＲ",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1791.9
+  },
+  {
+   "code": "5074.T",
+   "name": "テスホールディングス",
+   "industry": "建設業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 415.4
+  },
+  {
+   "code": "5161.T",
+   "name": "西川ゴム工業",
+   "industry": "ゴム製品",
+   "size": "-",
+   "market_cap_oku": 1294.3
+  },
+  {
+   "code": "5186.T",
+   "name": "ニッタ",
+   "industry": "ゴム製品",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 1843.5
+  },
+  {
+   "code": "5192.T",
+   "name": "三ツ星ベルト",
+   "industry": "ゴム製品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1215.6
+  },
+  {
+   "code": "5202.T",
+   "name": "日本板硝子",
+   "industry": "ガラス・土石製品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2500.2
+  },
+  {
+   "code": "5208.T",
+   "name": "有沢製作所",
+   "industry": "化学",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 830.6
+  },
+  {
+   "code": "5214.T",
+   "name": "日本電気硝子",
+   "industry": "ガラス・土石製品",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3489.7
+  },
+  {
+   "code": "5232.T",
+   "name": "住友大阪セメント",
+   "industry": "ガラス・土石製品",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 1703.7
+  },
+  {
+   "code": "5233.T",
+   "name": "太平洋セメント",
+   "industry": "ガラス・土石製品",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4484.9
+  },
+  {
+   "code": "5243.T",
+   "name": "ｎｏｔｅ",
+   "industry": "情報・通信業",
+   "size": "-",
+   "market_cap_oku": 575.3
+  },
+  {
+   "code": "5253.T",
+   "name": "カバー",
+   "industry": "情報・通信業",
+   "size": "-",
+   "market_cap_oku": 1054.8
+  },
+  {
+   "code": "5288.T",
+   "name": "アジアパイルホールディングス",
+   "industry": "ガラス・土石製品",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 575.9
+  },
+  {
+   "code": "5301.T",
+   "name": "東海カーボン",
+   "industry": "ガラス・土石製品",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3681.5
+  },
+  {
+   "code": "5302.T",
+   "name": "日本カーボン",
+   "industry": "ガラス・土石製品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 533.0
+  },
+  {
+   "code": "5310.T",
+   "name": "東洋炭素",
+   "industry": "ガラス・土石製品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1453.4
+  },
+  {
+   "code": "5331.T",
+   "name": "ノリタケ",
+   "industry": "ガラス・土石製品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1925.5
+  },
+  {
+   "code": "5384.T",
+   "name": "フジミインコーポレーテッド",
+   "industry": "ガラス・土石製品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2466.6
+  },
+  {
+   "code": "5423.T",
+   "name": "東京製鐵",
+   "industry": "鉄鋼",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1728.2
+  },
+  {
+   "code": "5451.T",
+   "name": "ヨドコウ",
+   "industry": "鉄鋼",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2034.1
+  },
+  {
+   "code": "5463.T",
+   "name": "丸一鋼管",
+   "industry": "鉄鋼",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3866.8
+  },
+  {
+   "code": "5471.T",
+   "name": "大同特殊鋼",
+   "industry": "鉄鋼",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4535.7
+  },
+  {
+   "code": "547A.T",
+   "name": "ムニノバホールディングス",
+   "industry": "その他金融業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2064.5
+  },
+  {
+   "code": "5480.T",
+   "name": "日本冶金工業",
+   "industry": "鉄鋼",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 749.5
+  },
+  {
+   "code": "5482.T",
+   "name": "愛知製鋼",
+   "industry": "鉄鋼",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2100.9
+  },
+  {
+   "code": "5541.T",
+   "name": "大平洋金属",
+   "industry": "鉄鋼",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 446.7
+  },
+  {
+   "code": "5563.T",
+   "name": "新日本電工",
+   "industry": "鉄鋼",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 549.5
+  },
+  {
+   "code": "5574.T",
+   "name": "ＡＢＥＪＡ",
+   "industry": "情報・通信業",
+   "size": "-",
+   "market_cap_oku": 305.5
+  },
+  {
+   "code": "5602.T",
+   "name": "栗本鐵工所",
+   "industry": "鉄鋼",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1007.3
+  },
+  {
+   "code": "5632.T",
+   "name": "三菱製鋼",
+   "industry": "鉄鋼",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 351.1
+  },
+  {
+   "code": "5702.T",
+   "name": "大紀アルミニウム工業所",
+   "industry": "非鉄金属",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 732.9
+  },
+  {
+   "code": "5703.T",
+   "name": "日本軽金属ホールディングス",
+   "industry": "非鉄金属",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1853.9
+  },
+  {
+   "code": "5707.T",
+   "name": "東邦亜鉛",
+   "industry": "非鉄金属",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 386.1
+  },
+  {
+   "code": "5715.T",
+   "name": "古河機械金属",
+   "industry": "非鉄金属",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1375.1
+  },
+  {
+   "code": "5726.T",
+   "name": "大阪チタニウムテクノロジーズ",
+   "industry": "非鉄金属",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1001.7
+  },
+  {
+   "code": "5741.T",
+   "name": "ＵＡＣＪ",
+   "industry": "非鉄金属",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 4056.0
+  },
+  {
+   "code": "5805.T",
+   "name": "ＳＷＣＣ",
+   "industry": "非鉄金属",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 4070.9
+  },
+  {
+   "code": "5842.T",
+   "name": "インテグラル",
+   "industry": "証券、商品先物取引業",
+   "size": "-",
+   "market_cap_oku": 1038.1
+  },
+  {
+   "code": "5851.T",
+   "name": "リョービ",
+   "industry": "非鉄金属",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 875.1
+  },
+  {
+   "code": "5857.T",
+   "name": "ＡＲＥホールディングス",
+   "industry": "非鉄金属",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 3274.5
+  },
+  {
+   "code": "590A.T",
+   "name": "ギフティグループ",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 392.3
+  },
+  {
+   "code": "5947.T",
+   "name": "リンナイ",
+   "industry": "金属製品",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4945.7
+  },
+  {
+   "code": "5975.T",
+   "name": "東プレ",
+   "industry": "金属製品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1690.5
+  },
+  {
+   "code": "5985.T",
+   "name": "サンコール",
+   "industry": "金属製品",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 615.8
+  },
+  {
+   "code": "5989.T",
+   "name": "エイチワン",
+   "industry": "金属製品",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 419.9
+  },
+  {
+   "code": "6005.T",
+   "name": "三浦工業",
+   "industry": "機械",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3682.0
+  },
+  {
+   "code": "6013.T",
+   "name": "タクマ",
+   "industry": "機械",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2174.7
+  },
+  {
+   "code": "6016.T",
+   "name": "ジャパンエンジンコーポレーション",
+   "industry": "輸送用機器",
+   "size": "-",
+   "market_cap_oku": 942.3
+  },
+  {
+   "code": "6023.T",
+   "name": "ダイハツインフィニアース",
+   "industry": "輸送用機器",
+   "size": "-",
+   "market_cap_oku": 821.4
+  },
+  {
+   "code": "6027.T",
+   "name": "弁護士ドットコム",
+   "industry": "サービス業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 1165.9
+  },
+  {
+   "code": "6036.T",
+   "name": "ＫｅｅＰｅｒ技研",
+   "industry": "サービス業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 964.7
+  },
+  {
+   "code": "6055.T",
+   "name": "ジャパンマテリアル",
+   "industry": "サービス業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2207.6
+  },
+  {
+   "code": "6058.T",
+   "name": "ベクトル",
+   "industry": "サービス業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 947.9
+  },
+  {
+   "code": "6071.T",
+   "name": "ＩＢＪ",
+   "industry": "サービス業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 354.6
+  },
+  {
+   "code": "6080.T",
+   "name": "Ｍ＆Ａキャピタルパートナーズ",
+   "industry": "サービス業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1329.9
+  },
+  {
+   "code": "6101.T",
+   "name": "ツガミ",
+   "industry": "機械",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2410.0
+  },
+  {
+   "code": "6103.T",
+   "name": "オークマ",
+   "industry": "機械",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2695.6
+  },
+  {
+   "code": "6104.T",
+   "name": "芝浦機械",
+   "industry": "機械",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1060.6
+  },
+  {
+   "code": "6135.T",
+   "name": "牧野フライス製作所",
+   "industry": "機械",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 3581.9
+  },
+  {
+   "code": "6136.T",
+   "name": "オーエスジー",
+   "industry": "機械",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2958.2
+  },
+  {
+   "code": "6140.T",
+   "name": "旭ダイヤモンド工業",
+   "industry": "機械",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 558.3
+  },
+  {
+   "code": "6141.T",
+   "name": "ＤＭＧ森精機",
+   "industry": "機械",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4060.2
+  },
+  {
+   "code": "6143.T",
+   "name": "ソディック",
+   "industry": "機械",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 863.6
+  },
+  {
+   "code": "6145.T",
+   "name": "ＮＩＴＴＯＫＵ",
+   "industry": "機械",
+   "size": "-",
+   "market_cap_oku": 410.4
+  },
+  {
+   "code": "6183.T",
+   "name": "ベルシステム２４ホールディングス",
+   "industry": "サービス業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 1029.7
+  },
+  {
+   "code": "6196.T",
+   "name": "ストライクグループ",
+   "industry": "サービス業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 807.1
+  },
+  {
+   "code": "6209.T",
+   "name": "リケンＮＰＲ",
+   "industry": "機械",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1046.6
+  },
+  {
+   "code": "6226.T",
+   "name": "守谷輸送機工業",
+   "industry": "機械",
+   "size": "-",
+   "market_cap_oku": 739.7
+  },
+  {
+   "code": "6227.T",
+   "name": "ＡＩメカテック",
+   "industry": "機械",
+   "size": "-",
+   "market_cap_oku": 1119.3
+  },
+  {
+   "code": "6235.T",
+   "name": "オプトラン",
+   "industry": "機械",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 999.7
+  },
+  {
+   "code": "6237.T",
+   "name": "イワキポンプ",
+   "industry": "機械",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 888.4
+  },
+  {
+   "code": "6250.T",
+   "name": "やまびこ",
+   "industry": "機械",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1854.1
+  },
+  {
+   "code": "6254.T",
+   "name": "野村マイクロ・サイエンス",
+   "industry": "機械",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1326.4
+  },
+  {
+   "code": "6258.T",
+   "name": "平田機工",
+   "industry": "機械",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1058.1
+  },
+  {
+   "code": "6264.T",
+   "name": "マルマエ",
+   "industry": "機械",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 546.6
+  },
+  {
+   "code": "6266.T",
+   "name": "タツモ",
+   "industry": "機械",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 505.1
+  },
+  {
+   "code": "6278.T",
+   "name": "ユニオンツール",
+   "industry": "機械",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2616.6
+  },
+  {
+   "code": "6287.T",
+   "name": "サトー",
+   "industry": "機械",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 909.8
+  },
+  {
+   "code": "6310.T",
+   "name": "井関農機",
+   "industry": "機械",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 466.0
+  },
+  {
+   "code": "6315.T",
+   "name": "ＴＯＷＡ",
+   "industry": "機械",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1659.7
+  },
+  {
+   "code": "6330.T",
+   "name": "東洋エンジニアリング",
+   "industry": "建設業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 1450.9
+  },
+  {
+   "code": "6331.T",
+   "name": "三菱化工機",
+   "industry": "機械",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 730.1
+  },
+  {
+   "code": "6340.T",
+   "name": "澁谷工業",
+   "industry": "機械",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 1455.2
+  },
+  {
+   "code": "6345.T",
+   "name": "アイチ　コーポレーション",
+   "industry": "機械",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 951.0
+  },
+  {
+   "code": "6349.T",
+   "name": "小森コーポレーション",
+   "industry": "機械",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1063.4
+  },
+  {
+   "code": "6363.T",
+   "name": "酉島製作所",
+   "industry": "機械",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 786.9
+  },
+  {
+   "code": "6366.T",
+   "name": "千代田化工建設",
+   "industry": "建設業",
+   "size": "-",
+   "market_cap_oku": 1796.1
+  },
+  {
+   "code": "6371.T",
+   "name": "椿本チエイン",
+   "industry": "機械",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2739.1
+  },
+  {
+   "code": "6376.T",
+   "name": "日機装",
+   "industry": "精密機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2290.6
+  },
+  {
+   "code": "6379.T",
+   "name": "レイズネクスト",
+   "industry": "建設業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 1592.7
+  },
+  {
+   "code": "6387.T",
+   "name": "サムコ",
+   "industry": "機械",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 668.3
+  },
+  {
+   "code": "6395.T",
+   "name": "タダノ",
+   "industry": "機械",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1807.9
+  },
+  {
+   "code": "6407.T",
+   "name": "ＣＫＤ",
+   "industry": "機械",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 3482.1
+  },
+  {
+   "code": "6412.T",
+   "name": "平和",
+   "industry": "機械",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2161.9
+  },
+  {
+   "code": "6417.T",
+   "name": "ＳＡＮＫＹＯ",
+   "industry": "機械",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3999.7
+  },
+  {
+   "code": "6432.T",
+   "name": "竹内製作所",
+   "industry": "機械",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 3519.9
+  },
+  {
+   "code": "6436.T",
+   "name": "アマノ",
+   "industry": "機械",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2749.0
+  },
+  {
+   "code": "6454.T",
+   "name": "マックス",
+   "industry": "機械",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 3326.0
+  },
+  {
+   "code": "6457.T",
+   "name": "グローリー",
+   "industry": "機械",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2356.8
+  },
+  {
+   "code": "6458.T",
+   "name": "新晃工業",
+   "industry": "機械",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 833.3
+  },
+  {
+   "code": "6472.T",
+   "name": "ＮＴＮ",
+   "industry": "機械",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2297.2
+  },
+  {
+   "code": "6474.T",
+   "name": "不二越",
+   "industry": "機械",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1192.3
+  },
+  {
+   "code": "6480.T",
+   "name": "日本トムソン",
+   "industry": "機械",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 1178.2
+  },
+  {
+   "code": "6486.T",
+   "name": "イーグル工業",
+   "industry": "機械",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1368.7
+  },
+  {
+   "code": "6490.T",
+   "name": "ＰＩＬＬＡＲ",
+   "industry": "機械",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2190.1
+  },
+  {
+   "code": "6498.T",
+   "name": "キッツ",
+   "industry": "機械",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1639.2
+  },
+  {
+   "code": "6507.T",
+   "name": "シンフォニアテクノロジー",
+   "industry": "電気機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 3326.6
+  },
+  {
+   "code": "6508.T",
+   "name": "明電舎",
+   "industry": "電気機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 4899.3
+  },
+  {
+   "code": "6516.T",
+   "name": "山洋電気",
+   "industry": "電気機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1836.1
+  },
+  {
+   "code": "6521.T",
+   "name": "オキサイド",
+   "industry": "電気機器",
+   "size": "-",
+   "market_cap_oku": 349.1
+  },
+  {
+   "code": "6523.T",
+   "name": "ＰＨＣホールディングス",
+   "industry": "電気機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1816.8
+  },
+  {
+   "code": "6524.T",
+   "name": "湖北工業",
+   "industry": "電気機器",
+   "size": "-",
+   "market_cap_oku": 1220.3
+  },
+  {
+   "code": "6526.T",
+   "name": "ソシオネクスト",
+   "industry": "電気機器",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3425.1
+  },
+  {
+   "code": "6544.T",
+   "name": "ジャパンエレベーターサービスホールディングス",
+   "industry": "サービス業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2644.8
+  },
+  {
+   "code": "6588.T",
+   "name": "東芝テック",
+   "industry": "電気機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1576.4
+  },
+  {
+   "code": "6590.T",
+   "name": "芝浦メカトロニクス",
+   "industry": "電気機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2592.7
+  },
+  {
+   "code": "6592.T",
+   "name": "マブチモーター",
+   "industry": "電気機器",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4188.8
+  },
+  {
+   "code": "6613.T",
+   "name": "ＱＤレーザ",
+   "industry": "電気機器",
+   "size": "-",
+   "market_cap_oku": 838.1
+  },
+  {
+   "code": "6617.T",
+   "name": "東光高岳",
+   "industry": "電気機器",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 1049.3
+  },
+  {
+   "code": "6622.T",
+   "name": "ダイヘン",
+   "industry": "電気機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2894.2
+  },
+  {
+   "code": "6627.T",
+   "name": "テラプローブ",
+   "industry": "電気機器",
+   "size": "-",
+   "market_cap_oku": 1008.9
+  },
+  {
+   "code": "6632.T",
+   "name": "ＪＶＣケンウッド",
+   "industry": "電気機器",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 1400.9
+  },
+  {
+   "code": "6644.T",
+   "name": "大崎電気工業",
+   "industry": "電気機器",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 666.0
+  },
+  {
+   "code": "6652.T",
+   "name": "ＩＤＥＣ",
+   "industry": "電気機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1075.9
+  },
+  {
+   "code": "6668.T",
+   "name": "アドテック　プラズマ　テクノロジー",
+   "industry": "電気機器",
+   "size": "-",
+   "market_cap_oku": 347.9
+  },
+  {
+   "code": "6674.T",
+   "name": "ジーエス・ユアサ　コーポレーション",
+   "industry": "電気機器",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4976.8
+  },
+  {
+   "code": "6677.T",
+   "name": "エスケーエレクトロニクス",
+   "industry": "電気機器",
+   "size": "-",
+   "market_cap_oku": 332.7
+  },
+  {
+   "code": "6703.T",
+   "name": "沖電気工業",
+   "industry": "電気機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2342.1
+  },
+  {
+   "code": "6707.T",
+   "name": "サンケン電気",
+   "industry": "電気機器",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 1360.4
+  },
+  {
+   "code": "6727.T",
+   "name": "ワコム",
+   "industry": "電気機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1136.5
+  },
+  {
+   "code": "6728.T",
+   "name": "アルバック",
+   "industry": "電気機器",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3545.4
+  },
+  {
+   "code": "6736.T",
+   "name": "サン電子",
+   "industry": "電気機器",
+   "size": "-",
+   "market_cap_oku": 1920.3
+  },
+  {
+   "code": "6737.T",
+   "name": "ＥＩＺＯ",
+   "industry": "電気機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1226.0
+  },
+  {
+   "code": "6740.T",
+   "name": "ジャパンディスプレイ",
+   "industry": "電気機器",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 2004.8
+  },
+  {
+   "code": "6741.T",
+   "name": "日本信号",
+   "industry": "電気機器",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 1163.8
+  },
+  {
+   "code": "6742.T",
+   "name": "京三製作所",
+   "industry": "電気機器",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 613.5
+  },
+  {
+   "code": "6744.T",
+   "name": "能美防災",
+   "industry": "電気機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2448.7
+  },
+  {
+   "code": "6745.T",
+   "name": "ホーチキ",
+   "industry": "電気機器",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 1419.0
+  },
+  {
+   "code": "6750.T",
+   "name": "エレコム",
+   "industry": "電気機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1643.8
+  },
+  {
+   "code": "6753.T",
+   "name": "シャープ",
+   "industry": "電気機器",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4186.1
+  },
+  {
+   "code": "6754.T",
+   "name": "アンリツ",
+   "industry": "電気機器",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4121.3
+  },
+  {
+   "code": "6768.T",
+   "name": "タムラ製作所",
+   "industry": "電気機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 621.5
+  },
+  {
+   "code": "6770.T",
+   "name": "アルプスアルパイン",
+   "industry": "電気機器",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4363.1
+  },
+  {
+   "code": "6777.T",
+   "name": "ｓａｎｔｅｃ　Ｈｏｌｄｉｎｇｓ",
+   "industry": "電気機器",
+   "size": "-",
+   "market_cap_oku": 2238.0
+  },
+  {
+   "code": "6779.T",
+   "name": "日本電波工業",
+   "industry": "電気機器",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 597.1
+  },
+  {
+   "code": "6787.T",
+   "name": "メイコー",
+   "industry": "電気機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 4792.0
+  },
+  {
+   "code": "6794.T",
+   "name": "フォスター電機",
+   "industry": "電気機器",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 679.7
+  },
+  {
+   "code": "6800.T",
+   "name": "ヨコオ",
+   "industry": "電気機器",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 881.4
+  },
+  {
+   "code": "6804.T",
+   "name": "ホシデン",
+   "industry": "電気機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1294.8
+  },
+  {
+   "code": "6807.T",
+   "name": "日本航空電子工業",
+   "industry": "電気機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1652.0
+  },
+  {
+   "code": "6810.T",
+   "name": "マクセル",
+   "industry": "電気機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 910.5
+  },
+  {
+   "code": "6814.T",
+   "name": "古野電気",
+   "industry": "電気機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2443.4
+  },
+  {
+   "code": "6834.T",
+   "name": "精工技研",
+   "industry": "電気機器",
+   "size": "-",
+   "market_cap_oku": 2310.8
+  },
+  {
+   "code": "6844.T",
+   "name": "新電元工業",
+   "industry": "電気機器",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 309.5
+  },
+  {
+   "code": "6849.T",
+   "name": "日本光電工業",
+   "industry": "電気機器",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2422.8
+  },
+  {
+   "code": "6855.T",
+   "name": "日本電子材料",
+   "industry": "電気機器",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 912.5
+  },
+  {
+   "code": "6859.T",
+   "name": "エスペック",
+   "industry": "電気機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 815.5
+  },
+  {
+   "code": "6862.T",
+   "name": "ミナトホールディングス",
+   "industry": "電気機器",
+   "size": "-",
+   "market_cap_oku": 306.2
+  },
+  {
+   "code": "6866.T",
+   "name": "日置電機",
+   "industry": "電気機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1367.4
+  },
+  {
+   "code": "6871.T",
+   "name": "日本マイクロニクス",
+   "industry": "電気機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 4628.4
+  },
+  {
+   "code": "6875.T",
+   "name": "メガチップス",
+   "industry": "電気機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1475.3
+  },
+  {
+   "code": "6890.T",
+   "name": "フェローテック",
+   "industry": "電気機器",
+   "size": "-",
+   "market_cap_oku": 4804.7
+  },
+  {
+   "code": "6914.T",
+   "name": "オプテックスグループ",
+   "industry": "電気機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1115.5
+  },
+  {
+   "code": "6923.T",
+   "name": "スタンレー電気",
+   "industry": "電気機器",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4471.4
+  },
+  {
+   "code": "6925.T",
+   "name": "ウシオ電機",
+   "industry": "電気機器",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2912.1
+  },
+  {
+   "code": "6929.T",
+   "name": "日本セラミック",
+   "industry": "電気機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 755.1
+  },
+  {
+   "code": "6941.T",
+   "name": "山一電機",
+   "industry": "電気機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1393.5
+  },
+  {
+   "code": "6946.T",
+   "name": "日本アビオニクス",
+   "industry": "電気機器",
+   "size": "-",
+   "market_cap_oku": 916.9
+  },
+  {
+   "code": "6951.T",
+   "name": "日本電子",
+   "industry": "電気機器",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3344.3
+  },
+  {
+   "code": "6958.T",
+   "name": "日本シイエムケイ",
+   "industry": "電気機器",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 549.0
+  },
+  {
+   "code": "6960.T",
+   "name": "フクダ電子",
+   "industry": "電気機器",
+   "size": "-",
+   "market_cap_oku": 3177.1
+  },
+  {
+   "code": "6961.T",
+   "name": "エンプラス",
+   "industry": "電気機器",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 883.3
+  },
+  {
+   "code": "6966.T",
+   "name": "三井ハイテック",
+   "industry": "電気機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1716.0
+  },
+  {
+   "code": "6986.T",
+   "name": "双葉電子工業",
+   "industry": "電気機器",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 330.8
+  },
+  {
+   "code": "6993.T",
+   "name": "大黒屋ホールディングス",
+   "industry": "小売業",
+   "size": "-",
+   "market_cap_oku": 638.1
+  },
+  {
+   "code": "6995.T",
+   "name": "東海理化電機製作所",
+   "industry": "輸送用機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2740.0
+  },
+  {
+   "code": "6996.T",
+   "name": "ニチコン",
+   "industry": "電気機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1746.1
+  },
+  {
+   "code": "6997.T",
+   "name": "日本ケミコン",
+   "industry": "電気機器",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 751.3
+  },
+  {
+   "code": "6999.T",
+   "name": "ＫＯＡ",
+   "industry": "電気機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 847.1
+  },
+  {
+   "code": "7003.T",
+   "name": "三井Ｅ＆Ｓ",
+   "industry": "機械",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4326.3
+  },
+  {
+   "code": "7004.T",
+   "name": "カナデビア",
+   "industry": "機械",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1943.3
+  },
+  {
+   "code": "7014.T",
+   "name": "名村造船所",
+   "industry": "輸送用機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 3338.2
+  },
+  {
+   "code": "7085.T",
+   "name": "カーブスホールディングス",
+   "industry": "サービス業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 819.7
+  },
+  {
+   "code": "7128.T",
+   "name": "ユニソルホールディングス",
+   "industry": "卸売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 664.0
+  },
+  {
+   "code": "7148.T",
+   "name": "ＦＰＧ",
+   "industry": "証券、商品先物取引業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1426.9
+  },
+  {
+   "code": "7157.T",
+   "name": "ライフネット生命保険",
+   "industry": "保険業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1165.7
+  },
+  {
+   "code": "7164.T",
+   "name": "全国保証",
+   "industry": "その他金融業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4237.3
+  },
+  {
+   "code": "7172.T",
+   "name": "ジャパンインベストメントアドバイザー",
+   "industry": "証券、商品先物取引業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1307.8
+  },
+  {
+   "code": "7173.T",
+   "name": "東京きらぼしフィナンシャルグループ",
+   "industry": "銀行業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 4849.2
+  },
+  {
+   "code": "7184.T",
+   "name": "富山第一銀行",
+   "industry": "銀行業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2072.0
+  },
+  {
+   "code": "7199.T",
+   "name": "プレミアグループ",
+   "industry": "その他金融業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 818.2
+  },
+  {
+   "code": "7211.T",
+   "name": "三菱自動車工業",
+   "industry": "輸送用機器",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4941.2
+  },
+  {
+   "code": "7220.T",
+   "name": "武蔵精密工業",
+   "industry": "輸送用機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1917.7
+  },
+  {
+   "code": "7224.T",
+   "name": "新明和工業",
+   "industry": "輸送用機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1287.1
+  },
+  {
+   "code": "7226.T",
+   "name": "極東開発工業",
+   "industry": "輸送用機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 883.4
+  },
+  {
+   "code": "7236.T",
+   "name": "ティラド",
+   "industry": "輸送用機器",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 855.4
+  },
+  {
+   "code": "7240.T",
+   "name": "ＮＯＫ",
+   "industry": "輸送用機器",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4770.1
+  },
+  {
+   "code": "7242.T",
+   "name": "カヤバ",
+   "industry": "輸送用機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1935.1
+  },
+  {
+   "code": "7245.T",
+   "name": "大同メタル工業",
+   "industry": "輸送用機器",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 544.2
+  },
+  {
+   "code": "7246.T",
+   "name": "プレス工業",
+   "industry": "輸送用機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1009.7
+  },
+  {
+   "code": "7278.T",
+   "name": "エクセディ",
+   "industry": "輸送用機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2208.2
+  },
+  {
+   "code": "7287.T",
+   "name": "日本精機",
+   "industry": "輸送用機器",
+   "size": "-",
+   "market_cap_oku": 1552.0
+  },
+  {
+   "code": "7296.T",
+   "name": "エフ・シー・シー",
+   "industry": "輸送用機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1980.9
+  },
+  {
+   "code": "7313.T",
+   "name": "テイ・エス　テック",
+   "industry": "輸送用機器",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2157.7
+  },
+  {
+   "code": "7322.T",
+   "name": "三十三フィナンシャルグループ",
+   "industry": "銀行業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 2246.7
+  },
+  {
+   "code": "7350.T",
+   "name": "おきなわフィナンシャルグループ",
+   "industry": "銀行業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1688.5
+  },
+  {
+   "code": "7380.T",
+   "name": "十六フィナンシャルグループ",
+   "industry": "銀行業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 4693.3
+  },
+  {
+   "code": "7381.T",
+   "name": "ＣＣＩグループ",
+   "industry": "銀行業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2839.5
+  },
+  {
+   "code": "7383.T",
+   "name": "ネットプロテクションズホールディングス",
+   "industry": "その他金融業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 405.0
+  },
+  {
+   "code": "7384.T",
+   "name": "プロクレアホールディングス",
+   "industry": "銀行業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 1364.8
+  },
+  {
+   "code": "7389.T",
+   "name": "あいちフィナンシャルグループ",
+   "industry": "銀行業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 4687.0
+  },
+  {
+   "code": "7409.T",
+   "name": "ＡｅｒｏＥｄｇｅ",
+   "industry": "輸送用機器",
+   "size": "-",
+   "market_cap_oku": 374.4
+  },
+  {
+   "code": "7419.T",
+   "name": "ノジマ",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 3664.0
+  },
+  {
+   "code": "7433.T",
+   "name": "伯東",
+   "industry": "卸売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 994.0
+  },
+  {
+   "code": "7456.T",
+   "name": "松田産業",
+   "industry": "卸売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1783.1
+  },
+  {
+   "code": "7458.T",
+   "name": "第一興商",
+   "industry": "卸売業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 1932.1
+  },
+  {
+   "code": "7476.T",
+   "name": "アズワン",
+   "industry": "卸売業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 1793.8
+  },
+  {
+   "code": "7504.T",
+   "name": "高速",
+   "industry": "卸売業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 942.5
+  },
+  {
+   "code": "7513.T",
+   "name": "コジマ",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1103.2
+  },
+  {
+   "code": "7516.T",
+   "name": "コーナン商事",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1298.4
+  },
+  {
+   "code": "7545.T",
+   "name": "西松屋チェーン",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1195.1
+  },
+  {
+   "code": "7552.T",
+   "name": "ハピネット",
+   "industry": "卸売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1585.2
+  },
+  {
+   "code": "7564.T",
+   "name": "ワークマン",
+   "industry": "小売業",
+   "size": "-",
+   "market_cap_oku": 4953.9
+  },
+  {
+   "code": "7575.T",
+   "name": "日本ライフライン",
+   "industry": "卸売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1070.6
+  },
+  {
+   "code": "7581.T",
+   "name": "サイゼリヤ",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 3517.6
+  },
+  {
+   "code": "7599.T",
+   "name": "ＩＤＯＭ",
+   "industry": "卸売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1258.1
+  },
+  {
+   "code": "7606.T",
+   "name": "ユナイテッドアローズ",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 643.4
+  },
+  {
+   "code": "7609.T",
+   "name": "ダイトロン",
+   "industry": "卸売業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 828.6
+  },
+  {
+   "code": "7611.T",
+   "name": "ハイデイ日高",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1103.5
+  },
+  {
+   "code": "7613.T",
+   "name": "シークス",
+   "industry": "卸売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 770.2
+  },
+  {
+   "code": "7616.T",
+   "name": "コロワイド",
+   "industry": "小売業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2243.1
+  },
+  {
+   "code": "7630.T",
+   "name": "壱番屋",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1742.9
+  },
+  {
+   "code": "7649.T",
+   "name": "スギホールディングス",
+   "industry": "小売業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4949.1
+  },
+  {
+   "code": "7685.T",
+   "name": "ＢｕｙＳｅｌｌ　Ｔｅｃｈｎｏｌｏｇｉｅｓ",
+   "industry": "卸売業",
+   "size": "-",
+   "market_cap_oku": 1987.8
+  },
+  {
+   "code": "7715.T",
+   "name": "長野計器",
+   "industry": "精密機器",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 717.8
+  },
+  {
+   "code": "7716.T",
+   "name": "ナカニシ",
+   "industry": "精密機器",
+   "size": "-",
+   "market_cap_oku": 2595.4
+  },
+  {
+   "code": "7717.T",
+   "name": "ブイ・テクノロジー",
+   "industry": "精密機器",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 532.4
+  },
+  {
+   "code": "7721.T",
+   "name": "東京計器",
+   "industry": "精密機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1183.2
+  },
+  {
+   "code": "7730.T",
+   "name": "マニー",
+   "industry": "精密機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1483.4
+  },
+  {
+   "code": "7734.T",
+   "name": "理研計器",
+   "industry": "精密機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1522.8
+  },
+  {
+   "code": "7740.T",
+   "name": "タムロン",
+   "industry": "精密機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2208.8
+  },
+  {
+   "code": "7744.T",
+   "name": "ノーリツ鋼機",
+   "industry": "精密機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2149.4
+  },
+  {
+   "code": "7777.T",
+   "name": "スリー・ディー・マトリックス",
+   "industry": "精密機器",
+   "size": "-",
+   "market_cap_oku": 462.0
+  },
+  {
+   "code": "7780.T",
+   "name": "メニコン",
+   "industry": "精密機器",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1386.4
+  },
+  {
+   "code": "7803.T",
+   "name": "ブシロード",
+   "industry": "その他製品",
+   "size": "-",
+   "market_cap_oku": 607.0
+  },
+  {
+   "code": "7806.T",
+   "name": "ＭＴＧ",
+   "industry": "その他製品",
+   "size": "-",
+   "market_cap_oku": 3304.1
+  },
+  {
+   "code": "7818.T",
+   "name": "トランザクション",
+   "industry": "その他製品",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 653.6
+  },
+  {
+   "code": "7821.T",
+   "name": "前田工繊",
+   "industry": "その他製品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1330.4
+  },
+  {
+   "code": "7826.T",
+   "name": "フルヤ金属",
+   "industry": "その他製品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2565.7
+  },
+  {
+   "code": "7839.T",
+   "name": "ＳＨＯＥＩ",
+   "industry": "その他製品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1080.9
+  },
+  {
+   "code": "7846.T",
+   "name": "パイロットコーポレーション",
+   "industry": "その他製品",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2249.8
+  },
+  {
+   "code": "7864.T",
+   "name": "フジシールインターナショナル",
+   "industry": "その他製品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1760.3
+  },
+  {
+   "code": "7867.T",
+   "name": "タカラトミー",
+   "industry": "その他製品",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3141.9
+  },
+  {
+   "code": "7906.T",
+   "name": "ヨネックス",
+   "industry": "その他製品",
+   "size": "-",
+   "market_cap_oku": 2195.3
+  },
+  {
+   "code": "7915.T",
+   "name": "ＮＩＳＳＨＡ",
+   "industry": "その他製品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 580.8
+  },
+  {
+   "code": "7944.T",
+   "name": "ローランド",
+   "industry": "その他製品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1012.8
+  },
+  {
+   "code": "7947.T",
+   "name": "エフピコ",
+   "industry": "化学",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2322.0
+  },
+  {
+   "code": "7956.T",
+   "name": "ピジョン",
+   "industry": "その他製品",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2455.9
+  },
+  {
+   "code": "7966.T",
+   "name": "リンテック",
+   "industry": "その他製品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 3241.8
+  },
+  {
+   "code": "7972.T",
+   "name": "イトーキ",
+   "industry": "その他製品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1254.0
+  },
+  {
+   "code": "7976.T",
+   "name": "三菱鉛筆",
+   "industry": "その他製品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1555.3
+  },
+  {
+   "code": "7981.T",
+   "name": "タカラスタンダード",
+   "industry": "その他製品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1966.5
+  },
+  {
+   "code": "7984.T",
+   "name": "コクヨ",
+   "industry": "その他製品",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3839.0
+  },
+  {
+   "code": "7988.T",
+   "name": "ニフコ",
+   "industry": "化学",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4702.5
+  },
+  {
+   "code": "7994.T",
+   "name": "オカムラ",
+   "industry": "その他製品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2262.7
+  },
+  {
+   "code": "7995.T",
+   "name": "バルカー",
+   "industry": "化学",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1140.9
+  },
+  {
+   "code": "8005.T",
+   "name": "スクロール",
+   "industry": "小売業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 590.5
+  },
+  {
+   "code": "8012.T",
+   "name": "長瀬産業",
+   "industry": "卸売業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4669.2
+  },
+  {
+   "code": "8016.T",
+   "name": "オンワードホールディングス",
+   "industry": "繊維製品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 978.5
+  },
+  {
+   "code": "8020.T",
+   "name": "兼松",
+   "industry": "卸売業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3785.0
+  },
+  {
+   "code": "8022.T",
+   "name": "美津濃",
+   "industry": "その他製品",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 3145.0
+  },
+  {
+   "code": "8032.T",
+   "name": "日本紙パルプ商事",
+   "industry": "卸売業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 1336.5
+  },
+  {
+   "code": "8051.T",
+   "name": "山善",
+   "industry": "卸売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1697.2
+  },
+  {
+   "code": "8056.T",
+   "name": "ＢＩＰＲＯＧＹ",
+   "industry": "情報・通信業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4651.1
+  },
+  {
+   "code": "8057.T",
+   "name": "内田洋行",
+   "industry": "卸売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1133.9
+  },
+  {
+   "code": "8059.T",
+   "name": "第一実業",
+   "industry": "卸売業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 1172.2
+  },
+  {
+   "code": "8061.T",
+   "name": "西華産業",
+   "industry": "卸売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1117.0
+  },
+  {
+   "code": "8078.T",
+   "name": "阪和興業",
+   "industry": "卸売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 3706.9
+  },
+  {
+   "code": "8086.T",
+   "name": "ニプロ",
+   "industry": "精密機器",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2397.5
+  },
+  {
+   "code": "8088.T",
+   "name": "岩谷産業",
+   "industry": "卸売業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4888.9
+  },
+  {
+   "code": "8098.T",
+   "name": "稲畑産業",
+   "industry": "卸売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2383.5
+  },
+  {
+   "code": "8111.T",
+   "name": "ゴールドウイン",
+   "industry": "繊維製品",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2890.8
+  },
+  {
+   "code": "8117.T",
+   "name": "中央自動車工業",
+   "industry": "卸売業",
+   "size": "-",
+   "market_cap_oku": 1205.9
+  },
+  {
+   "code": "8125.T",
+   "name": "ワキタ",
+   "industry": "卸売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 982.1
+  },
+  {
+   "code": "8129.T",
+   "name": "東邦ホールディングス",
+   "industry": "卸売業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2562.8
+  },
+  {
+   "code": "8130.T",
+   "name": "サンゲツ",
+   "industry": "卸売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1869.6
+  },
+  {
+   "code": "8151.T",
+   "name": "東陽テクニカ",
+   "industry": "卸売業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 390.8
+  },
+  {
+   "code": "8153.T",
+   "name": "モスフードサービス",
+   "industry": "卸売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1205.1
+  },
+  {
+   "code": "8154.T",
+   "name": "加賀電子",
+   "industry": "卸売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2340.1
+  },
+  {
+   "code": "8167.T",
+   "name": "リテールパートナーズ",
+   "industry": "小売業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 579.0
+  },
+  {
+   "code": "8173.T",
+   "name": "Ｊｏｓｈｉｎ",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1093.4
+  },
+  {
+   "code": "8174.T",
+   "name": "日本瓦斯",
+   "industry": "小売業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3234.8
+  },
+  {
+   "code": "8179.T",
+   "name": "ロイヤルホールディングス",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1334.2
+  },
+  {
+   "code": "8194.T",
+   "name": "ライフコーポレーション",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2406.9
+  },
+  {
+   "code": "8200.T",
+   "name": "リンガーハット",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 611.6
+  },
+  {
+   "code": "8214.T",
+   "name": "ＡＯＫＩホールディングス",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1472.3
+  },
+  {
+   "code": "8218.T",
+   "name": "コメリ",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1840.7
+  },
+  {
+   "code": "8219.T",
+   "name": "青山商事",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1094.4
+  },
+  {
+   "code": "8237.T",
+   "name": "松屋",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1122.9
+  },
+  {
+   "code": "8242.T",
+   "name": "エイチ・ツー・オー　リテイリング",
+   "industry": "小売業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3282.6
+  },
+  {
+   "code": "8273.T",
+   "name": "イズミ",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2133.6
+  },
+  {
+   "code": "8276.T",
+   "name": "平和堂",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1334.3
+  },
+  {
+   "code": "8278.T",
+   "name": "フジ",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1772.8
+  },
+  {
+   "code": "8282.T",
+   "name": "ケーズホールディングス",
+   "industry": "小売業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2938.8
+  },
+  {
+   "code": "8304.T",
+   "name": "あおぞら銀行",
+   "industry": "銀行業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4711.9
+  },
+  {
+   "code": "8336.T",
+   "name": "武蔵野銀行",
+   "industry": "銀行業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2750.2
+  },
+  {
+   "code": "8337.T",
+   "name": "千葉興業銀行",
+   "industry": "銀行業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1593.7
+  },
+  {
+   "code": "8338.T",
+   "name": "筑波銀行",
+   "industry": "銀行業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 633.7
+  },
+  {
+   "code": "8343.T",
+   "name": "秋田銀行",
+   "industry": "銀行業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 1607.1
+  },
+  {
+   "code": "8344.T",
+   "name": "山形銀行",
+   "industry": "銀行業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 1430.8
+  },
+  {
+   "code": "8345.T",
+   "name": "岩手銀行",
+   "industry": "銀行業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 1752.7
+  },
+  {
+   "code": "8346.T",
+   "name": "東邦銀行",
+   "industry": "銀行業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2478.9
+  },
+  {
+   "code": "8360.T",
+   "name": "山梨中央銀行",
+   "industry": "銀行業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2206.2
+  },
+  {
+   "code": "8361.T",
+   "name": "大垣共立銀行",
+   "industry": "銀行業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 3393.5
+  },
+  {
+   "code": "8362.T",
+   "name": "福井銀行",
+   "industry": "銀行業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 1667.8
+  },
+  {
+   "code": "8367.T",
+   "name": "南都銀行",
+   "industry": "銀行業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 3094.1
+  },
+  {
+   "code": "8370.T",
+   "name": "紀陽銀行",
+   "industry": "銀行業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 3323.7
+  },
+  {
+   "code": "8381.T",
+   "name": "山陰合同銀行",
+   "industry": "銀行業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 3889.9
+  },
+  {
+   "code": "8386.T",
+   "name": "百十四銀行",
+   "industry": "銀行業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 3522.7
+  },
+  {
+   "code": "8387.T",
+   "name": "四国銀行",
+   "industry": "銀行業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 1581.1
+  },
+  {
+   "code": "8388.T",
+   "name": "阿波銀行",
+   "industry": "銀行業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 3864.3
+  },
+  {
+   "code": "8392.T",
+   "name": "大分銀行",
+   "industry": "銀行業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 2264.7
+  },
+  {
+   "code": "8393.T",
+   "name": "宮崎銀行",
+   "industry": "銀行業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 2224.6
+  },
+  {
+   "code": "8395.T",
+   "name": "佐賀銀行",
+   "industry": "銀行業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 1110.4
+  },
+  {
+   "code": "8399.T",
+   "name": "琉球銀行",
+   "industry": "銀行業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1326.6
+  },
+  {
+   "code": "8410.T",
+   "name": "セブン銀行",
+   "industry": "銀行業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3974.7
+  },
+  {
+   "code": "8424.T",
+   "name": "芙蓉総合リース",
+   "industry": "その他金融業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4019.4
+  },
+  {
+   "code": "8425.T",
+   "name": "みずほリース",
+   "industry": "その他金融業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 3833.0
+  },
+  {
+   "code": "8508.T",
+   "name": "Ｊトラスト",
+   "industry": "その他金融業",
+   "size": "-",
+   "market_cap_oku": 1008.6
+  },
+  {
+   "code": "8511.T",
+   "name": "日本証券金融",
+   "industry": "その他金融業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2012.4
+  },
+  {
+   "code": "8522.T",
+   "name": "名古屋銀行",
+   "industry": "銀行業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 3512.7
+  },
+  {
+   "code": "8524.T",
+   "name": "北洋銀行",
+   "industry": "銀行業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 4930.9
+  },
+  {
+   "code": "8541.T",
+   "name": "愛媛銀行",
+   "industry": "銀行業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 1254.3
+  },
+  {
+   "code": "8544.T",
+   "name": "京葉銀行",
+   "industry": "銀行業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 3332.3
+  },
+  {
+   "code": "8550.T",
+   "name": "栃木銀行",
+   "industry": "銀行業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 1146.5
+  },
+  {
+   "code": "8551.T",
+   "name": "北日本銀行",
+   "industry": "銀行業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 643.8
+  },
+  {
+   "code": "8570.T",
+   "name": "イオンフィナンシャルサービス",
+   "industry": "その他金融業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3512.4
+  },
+  {
+   "code": "8584.T",
+   "name": "ジャックス",
+   "industry": "その他金融業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1679.2
+  },
+  {
+   "code": "8585.T",
+   "name": "オリエントコーポレーション",
+   "industry": "その他金融業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1463.6
+  },
+  {
+   "code": "8595.T",
+   "name": "ジャフコ　グループ",
+   "industry": "証券、商品先物取引業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 1209.1
+  },
+  {
+   "code": "8600.T",
+   "name": "トモニホールディングス",
+   "industry": "銀行業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2183.6
+  },
+  {
+   "code": "8609.T",
+   "name": "岡三証券グループ",
+   "industry": "証券、商品先物取引業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2485.9
+  },
+  {
+   "code": "8614.T",
+   "name": "東洋証券",
+   "industry": "証券、商品先物取引業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 503.9
+  },
+  {
+   "code": "8616.T",
+   "name": "東海東京フィナンシャル・ホールディングス",
+   "industry": "証券、商品先物取引業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2292.0
+  },
+  {
+   "code": "8622.T",
+   "name": "水戸証券",
+   "industry": "証券、商品先物取引業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 590.9
+  },
+  {
+   "code": "8628.T",
+   "name": "松井証券",
+   "industry": "証券、商品先物取引業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 3104.0
+  },
+  {
+   "code": "8698.T",
+   "name": "マネックスグループ",
+   "industry": "証券、商品先物取引業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1845.0
+  },
+  {
+   "code": "8706.T",
+   "name": "極東証券",
+   "industry": "証券、商品先物取引業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 613.9
+  },
+  {
+   "code": "8707.T",
+   "name": "岩井コスモホールディングス",
+   "industry": "証券、商品先物取引業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1100.4
+  },
+  {
+   "code": "8713.T",
+   "name": "フィデアホールディングス",
+   "industry": "銀行業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 505.8
+  },
+  {
+   "code": "8714.T",
+   "name": "池田泉州ホールディングス",
+   "industry": "銀行業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 3015.6
+  },
+  {
+   "code": "8715.T",
+   "name": "アニコム　ホールディングス",
+   "industry": "保険業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 783.6
+  },
+  {
+   "code": "8789.T",
+   "name": "フィンテック　グローバル",
+   "industry": "その他金融業",
+   "size": "-",
+   "market_cap_oku": 306.1
+  },
+  {
+   "code": "8803.T",
+   "name": "平和不動産",
+   "industry": "不動産業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1573.1
+  },
+  {
+   "code": "8818.T",
+   "name": "京阪神ビルディング",
+   "industry": "不動産業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 1068.5
+  },
+  {
+   "code": "8848.T",
+   "name": "レオパレス２１",
+   "industry": "不動産業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2074.9
+  },
+  {
+   "code": "8876.T",
+   "name": "リログループ",
+   "industry": "サービス業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3430.8
+  },
+  {
+   "code": "8897.T",
+   "name": "ＭＩＲＡＲＴＨホールディングス",
+   "industry": "不動産業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 608.0
+  },
+  {
+   "code": "8919.T",
+   "name": "カチタス",
+   "industry": "不動産業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2829.2
+  },
+  {
+   "code": "8923.T",
+   "name": "トーセイ",
+   "industry": "不動産業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1698.6
+  },
+  {
+   "code": "9003.T",
+   "name": "相鉄ホールディングス",
+   "industry": "陸運業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2492.8
+  },
+  {
+   "code": "9006.T",
+   "name": "京浜急行電鉄",
+   "industry": "陸運業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4048.8
+  },
+  {
+   "code": "9008.T",
+   "name": "京王電鉄",
+   "industry": "陸運業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4518.2
+  },
+  {
+   "code": "9010.T",
+   "name": "富士急行",
+   "industry": "陸運業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1388.0
+  },
+  {
+   "code": "9031.T",
+   "name": "西日本鉄道",
+   "industry": "陸運業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2310.0
+  },
+  {
+   "code": "9044.T",
+   "name": "ＮＡＮＫＡＩ",
+   "industry": "陸運業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3370.4
+  },
+  {
+   "code": "9045.T",
+   "name": "京阪ホールディングス",
+   "industry": "陸運業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3217.7
+  },
+  {
+   "code": "9048.T",
+   "name": "名古屋鉄道",
+   "industry": "陸運業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3655.9
+  },
+  {
+   "code": "9065.T",
+   "name": "山九",
+   "industry": "陸運業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4061.8
+  },
+  {
+   "code": "9069.T",
+   "name": "センコーグループホールディングス",
+   "industry": "陸運業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3722.3
+  },
+  {
+   "code": "9075.T",
+   "name": "福山通運",
+   "industry": "陸運業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2166.2
+  },
+  {
+   "code": "9076.T",
+   "name": "セイノーホールディングス",
+   "industry": "陸運業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4378.3
+  },
+  {
+   "code": "9090.T",
+   "name": "ＡＺ－ＣＯＭ丸和ホールディングス",
+   "industry": "陸運業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1193.3
+  },
+  {
+   "code": "9110.T",
+   "name": "ＮＳユナイテッド海運",
+   "industry": "海運業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2472.0
+  },
+  {
+   "code": "9119.T",
+   "name": "飯野海運",
+   "industry": "海運業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1833.6
+  },
+  {
+   "code": "9166.T",
+   "name": "ＧＥＮＤＡ",
+   "industry": "サービス業",
+   "size": "-",
+   "market_cap_oku": 1336.8
+  },
+  {
+   "code": "9247.T",
+   "name": "ＴＲＥホールディングス",
+   "industry": "サービス業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 854.9
+  },
+  {
+   "code": "9278.T",
+   "name": "ブックオフグループホールディングス",
+   "industry": "小売業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 520.6
+  },
+  {
+   "code": "9279.T",
+   "name": "ギフトホールディングス",
+   "industry": "小売業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 951.4
+  },
+  {
+   "code": "9302.T",
+   "name": "三井倉庫ホールディングス",
+   "industry": "倉庫・運輸関連業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2489.5
+  },
+  {
+   "code": "9303.T",
+   "name": "住友倉庫",
+   "industry": "倉庫・運輸関連業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 3130.5
+  },
+  {
+   "code": "9304.T",
+   "name": "澁澤倉庫",
+   "industry": "倉庫・運輸関連業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 1131.6
+  },
+  {
+   "code": "9336.T",
+   "name": "大栄環境",
+   "industry": "サービス業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 3760.3
+  },
+  {
+   "code": "9364.T",
+   "name": "上組",
+   "industry": "倉庫・運輸関連業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4782.8
+  },
+  {
+   "code": "9409.T",
+   "name": "テレビ朝日ホールディングス",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 3136.8
+  },
+  {
+   "code": "9416.T",
+   "name": "ビジョン",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 499.3
+  },
+  {
+   "code": "9418.T",
+   "name": "Ｕ－ＮＥＸＴ　ＨＯＬＤＩＮＧＳ",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 3165.6
+  },
+  {
+   "code": "9436.T",
+   "name": "沖縄セルラー電話",
+   "industry": "情報・通信業",
+   "size": "-",
+   "market_cap_oku": 3822.8
+  },
+  {
+   "code": "9449.T",
+   "name": "ＧＭＯインターネットグループ",
+   "industry": "情報・通信業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3837.0
+  },
+  {
+   "code": "9504.T",
+   "name": "中国電力",
+   "industry": "電気・ガス業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3745.0
+  },
+  {
+   "code": "9505.T",
+   "name": "北陸電力",
+   "industry": "電気・ガス業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2202.9
+  },
+  {
+   "code": "9507.T",
+   "name": "四国電力",
+   "industry": "電気・ガス業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4271.3
+  },
+  {
+   "code": "9509.T",
+   "name": "北海道電力",
+   "industry": "電気・ガス業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2310.2
+  },
+  {
+   "code": "9519.T",
+   "name": "レノバ",
+   "industry": "電気・ガス業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 789.4
+  },
+  {
+   "code": "9533.T",
+   "name": "東邦瓦斯",
+   "industry": "電気・ガス業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4436.4
+  },
+  {
+   "code": "9536.T",
+   "name": "西部ガスホールディングス",
+   "industry": "電気・ガス業",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 900.9
+  },
+  {
+   "code": "9551.T",
+   "name": "メタウォーター",
+   "industry": "電気・ガス業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1386.7
+  },
+  {
+   "code": "9552.T",
+   "name": "クオンツ総研ホールディングス",
+   "industry": "サービス業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 607.3
+  },
+  {
+   "code": "9601.T",
+   "name": "松竹",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1491.2
+  },
+  {
+   "code": "9603.T",
+   "name": "エイチ・アイ・エス",
+   "industry": "サービス業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 886.0
+  },
+  {
+   "code": "9605.T",
+   "name": "東映",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 3749.2
+  },
+  {
+   "code": "9616.T",
+   "name": "共立メンテナンス",
+   "industry": "サービス業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2960.9
+  },
+  {
+   "code": "9627.T",
+   "name": "アインホールディングス",
+   "industry": "小売業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2155.2
+  },
+  {
+   "code": "9678.T",
+   "name": "カナモト",
+   "industry": "サービス業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1912.5
+  },
+  {
+   "code": "9682.T",
+   "name": "ＤＴＳ",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1768.0
+  },
+  {
+   "code": "9715.T",
+   "name": "トランス・コスモス",
+   "industry": "サービス業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1395.9
+  },
+  {
+   "code": "9716.T",
+   "name": "乃村工藝社",
+   "industry": "サービス業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1428.4
+  },
+  {
+   "code": "9722.T",
+   "name": "藤田観光",
+   "industry": "サービス業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1717.2
+  },
+  {
+   "code": "9743.T",
+   "name": "丹青社",
+   "industry": "サービス業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 716.5
+  },
+  {
+   "code": "9744.T",
+   "name": "メイテックグループホールディングス",
+   "industry": "サービス業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2586.4
+  },
+  {
+   "code": "9746.T",
+   "name": "ＴＫＣ",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 2038.5
+  },
+  {
+   "code": "9757.T",
+   "name": "船井総研ホールディングス",
+   "industry": "サービス業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1100.8
+  },
+  {
+   "code": "9759.T",
+   "name": "ＮＳＤ",
+   "industry": "情報・通信業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2175.7
+  },
+  {
+   "code": "9793.T",
+   "name": "ダイセキ",
+   "industry": "サービス業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1754.3
+  },
+  {
+   "code": "9824.T",
+   "name": "泉州電業",
+   "industry": "卸売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1258.5
+  },
+  {
+   "code": "9830.T",
+   "name": "トラスコ中山",
+   "industry": "卸売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1558.0
+  },
+  {
+   "code": "9831.T",
+   "name": "ヤマダホールディングス",
+   "industry": "小売業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4714.7
+  },
+  {
+   "code": "9842.T",
+   "name": "アークランズ",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1173.5
+  },
+  {
+   "code": "9861.T",
+   "name": "吉野家ホールディングス",
+   "industry": "小売業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 2462.2
+  },
+  {
+   "code": "9880.T",
+   "name": "イノテック",
+   "industry": "電気機器",
+   "size": "TOPIX Small 2",
+   "market_cap_oku": 390.2
+  },
+  {
+   "code": "9887.T",
+   "name": "松屋フーズホールディングス",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1087.4
+  },
+  {
+   "code": "9889.T",
+   "name": "ＪＢＣＣホールディングス",
+   "industry": "情報・通信業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1022.7
+  },
+  {
+   "code": "9900.T",
+   "name": "サガミホールディングス",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 679.6
+  },
+  {
+   "code": "9934.T",
+   "name": "因幡電機産業",
+   "industry": "卸売業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3438.3
+  },
+  {
+   "code": "9936.T",
+   "name": "王将フードサービス",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1548.6
+  },
+  {
+   "code": "9948.T",
+   "name": "アークス",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1990.0
+  },
+  {
+   "code": "9956.T",
+   "name": "バローホールディングス",
+   "industry": "小売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1893.2
+  },
+  {
+   "code": "9960.T",
+   "name": "東テク",
+   "industry": "卸売業",
+   "size": "TOPIX Small 1",
+   "market_cap_oku": 1619.7
+  },
+  {
+   "code": "9987.T",
+   "name": "スズケン",
+   "industry": "卸売業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 3491.5
+  },
+  {
+   "code": "9989.T",
+   "name": "サンドラッグ",
+   "industry": "小売業",
+   "size": "TOPIX Mid400",
+   "market_cap_oku": 4358.8
+  }
+ ],
+ "fetched_at": "2026-09-06T17:00:32+09:00"
+}
