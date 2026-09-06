@@ -182,22 +182,33 @@ def _accumulation_field(facts: dict) -> dict | None:
     trk = a.get("tracking", [])
     if not (dist or acc or trk):
         return None
+
+    # 層1(保有・監視)を必ず先に出す。埋め込みは行数が限られるので、層2の発掘銘柄で
+    # 保有株の売り抜けシグナルが押し出されると、一番読ませたいものが消える。
+    def _by_layer(rows: list[dict]) -> list[dict]:
+        return ([r for r in rows if r.get("layer") == "core"]
+                + [r for r in rows if r.get("layer") != "core"])
+
+    def _lt(x: dict) -> str:
+        return "保有・監視" if x.get("layer") == "core" else "発掘"
+
     lines = []
-    for x in dist[:3]:
+    for x in _by_layer(dist)[:3]:
         tag = ("決算" if x.get("earnings_spike") is True
                else "通常" if x.get("earnings_spike") is False else "決算判別不可")
-        lines.append(f"🔻 **売り抜けの疑い** {x['name']} {x['date']} "
+        lines.append(f"🔻 **売り抜けの疑い**[{_lt(x)}] {x['name']} {x['date']} "
                      f"出来高{x['vol_ratio']}倍・終値位置{x['crp']}（{tag}）")
-    for x in acc[:3]:
-        lines.append(f"🟢 **集積の疑い** {x['name']} {x['date']} "
+    for x in _by_layer(acc)[:3]:
+        lines.append(f"🟢 **集積の疑い**[{_lt(x)}] {x['name']} {x['date']} "
                      f"出来高{x['vol_ratio']}倍・終値位置{x['crp']}")
-    for x in trk[:2]:
+    for x in _by_layer(trk)[:2]:
         f = x.get("followup", {})
-        lines.append(f"⏳ 候補追跡中 {x['name']} {x['date']} "
+        lines.append(f"⏳ 候補追跡中[{_lt(x)}] {x['name']} {x['date']} "
                      f"({f.get('elapsed')}/{f.get('needed')}営業日)")
-    extra = len(dist) + len(acc) + len(trk) - len(lines)
+    om = sum((a.get("universe_rows_omitted") or {}).values())
+    extra = len(dist) + len(acc) + len(trk) - len(lines) + om
     if extra > 0:
-        lines.append(f"… 他{extra}件は添付の .md に")
+        lines.append(f"… 他{extra}件は添付の .md とダッシュボードに")
     return {"name": "🏦 買い集め/売り抜け検出", "value": "\n".join(lines)[:1024],
             "inline": False}
 

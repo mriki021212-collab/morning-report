@@ -285,6 +285,12 @@
   .acc-tag.trk{color:var(--mut);border-color:var(--line)}
   .acc-tag.ern{color:var(--accent);border-color:var(--accent-dim)}
   .acc-tag.na{color:var(--mut-dim);border-color:var(--line)}
+  .acc-tag.core{color:var(--accent);border-color:var(--accent-dim)}
+  .acc-tag.uni{color:var(--mut-dim);border-color:var(--line)}
+  /* 層1は左のアクセントバーでも示す。色ラベルだけに頼らない */
+  .acc-list li.core{padding-left:7px;position:relative}
+  .acc-list li.core::before{content:"";position:absolute;left:0;top:5px;bottom:5px;
+                            width:2px;background:var(--accent);border-radius:1px}
   .acc-sub{font-size:9.5px;color:var(--mut-dim);margin:7px 0 2px;
            text-transform:uppercase;letter-spacing:.5px}
 
@@ -1449,13 +1455,20 @@ function accRow(x, kindTag){
   if(f.state === "tracking") bits.push(`追跡 ${f.elapsed}/${f.needed}営業日`);
   else if(f.checked_count) bits.push(`④ ${f.passed_count}/${f.checked_count}条件`);
 
-  return `<li>
+  // 層1(保有・監視)と層2(発掘)を必ず見分けられるようにする。保有株の売り抜けシグナルと
+  // 知らない銘柄のシグナルは読み手にとって重みが全く違うので、同じ見た目にしない。
+  const core = x.layer === "core";
+  const layerTag = core
+    ? '<span class="acc-tag core">層1 保有・監視</span>'
+    : '<span class="acc-tag uni">層2 発掘</span>';
+
+  return `<li class="${core ? "core" : ""}">
     <div class="acc-head">
       <span class="dt num">${esc(x.date)}</span>
       <span class="nm">${esc(x.name)}<span class="cd"> ${esc(x.code)}</span></span>
       ${kindTag}${ern}
     </div>
-    <div class="acc-metrics">${bits.map(esc).join(" · ")}</div>
+    <div class="acc-metrics">${layerTag} ${bits.map(esc).join(" · ")}</div>
   </li>`;
 }
 
@@ -1490,9 +1503,17 @@ function renderAccum(){
   }
 
   const notes = [];
-  notes.push(`層1 ${core.n_targets||0}銘柄を全数判定。層2は${uni.status ? esc(uni.status) : (uni.n_targets||0)+"銘柄"}。`);
+  const uniState = uni.status ? esc(uni.status)
+    : `${uni.n_targets||0}銘柄（${uni.scan_mode==="full"?"全数走査":"候補のみ追跡"}）`;
+  notes.push(`層1 ${core.n_targets||0}銘柄を全数判定。層2は${uniState}。`);
+  // 上限で切った件数。0件と「上限で隠れている」を区別できるようにする。
+  const om = ACCUM.universe_rows_omitted || {};
+  const omTotal = (om.distribution||0)+(om.accumulation||0)+(om.tracking||0);
+  if(omTotal) notes.push(`層2は表示上限のため${omTotal}件を省略しています（該当ゼロではありません）。`);
   if((core.fetch_failed||[]).length)
     notes.push(`⚠️ ${core.fetch_failed.length}銘柄は株価を取得できませんでした（該当ゼロではありません）。`);
+  if((uni.fetch_failed||[]).length)
+    notes.push(`⚠️ 層2の${uni.fetch_failed.length}銘柄は株価を取得できませんでした。`);
   if(ins.length)
     notes.push("判定対象外: " + ins.map(x=>`${esc(x.name)}（${esc(x.reason)}）`).join(" / "));
   notes.push(esc(ACCUM.method||""));

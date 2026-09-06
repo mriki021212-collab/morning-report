@@ -236,13 +236,18 @@ def screen_by_market_cap(codes: list[str], min_oku: float, max_oku: float
 
     yfinance の fast_info.market_cap を使う。取れなかった銘柄は「帯の中かもしれないが
     確認できない」ので通さない（推定で埋めない）。
+
+    注意: FastInfo は属性が snake_case、dictキーが camelCase という二重の顔を持つ。
+    `fast_info.get("market_cap")` は例外を出さずに None を返すので、これを使うと
+    「全銘柄で時価総額が取れない」状態が無言で起きる（実測で発生させた）。
+    属性アクセス `.market_cap` を使うこと。
     """
     import yfinance as yf
 
     passed, rejected, caps = [], {}, {}
     for code in codes:
         try:
-            mc = yf.Ticker(code).fast_info.get("market_cap")
+            mc = yf.Ticker(code).fast_info.market_cap
         except Exception as e:
             rejected[code] = f"時価総額を取得できない: {type(e).__name__}"
             continue
@@ -258,6 +263,92 @@ def screen_by_market_cap(codes: list[str], min_oku: float, max_oku: float
         else:
             passed.append(code)
     return passed, rejected, caps
+
+
+# --------------------------------------------------------------------------
+# Step3: 層2ユニバースの構築
+# --------------------------------------------------------------------------
+def build_jpx_universe(cfg: dict, out_dir: pathlib.Path, verbose: bool = True) -> dict:
+    """JPXの上場銘柄一覧にフィルタを掛けて層2ユニバースを作り、キャッシュに書く。
+
+    重い処理（3,600銘柄の株価取得＋数百銘柄の時価総額照会）なので、毎回の判定では
+    走らせない。週1回のフル走査の前に1度だけ実行し、結果を
+    out/universe_jpx_filtered.json に置く。members() はそれを読むだけ。
+
+    絞る順番には理由がある。安い条件から先に掛けて、高い条件に渡す件数を減らす:
+      1. 区分・コード・規模区分   … ファイルだけで判定できる。ネットワーク不要
+      2. 履歴長・平均売買代金     … 一括取得した株価から計算できる。追加リクエストなし
+      3. 時価総額                 … 1銘柄1リクエスト。ここに来る件数を最小にしたい
+    """
+    import collect
+
+    ucfg = cfg["accumulation"]["layers"]["universe"]
+    f = ucfg["filters"]
+    fetch_cfg = ucfg.get("fetch") or {}
+    t0 = dt.datetime.now(JST)
+
+    listed = fetch_jpx_listed(ucfg["sources"]["jpx_listed"]["url"], out_dir,
+                              ucfg.get("jpx_cache_hours", 168))
+    if listed.get("rows") is None:
+        return {"status": f"ユニバースを取得できていません: {listed.get('status')}",
+                "members": None}
+
+    cands, dropped = jpx_stock_candidates(listed, f.get("exclude_sizes"))
+    if verbose:
+        print(f"1. JPX一覧 {listed['n']}件 → 一次フィルタ後 {len(cands)}件 {dropped}")
+
+    codes = [c["code"] for c in cands]
+    frames, fetch_failed = collect.fetch_ohlcv_batch(
+        codes, period=fetch_cfg.get("period", "3y"),
+        chunk=fetch_cfg.get("chunk", 40), pause=fetch_cfg.get("pause_sec", 0.0))
+    if verbose:
+        print(f"2. 株価取得 成功{len(frames)} / 失敗{len(fetch_failed)}")
+
+    liquid, rejected_px = screen_by_price_data(
+        frames, f["avg_turnover_min_oku"], f["avg_turnover_days"],
+        f["min_listed_bdays"])
+    if verbose:
+        n_short = sum(1 for v in rejected_px.values() if "履歴" in v)
+        print(f"3. 履歴長・売買代金 → {len(liquid)}件 "
+              f"(履歴不足{n_short} / 流動性不足{len(rejected_px)-n_short})")
+
+    passed, rejected_mc, caps = screen_by_market_cap(
+        liquid, f["market_cap_min_oku"], f["market_cap_max_oku"])
+    if verbose:
+        print(f"4. 時価総額 {f['market_cap_min_oku']}〜{f['market_cap_max_oku']}億円 "
+              f"→ {len(passed)}件")
+
+    by_code = {c["code"]: c for c in cands}
+    members_ = [{"code": c, "name": by_code[c]["name"],
+                 "industry": by_code[c].get("industry"),
+                 "size": by_code[c].get("size"),
+                 "market_cap_oku": caps.get(c)}
+                for c in passed]
+    members_.sort(key=lambda m: m["code"])
+
+    data = {
+        "status": "ok" if members_ else "フィルタを通過した銘柄が0件",
+        "source": listed.get("source"), "url": listed.get("url"),
+        "as_of": listed.get("as_of"),
+        "built_at": t0.isoformat(timespec="seconds"),
+        "elapsed_sec": round((dt.datetime.now(JST) - t0).total_seconds(), 1),
+        "filters": f,
+        "funnel": {
+            "listed_total": listed["n"],
+            "after_primary": len(cands),
+            "primary_dropped": dropped,
+            "price_fetched": len(frames),
+            "price_fetch_failed": len(fetch_failed),
+            "after_liquidity": len(liquid),
+            "after_market_cap": len(passed),
+        },
+        # 落ちた理由は件数だけ残す。3,600件ぶんの理由を全部書くとファイルが巨大になる。
+        "rejected_sample": dict(list(rejected_mc.items())[:5]),
+        "n": len(members_),
+        "members": members_,
+    }
+    _cache_write(out_dir / "universe_jpx_filtered.json", data)
+    return data
 
 
 # --------------------------------------------------------------------------
@@ -290,18 +381,22 @@ def members(cfg: dict, out_dir: pathlib.Path) -> dict:
                 "publishable": False}   # 日経の著作物。一覧を公開物に出さない
 
     if mode == "jpx_filtered":
-        s = srcs.get("jpx_listed") or {}
-        d = fetch_jpx_listed(s.get("url"), out_dir, ucfg.get("jpx_cache_hours", 168))
-        if d.get("rows") is None:
-            return {"status": f"ユニバースを取得できていません: {d.get('status')}",
+        # 構築は build_jpx_universe() が別に走らせる（重いので毎回はやらない）。
+        # ここは出来上がったものを読むだけ。無ければ「未構築」であって「該当ゼロ」ではない。
+        path = out_dir / "universe_jpx_filtered.json"
+        built = _cache_read(path, ucfg.get("universe_ttl_hours", 24 * 8))
+        if built is None:
+            why = ("まだ構築されていません" if not path.exists()
+                   else "構築済みだが古くなっています")
+            return {"status": f"ユニバース未構築（{why}。"
+                              f"src/universe_build.py を実行してください）",
                     "mode": mode, "members": None}
-        f = ucfg.get("filters") or {}
-        cands, dropped = jpx_stock_candidates(d, f.get("exclude_sizes"))
-        return {"status": None, "mode": mode, "source": d.get("source"),
-                "as_of": d.get("as_of"), "members": cands, "n": len(cands),
-                "n_listed_total": d.get("n"), "dropped": dropped,
-                "publishable": True,
-                "note": "ここは一次フィルタ（区分・規模区分）のみ。"
-                        "売買代金・履歴長・時価総額は価格データ取得後に絞る。"}
+        if built.get("members") is None:
+            return {"status": f"ユニバースを取得できていません: {built.get('status')}",
+                    "mode": mode, "members": None}
+        return {"status": None, "mode": mode, "source": built.get("source"),
+                "as_of": built.get("as_of"), "built_at": built.get("built_at"),
+                "members": built["members"], "n": built["n"],
+                "funnel": built.get("funnel"), "publishable": True}
 
     return {"status": f"未知のユニバースmode: {mode!r}", "mode": mode, "members": None}
