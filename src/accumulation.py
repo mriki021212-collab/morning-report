@@ -369,7 +369,14 @@ def update_state(state: dict, results: list[dict], p: Params, today: dt.date) ->
         if r.get("status"):
             continue
         for sp in r.get("spikes", []):
-            if not str(sp.get("kind", "")).startswith(("候補", "集積")):
+            kind = str(sp.get("kind", ""))
+            # 残すのは「まだ追跡が要るもの」と「成立したもの」だけ。
+            # 「候補（④不成立）」は10日の判定が終わって結果が確定しており、
+            # 翌日以降に見直す理由が無い。これを残すと状態ファイルが膨らみ
+            # (718銘柄で696件・297KB)、平日の追跡対象も数百銘柄に膨れて
+            # 「平日は数十件以下」という前提が崩れる。
+            if not (kind.startswith("候補（追跡中")
+                    or kind.startswith("集積")):
                 continue
             key = f"{r['code']}|{sp['date']}"
             prev = cands.get(key, {})
@@ -406,9 +413,15 @@ def save_state(state: dict, out_dir: pathlib.Path) -> None:
 
 
 def tracking_codes(state: dict) -> list[str]:
-    """平日の追跡対象。層2で候補フラグが立っている銘柄のコード。"""
+    """平日の追跡対象。層2で「まだ10日が埋まっていない候補」の銘柄コード。
+
+    既に④の判定が終わった候補（成立・不成立とも）は含めない。結果が確定しており、
+    翌日以降に株価を取り直す理由が無い。ここを絞らないと平日の取得対象が
+    ユニバース全体に近づき、二段構えにした意味が無くなる。
+    """
     return sorted({c["code"] for c in state.get("candidates", {}).values()
-                   if c.get("layer") == "universe"})
+                   if c.get("layer") == "universe"
+                   and str(c.get("kind", "")).startswith("候補（追跡中")})
 
 
 # --------------------------------------------------------------------------
