@@ -10,7 +10,7 @@ import jpholiday
 import yaml
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
-import analogs, collect, dashboard, earnings, jquants, news, notify, render, tdnet  # noqa: E402
+import accumulation, analogs, collect, dashboard, earnings, jquants, news, notify, render, tdnet  # noqa: E402
 import postguard  # noqa: E402
 import yahoo_jp  # noqa: E402
 
@@ -334,6 +334,19 @@ def main() -> None:
             print(f"earnings: {len(e['events'])}件 / 取得不可 {len(e['failed'])}銘柄")
         except Exception:
             print("earnings の生成に失敗（レポートは続行）:\n" + traceback.format_exc())
+
+        # 買い集め検出。これもレポート本体とは独立。落ちてもレポートは止めない。
+        # hist は既に取得済みのOHLCV日足なので再取得しない（不足時だけ fetch する）。
+        try:
+            acc = accumulation.write(cfg, hist, out, fetch=collect.fetch_history)
+            facts["accumulation"] = acc
+            print(f"accumulation: 層1 {acc['layers']['core']['n_targets']}銘柄 / "
+                  f"集積 {len(acc['accumulation'])}件 / 売り抜け {len(acc['distribution'])}件 / "
+                  f"追跡中 {len(acc['tracking'])}件 / 日数不足 {len(acc['insufficient'])}銘柄")
+            for x in acc["insufficient"]:
+                print(f"  除外 {x['code']} {x['name']}: {x['reason']}")
+        except Exception:
+            print("accumulation の生成に失敗（レポートは続行）:\n" + traceback.format_exc())
 
         # 後場版は朝のファイルを上書きしない。
         # morning_vs_actual が今朝のスナップショットを読むため潰すと比較ができなくなる。

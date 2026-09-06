@@ -166,6 +166,42 @@ def _news_field(facts: dict) -> dict:
     return {"name": "📰 主要ニュース", "value": body, "inline": False}
 
 
+def _accumulation_field(facts: dict) -> dict | None:
+    """買い集め/売り抜けの検出結果。
+
+    Embedを1フィールド増やすので、出すのは「読み手が動く可能性がある時」だけにする:
+    該当があった時と、判定そのものが落ちた時。該当ゼロは .md 側に書いてある。
+    ただし「該当ゼロ」と「落ちた」を同じ沈黙にはしない — 落ちた時は必ず出す。
+    """
+    a = facts.get("accumulation") if facts else None
+    if a is None:
+        return {"name": "🏦 買い集め/売り抜け検出",
+                "value": "⚠️ 算出できていない（accumulation の生成に失敗）。該当ゼロではない。",
+                "inline": False}
+    dist, acc = a.get("distribution", []), a.get("accumulation", [])
+    trk = a.get("tracking", [])
+    if not (dist or acc or trk):
+        return None
+    lines = []
+    for x in dist[:3]:
+        tag = ("決算" if x.get("earnings_spike") is True
+               else "通常" if x.get("earnings_spike") is False else "決算判別不可")
+        lines.append(f"🔻 **売り抜けの疑い** {x['name']} {x['date']} "
+                     f"出来高{x['vol_ratio']}倍・終値位置{x['crp']}（{tag}）")
+    for x in acc[:3]:
+        lines.append(f"🟢 **集積の疑い** {x['name']} {x['date']} "
+                     f"出来高{x['vol_ratio']}倍・終値位置{x['crp']}")
+    for x in trk[:2]:
+        f = x.get("followup", {})
+        lines.append(f"⏳ 候補追跡中 {x['name']} {x['date']} "
+                     f"({f.get('elapsed')}/{f.get('needed')}営業日)")
+    extra = len(dist) + len(acc) + len(trk) - len(lines)
+    if extra > 0:
+        lines.append(f"… 他{extra}件は添付の .md に")
+    return {"name": "🏦 買い集め/売り抜け検出", "value": "\n".join(lines)[:1024],
+            "inline": False}
+
+
 def _holdings_field(facts: dict) -> dict:
     h = facts.get("holdings", {}) if facts else {}
     lines = []
@@ -221,6 +257,9 @@ def post(report: str, audit_result: str = "OK", facts: dict | None = None) -> No
         if hs:
             fields.append(_alert_field(hs))
         fields.append(_holdings_field(facts))
+        af = _accumulation_field(facts)
+        if af:
+            fields.append(af)
         # 寄り付き示唆は朝だけ意味を持つ。大引け後に出しても読み手を混乱させるだけ。
         if not afternoon:
             fields.append(_gap_field(facts))

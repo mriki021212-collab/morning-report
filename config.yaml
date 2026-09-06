@@ -123,6 +123,80 @@ earnings:
   #     source_url: "https://www.j-display.com/ir/"
   manual: {}
 
+# ===== 機関投資家の買い集め検出 (accumulation) =====
+# 考え方: 「出来高が増えた株」ではなく「出来高が増えた後も売られない株」を探す。
+# 全ての閾値はここで調整する。src/accumulation.py にハードコードしないこと。
+# 数値の意味は docs/accumulation.md に、根拠となる考え方ごと書いてある。
+accumulation:
+  # 判定に必要な最小履歴（営業日）。これを下回る銘柄は値を一切出さず、理由だけを出す。
+  # 300 の根拠: ③のU/D比に50日、④のレンジ収縮に「スパイク前20日」、
+  # さらに複数回のスパイクを拾える程度の余裕。
+  min_history_days: 300
+
+  # ① 出来高スパイク: VolRatio = V / SMA(V,20) >= vol_spike_ratio
+  vol_spike_ratio: 2.0
+  vol_sma_days: 20
+  # SMAに当日を含めない。含めると自分自身で平均を押し上げ、
+  # 「普段の2倍」という元の言葉より緩い判定になる（3倍の日でも比率2.7倍程度に薄まる）。
+  vol_sma_exclude_today: true
+
+  # ② 終値位置 CRP = (C - L) / (H - L)。H == L の日は null（ゼロ除算を値で埋めない）
+  crp_high: 0.7          # これ以上 = 高値引け = 買いが強い
+  crp_low: 0.3           # これ以下 = 安値引け = 売りが強い
+  upper_wick_min: 0.5    # 売り抜け判定の上ひげ (H-C)/(H-L)
+
+  # ③ 上昇日/下落日の出来高比（補助スコア。単独では判定に使わない）
+  ud_days: 50
+  ud_min: 1.5
+
+  # ④ スパイク後の耐性。P0=スパイク日の終値, R=スパイク日の H-L
+  followup_days: 10       # N。この日数ぶん埋まるまでは「追跡中」で、合否を出さない
+  drawdown_r_mult: 0.5    # 押し込み耐性: 以降N日の最安値 >= P0 - 0.5R
+  range_contraction: 0.7  # レンジ収縮: 直近N日平均(H-L)/C < スパイク前M日平均 * 0.7
+  range_base_days: 20     # M
+
+  # 毎回の走査で直近何営業日ぶんのスパイクを候補として拾うか。
+  # followup_days より十分に長くしないと、候補が④の評価を受ける前に窓から外れる。
+  scan_days: 60
+  # 候補フラグを out/accumulation_state.json に保持する営業日数。
+  candidate_keep_days: 40
+
+  # 決算スパイクか通常スパイクかの判別（Aの6に対応）
+  earnings_match:
+    # TDnetの決算短信がこの時刻以降の開示なら、市場が反応するのは翌営業日。
+    # 15:30開示の決算に対し当日をスパイク日とみなすと、決算前の需給を決算のせいにしてしまう。
+    after_close_hhmm: "15:00"
+    # 反応日から前後何営業日以内のスパイクを「決算スパイク」とみなすか
+    window_bdays: 1
+    # 過去の決算発表日のキャッシュ有効時間。過去日は変わらないので長めでよい。
+    cache_hours: 168
+    # 1銘柄あたりTDnetから何件の開示を遡るか。ここで届かない過去は「判別不可」にする。
+    tdnet_limit: 300
+
+  # ===== 2層構成 =====
+  # 層1と層2は目的が違う。混ぜて1つのランキングにしないこと。
+  layers:
+    core:
+      label: "層1 守り（保有・監視）"
+      note: "主目的は売り抜けの疑い（保有株の高出来高・安値引け）。集積は該当ゼロが常態。"
+      # config.yaml の既存グループをそのまま母集団にする。ここに銘柄を直書きしない。
+      groups: ["holdings", "watch", "sector"]
+    universe:
+      label: "層2 攻め（発掘ユニバース）"
+      note: "本来スクリーナーである手法を成立させるための母集団。週1回フル走査する。"
+      # Step3 で構築するまでは false。false の間、画面には「未構築」と出る（ゼロ件ではない）。
+      enabled: false
+      filters:
+        market_cap_min_oku: 300     # 億円。小さすぎると個人の単発注文でスパイクが立つ
+        market_cap_max_oku: 5000    # 億円。大きすぎると機関の買いが出来高に痕跡を残さない
+        avg_turnover_min_oku: 3     # 億円。直近20日の平均売買代金
+        avg_turnover_days: 20
+        min_listed_bdays: 300       # min_history_days と揃える（④の計算に必要な履歴長）
+        exclude_keywords: ["ETF", "ETN", "REIT", "投資法人", "整理", "内国株預託証券"]
+      source:
+        name: "JPX 上場銘柄一覧 (Excel)"
+        url: "https://www.jpx.co.jp/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_j.xls"
+
 # ===== アナログ（過去チャート類似）検索 =====
 analog:
   window: 60          # 直近何営業日のパターンを検索キーにするか

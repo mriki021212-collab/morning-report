@@ -269,6 +269,25 @@
   .ern-tag.fix{color:var(--up);border-color:var(--up-dim)}
   .ern-tag.est{color:var(--mut);border-color:var(--line)}
 
+  /* ---- accumulation (買い集め/売り抜け検出) ----
+     方向は色だけで示さない。必ず「集積の疑い/売り抜けの疑い」という文字ラベルを併記する。 */
+  .acc-list{margin:0;padding:0;list-style:none}
+  .acc-list li{padding:5px 2px;border-bottom:1px solid var(--line-soft);font-size:11px}
+  .acc-list li:last-child{border-bottom:none}
+  .acc-head{display:flex;gap:7px;align-items:baseline}
+  .acc-list .dt{color:var(--mut-dim);font-size:10px;white-space:nowrap}
+  .acc-list .nm{color:var(--txt);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .acc-list .cd{color:var(--mut-dim);font-size:9.5px}
+  .acc-metrics{color:var(--mut);font-size:9.5px;margin-top:2px;padding-left:1px}
+  .acc-tag{font-size:8.5px;border:1px solid var(--line);padding:0 3px;border-radius:2px;white-space:nowrap}
+  .acc-tag.dist{color:var(--dn);border-color:var(--dn-dim)}
+  .acc-tag.acc{color:var(--up);border-color:var(--up-dim)}
+  .acc-tag.trk{color:var(--mut);border-color:var(--line)}
+  .acc-tag.ern{color:var(--accent);border-color:var(--accent-dim)}
+  .acc-tag.na{color:var(--mut-dim);border-color:var(--line)}
+  .acc-sub{font-size:9.5px;color:var(--mut-dim);margin:7px 0 2px;
+           text-transform:uppercase;letter-spacing:.5px}
+
   /* ---- sentiment ---- */
   .sent-score{font-size:19px;font-weight:700;margin-bottom:6px}
   .sent-detail{font-size:10.5px;color:var(--mut);margin-bottom:3px}
@@ -447,6 +466,11 @@
         <div class="panel" id="panel-earnings">
           <h2>決算カレンダー<span class="note">確定/予定を区別・推定日は出さない</span></h2>
           <div class="body" id="earnings-body"></div>
+        </div>
+
+        <div class="panel" id="panel-accum">
+          <h2>買い集め/売り抜け検出<span class="note">出来高スパイク＋終値位置・推定なし</span></h2>
+          <div class="body" id="accum-body"></div>
         </div>
 
         <div class="panel" id="panel-sentiment">
@@ -1399,6 +1423,96 @@ function renderEarnings(){
   el.innerHTML = `<ul class="ern-list">${rows}</ul><div class="def">${notes.join("<br>")}</div>`;
 }
 
+/* ---- 買い集め/売り抜け検出 ----
+   out/accumulation.json は dashboard.json / earnings.json とは独立に読む。
+   ACCUM の意味は3値: null=まだ読めていない / オブジェクト=読めた。
+   「ファイルが無い」「該当ゼロ」「層2が未構築」は全部意味が違うので同じ空表示にしない。
+   ここは一切の再計算をしない（JSONの値をそのまま出すだけ）。 */
+let ACCUM = null;
+
+function accRow(x, kindTag){
+  // 決算スパイクかどうかは3値。null は「通常スパイク」ではなく「判別できていない」。
+  let ern;
+  if(x.earnings_spike === true)       ern = '<span class="acc-tag ern">決算スパイク</span>';
+  else if(x.earnings_spike === false) ern = '<span class="acc-tag">通常スパイク</span>';
+  else ern = `<span class="acc-tag na" title="${esc(x.earnings_spike_status||"")}">決算判別不可</span>`;
+
+  const f = x.followup || {};
+  const bits = [];
+  bits.push(`出来高 ${x.vol_ratio === null || x.vol_ratio === undefined ? "—" : x.vol_ratio.toFixed(2)}倍`);
+  // CRP は H==L の日に null になる。終値位置0.00(安値引け)とは全くの別物なので、
+  // falsy 判定(!x.crp)ではなく null/undefined を明示的に見る。
+  bits.push(`終値位置 ${x.crp === null || x.crp === undefined ? "算出不可(H=L)" : x.crp.toFixed(2)}`);
+  // 符号を必ず付ける。「6.24%」だけでは上げか下げか読めない。
+  if(x.chg_pct !== null && x.chg_pct !== undefined)
+    bits.push(`前日比 ${x.chg_pct >= 0 ? "+" : ""}${x.chg_pct.toFixed(2)}%`);
+  if(f.state === "tracking") bits.push(`追跡 ${f.elapsed}/${f.needed}営業日`);
+  else if(f.checked_count) bits.push(`④ ${f.passed_count}/${f.checked_count}条件`);
+
+  return `<li>
+    <div class="acc-head">
+      <span class="dt num">${esc(x.date)}</span>
+      <span class="nm">${esc(x.name)}<span class="cd"> ${esc(x.code)}</span></span>
+      ${kindTag}${ern}
+    </div>
+    <div class="acc-metrics">${bits.map(esc).join(" · ")}</div>
+  </li>`;
+}
+
+function renderAccum(){
+  const el = document.getElementById("accum-body");
+  if(!el) return;
+  if(!ACCUM){
+    el.innerHTML = '<div class="empty">買い集め検出を取得できていません（out/accumulation.json が読めません）</div>';
+    return;
+  }
+  const core = (ACCUM.layers||{}).core || {};
+  const uni  = (ACCUM.layers||{}).universe || {};
+  const dist = ACCUM.distribution || [];
+  const acc  = ACCUM.accumulation || [];
+  const trk  = ACCUM.tracking || [];
+  const ins  = ACCUM.insufficient || [];
+
+  let html = "";
+  html += '<div class="acc-sub">売り抜けの疑い（高出来高＋安値引け）</div>';
+  html += dist.length
+    ? `<ul class="acc-list">${dist.slice(0,5).map(x=>accRow(x,'<span class="acc-tag dist">売り抜け</span>')).join("")}</ul>`
+    : '<div class="empty">該当なし（判定は実行済み）</div>';
+
+  html += '<div class="acc-sub">集積の疑い（高値引け＋その後10日の耐性）</div>';
+  html += acc.length
+    ? `<ul class="acc-list">${acc.slice(0,5).map(x=>accRow(x,'<span class="acc-tag acc">集積</span>')).join("")}</ul>`
+    : '<div class="empty">該当なし（判定は実行済み）</div>';
+
+  if(trk.length){
+    html += '<div class="acc-sub">候補（10日が埋まるまで追跡中・合否未確定）</div>';
+    html += `<ul class="acc-list">${trk.slice(0,5).map(x=>accRow(x,'<span class="acc-tag trk">候補</span>')).join("")}</ul>`;
+  }
+
+  const notes = [];
+  notes.push(`層1 ${core.n_targets||0}銘柄を全数判定。層2は${uni.status ? esc(uni.status) : (uni.n_targets||0)+"銘柄"}。`);
+  if((core.fetch_failed||[]).length)
+    notes.push(`⚠️ ${core.fetch_failed.length}銘柄は株価を取得できませんでした（該当ゼロではありません）。`);
+  if(ins.length)
+    notes.push("判定対象外: " + ins.map(x=>`${esc(x.name)}（${esc(x.reason)}）`).join(" / "));
+  notes.push(esc(ACCUM.method||""));
+  notes.push("判定は全てPython側の計算結果。推定・補完はしていません。売買判断ではありません。");
+  html += `<div class="def">${notes.join("<br>")}</div>`;
+  el.innerHTML = html;
+}
+
+async function loadAccum(){
+  try{
+    const r = await fetch("out/accumulation.json?_="+Date.now(), {cache:"no-store"});
+    if(!r.ok) throw new Error("HTTP "+r.status);
+    ACCUM = await r.json();
+  }catch(e){
+    // 空オブジェクトにフォールバックしない。null のままにして「読めていない」を出す。
+    ACCUM = null;
+  }
+  renderAccum();
+}
+
 /* ---- 決算アラート ----
    confirmed:false の日付で「あと2日」と断定しない。文言に必ず「予定」を入れて、
    確定していない日付であることを読み手が分かるようにする。 */
@@ -1963,6 +2077,7 @@ function boot(d){
   setInterval(()=>renderSysInfo(STATE.data), 1000);
   setInterval(pollDashboard, DASHBOARD_POLL_MS);
   setInterval(loadEarnings, DASHBOARD_POLL_MS);
+  setInterval(loadAccum, DASHBOARD_POLL_MS);
 }
 
 async function pollDashboard(){
@@ -2005,6 +2120,7 @@ async function loadEarnings(){
   else renderEarnings();
 }
 loadEarnings();
+loadAccum();
 
 fetchStart();
 const _fetchStartTs = performance.now();

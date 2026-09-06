@@ -188,6 +188,115 @@ def build(cfg: dict, today: dt.date | None = None) -> dict:
     }
 
 
+# ---------------------------------------------------------------------------
+# 過去の決算発表日
+#
+# 上の build() は「これから先の予定」しか持たない (過去日は意図的に捨てている)。
+# accumulation.py は逆に「過去のスパイク日が決算の日だったか」を知りたいので、
+# 過去日の一次ソースが別に要る。
+#
+# yfinance の get_earnings_dates() は使えない。2026-09-06 に実測したところ、
+#   7974.T max=2025-05-08 / 8035.T max=2025-04-30 / 6920.T max=2025-04-28
+#   285A.T max=2025-05-15 / NVDA max=2025-06-26
+# と、どの銘柄も約16か月前で止まっていた。株価は 2026-09-04 まで取れているので、
+# 直近1年ぶんのスパイクは全て「決算日不明」になってしまう。
+#
+# TDnet (やのしんWEB-API) は決算短信そのものの開示日時を返す。同日に実測:
+#   7974 は 2009-10-29 から 2026-08-06 まで68件、285A は上場後の8件、
+#   5803 は 2026-08-07 14:00 (＝大引け前の開示) まで取れた。
+# 一次情報でありタイムスタンプまで持つので、こちらを使う。
+# ---------------------------------------------------------------------------
+TDNET_LIST = "https://webapi.yanoshin.jp/webapi/tdnet/list"
+_KESSAN = "決算短信"
+
+
+def _parse_pubdate(raw: str) -> dt.datetime | None:
+    for fmt in ("%Y-%m-%d %H:%M:%S", "%a, %d %b %Y %H:%M:%S %z"):
+        try:
+            when = dt.datetime.strptime((raw or "").strip(), fmt)
+            return when if when.tzinfo else when.replace(tzinfo=JST)
+        except (ValueError, AttributeError):
+            continue
+    return None
+
+
+def _fetch_past_one(code: str, limit: int) -> dict:
+    """1銘柄ぶんの過去決算短信。失敗は必ず status に出す（空リストで隠さない）。"""
+    import requests
+
+    url = f"{TDNET_LIST}/{code.replace('.T', '')}.json?limit={limit}"
+    try:
+        r = requests.get(url, timeout=30, headers={"User-Agent": "morning-report/1.0"})
+        r.raise_for_status()
+        rows = r.json().get("items", [])
+    except Exception as e:
+        return {"status": f"取得失敗: {type(e).__name__}: {e}",
+                "announcements": None, "covers_from": None}
+
+    anns, all_dates = [], []
+    for row in rows:
+        d = row.get("Tdnet", row)
+        when = _parse_pubdate(d.get("pubdate") or d.get("update") or "")
+        if when is None:
+            continue
+        all_dates.append(when)
+        if _KESSAN in (d.get("title") or ""):
+            anns.append({"datetime_jst": when.isoformat(timespec="seconds"),
+                         "title": d.get("title", "")})
+    anns.sort(key=lambda a: a["datetime_jst"])
+    return {
+        "status": "ok" if anns else "決算短信の開示が見つからない",
+        # このAPIは新しい順に limit 件を返す。limit で頭打ちになった銘柄は、
+        # ここより古いスパイクを「決算ではない」と言い切れない。その境界を必ず持ち回る。
+        "covers_from": min(all_dates).date().isoformat() if all_dates else None,
+        "truncated": len(rows) >= limit,
+        "announcements": anns,
+    }
+
+
+def past_announcements(codes: list[str], out_dir: pathlib.Path | None = None,
+                       cache_hours: int = 168, limit: int = 300) -> dict:
+    """過去の決算発表日時を銘柄ごとに返す。
+
+    返り値: {code: {"status": ..., "covers_from": "YYYY-MM-DD"|None,
+                    "announcements": [{"datetime_jst": ...}, ...] | None}}
+    announcements が None なら「取れなかった」。空リストなら「開示が無かった」。
+    この2つを呼び出し側が区別できるようにしておくこと。
+
+    過去日は後から変わらないのでキャッシュしてよい。キャッシュは
+    out/earnings_past.json。取得失敗した銘柄はキャッシュに残さない
+    （失敗を成功として固定してしまうため）。
+    """
+    cache: dict = {}
+    path = out_dir / "earnings_past.json" if out_dir else None
+    now = dt.datetime.now(JST)
+    if path and path.exists():
+        try:
+            cache = json.loads(path.read_text(encoding="utf-8"))
+        except Exception:
+            cache = {}
+
+    out, fetched = {}, False
+    for code in codes:
+        c = cache.get(code)
+        if c and c.get("fetched_at"):
+            age = (now - dt.datetime.fromisoformat(c["fetched_at"])).total_seconds() / 3600
+            if age < cache_hours and c.get("announcements") is not None:
+                out[code] = {k: c[k] for k in ("status", "covers_from", "truncated",
+                                               "announcements") if k in c}
+                continue
+        res = _fetch_past_one(code, limit)
+        out[code] = res
+        fetched = True
+        if res.get("announcements") is not None:
+            cache[code] = dict(res, fetched_at=now.isoformat(timespec="seconds"))
+
+    if path and fetched:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(cache, ensure_ascii=False, indent=1), encoding="utf-8")
+    return out
+
+
 def write(cfg: dict, out_dir: pathlib.Path) -> dict:
     data = build(cfg)
     out_dir.mkdir(parents=True, exist_ok=True)

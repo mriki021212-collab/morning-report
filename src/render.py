@@ -261,6 +261,8 @@ def _rest_of_morning(L: list, facts: dict) -> str:
     for n in mc[:8]:
         L.append(f"- {n['title']} — {n['source']} / {n['published']}")
 
+    L += _accumulation_section(facts)
+
     # 欠損一覧
     L.append(_sec("データ欠損一覧"))
     for k in ("orderbook", "sentiment", "events"):
@@ -274,6 +276,66 @@ def _rest_of_morning(L: list, facts: dict) -> str:
         L.append(f"- {s}")
     L.append("\n_本レポートは投資助言ではない。売買判断は自己責任で。_")
     return "\n".join(L)
+
+
+def _accumulation_section(facts: dict) -> list[str]:
+    """買い集め/売り抜けの検出結果。数値と該当有無だけを書く（売買判断は書かない）。
+
+    「該当なし」と「判定できていない」を必ず書き分ける。層1は該当ゼロが常態なので、
+    ゼロを黙って空欄にすると、動いていないのか該当が無いのか読み手が区別できない。
+    """
+    a = facts.get("accumulation")
+    L = [_sec("⑦ 買い集め/売り抜けの検出（機械判定）")]
+    if not a:
+        L.append("**現時点では確認できない（accumulation の生成に失敗）**")
+        return L
+    if a.get("status"):
+        L.append(f"**{a['status']}**")
+        return L
+
+    core = a.get("layers", {}).get("core", {})
+    uni = a.get("layers", {}).get("universe", {})
+    uni_state = uni.get("status") or f"{uni.get('n_targets', 0)}銘柄"
+    L.append(f"対象: {core.get('label')} {core.get('n_targets', 0)}銘柄 / "
+             f"{uni.get('label')} は{uni_state}")
+
+    dist = a.get("distribution", [])
+    L.append("\n**売り抜けの疑い（高出来高＋安値引け＋上ひげ）**")
+    if not dist:
+        L.append("- 該当なし（判定は正常に実行済み）")
+    for x in dist[:8]:
+        tag = ("決算スパイク" if x.get("earnings_spike") is True
+               else "通常スパイク" if x.get("earnings_spike") is False
+               else f"決算判別不可（{x.get('earnings_spike_status')}）")
+        L.append(f"- {x['date']} {x['name']}（{x['code']}）出来高{x['vol_ratio']}倍 / "
+                 f"終値位置{x['crp']} / 前日比{_arrow(x.get('chg_pct'))} / {tag}")
+
+    acc = a.get("accumulation", [])
+    L.append("\n**集積の疑い（高出来高＋高値引け＋その後10日の耐性を全て満たす）**")
+    if not acc:
+        L.append("- 該当なし（判定は正常に実行済み。層1は母集団が小さく該当ゼロが常態）")
+    for x in acc[:8]:
+        L.append(f"- {x['date']} {x['name']}（{x['code']}）出来高{x['vol_ratio']}倍 / "
+                 f"終値位置{x['crp']}")
+
+    trk = a.get("tracking", [])
+    if trk:
+        L.append("\n**候補（スパイク後の10日が埋まるまで追跡中・合否は未確定）**")
+        for x in trk[:8]:
+            f = x.get("followup", {})
+            L.append(f"- {x['date']} {x['name']}（{x['code']}）"
+                     f"{f.get('elapsed')}/{f.get('needed')}営業日経過")
+
+    ins = a.get("insufficient", [])
+    if ins:
+        L.append("\n**判定対象外（値は出さない）**")
+        for x in ins:
+            L.append(f"- {x['name']}（{x['code']}）: {x['reason']}")
+    if core.get("fetch_failed"):
+        L.append("\n**株価を取得できなかった銘柄**")
+        for x in core["fetch_failed"]:
+            L.append(f"- {x['name']}（{x['code']}）: {x['error']}")
+    return L
 
 
 def _earnings_section(facts: dict) -> list[str]:
@@ -413,6 +475,8 @@ def render_afternoon(facts: dict) -> str:
         for n in rows:
             tag = f"**[{'・'.join(n['matched'])}]** " if n.get("matched") else ""
             L.append(f"- {tag}{n['title']} — {n['source']} / {n['published']}")
+
+    L += _accumulation_section(facts)
 
     L.append(_sec("データ欠損一覧"))
     for k in ("orderbook", "sentiment"):

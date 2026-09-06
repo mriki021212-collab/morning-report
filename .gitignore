@@ -15,6 +15,16 @@ out/*
 !out/earnings.json
 !out/posted.json
 !out/newsdash.json
+# accumulation.json も Pages で配信する（terminal_dashboard.html のパネルが直接fetchする）。
+# accumulation_state.json は posted.json と同じ理由の例外: 候補フラグは翌営業日以降に
+# 引き継ぐ必要があり、デスクトップのタスクと Actions が共有できる場所がここしかない。
+!out/accumulation.json
+!out/accumulation_state.json
+# 過去の決算発表日のキャッシュ。過去日は変わらないので共有してよく、
+# 共有するぶんだけ TDnet API を叩く回数が減る。
+!out/earnings_past.json
+# 検証スクリプトの出力は再現可能なので上げない（300KB超・毎回変わる）
+out/accumulation_backtest.json
 
 # ローカル専用スクリプト
 run.ps1

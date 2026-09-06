@@ -1,0 +1,1299 @@
+{
+ "as_of": "2026-09-06T05:36:44+09:00",
+ "params": {
+  "min_history_days": 300,
+  "vol_spike_ratio": 2.0,
+  "vol_sma_days": 20,
+  "vol_sma_exclude_today": true,
+  "crp_high": 0.7,
+  "crp_low": 0.3,
+  "upper_wick_min": 0.5,
+  "ud_days": 50,
+  "ud_min": 1.5,
+  "followup_days": 10,
+  "drawdown_r_mult": 0.5,
+  "range_contraction": 0.7,
+  "range_base_days": 20,
+  "scan_days": 60,
+  "candidate_keep_days": 40,
+  "earnings_match": {
+   "after_close_hhmm": "15:00",
+   "window_bdays": 1,
+   "cache_hours": 168,
+   "tdnet_limit": 300
+  },
+  "layers": {
+   "core": {
+    "label": "層1 守り（保有・監視）",
+    "note": "主目的は売り抜けの疑い（保有株の高出来高・安値引け）。集積は該当ゼロが常態。",
+    "groups": [
+     "holdings",
+     "watch",
+     "sector"
+    ]
+   },
+   "universe": {
+    "label": "層2 攻め（発掘ユニバース）",
+    "note": "本来スクリーナーである手法を成立させるための母集団。週1回フル走査する。",
+    "enabled": false,
+    "filters": {
+     "market_cap_min_oku": 300,
+     "market_cap_max_oku": 5000,
+     "avg_turnover_min_oku": 3,
+     "avg_turnover_days": 20,
+     "min_listed_bdays": 300,
+     "exclude_keywords": [
+      "ETF",
+      "ETN",
+      "REIT",
+      "投資法人",
+      "整理",
+      "内国株預託証券"
+     ]
+    },
+    "source": {
+     "name": "JPX 上場銘柄一覧 (Excel)",
+     "url": "https://www.jpx.co.jp/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_j.xls"
+    }
+   }
+  }
+ },
+ "method": "① V/SMA(V,20)>=閾値 ② CRP=(C-L)/(H-L) ③ 50日U/D出来高比 ④ スパイク後10日の押し込み耐性・窓維持・レンジ収縮",
+ "layers": {
+  "core": {
+   "label": "層1 守り（保有・監視）",
+   "note": "主目的は売り抜けの疑い（保有株の高出来高・安値引け）。集積は該当ゼロが常態。",
+   "enabled": true,
+   "status": null,
+   "n_targets": 13,
+   "fetch_failed": [],
+   "results": [
+    {
+     "code": "7974.T",
+     "name": "任天堂",
+     "layer": "core",
+     "status": null,
+     "as_of": "2026-09-04",
+     "history_days": 5614,
+     "scan_days": 60,
+     "earnings_source": {
+      "status": "ok",
+      "covers_from": "2009-10-29",
+      "truncated": false
+     },
+     "ud": {
+      "value": 1.4951,
+      "pass": false,
+      "days": 50,
+      "up_volume": 293807100.0,
+      "down_volume": 196507400.0,
+      "threshold": 1.5,
+      "status": null
+     },
+     "latest": {
+      "date": "2026-09-04",
+      "vol_ratio": 0.5545,
+      "crp": 0.2449,
+      "close": 8839.0,
+      "volume": 5577200.0
+     },
+     "spikes": [
+      {
+       "date": "2026-07-29",
+       "vol_ratio": 2.2088,
+       "vol_sma20": 8524225.0,
+       "volume": 18827900.0,
+       "open": 7714.0,
+       "high": 8058.0,
+       "low": 7618.0,
+       "close": 7986.0,
+       "chg_pct": 4.2695,
+       "crp": 0.8364,
+       "wick_from_close": 0.1636,
+       "upper_shadow": 0.1636,
+       "earnings_spike": false,
+       "earnings_spike_status": null,
+       "range_zero": false,
+       "kind": "候補（④不成立）",
+       "followup": {
+        "state": "evaluated",
+        "elapsed": 10,
+        "needed": 10,
+        "drawdown": {
+         "min_low": 7403.0,
+         "floor": 7766.0,
+         "pass": false
+        },
+        "gap_hold": {
+         "min_close": 7428.0,
+         "spike_open": 7714.0,
+         "pass": false
+        },
+        "range_contraction": {
+         "after_mean_pct": 3.3267,
+         "before_mean_pct": 2.4569,
+         "threshold_pct": 1.7198,
+         "pass": false,
+         "status": null
+        },
+        "passed_count": 0,
+        "checked_count": 3,
+        "failed_conditions": [
+         "drawdown",
+         "gap_hold",
+         "range_contraction"
+        ],
+        "pass": false,
+        "status": null
+       }
+      },
+      {
+       "date": "2026-08-07",
+       "vol_ratio": 2.2007,
+       "vol_sma20": 9609410.0,
+       "volume": 21147900.0,
+       "open": 7815.0,
+       "high": 8047.0,
+       "low": 7624.0,
+       "close": 8043.0,
+       "chg_pct": 5.2611,
+       "crp": 0.9905,
+       "wick_from_close": 0.0095,
+       "upper_shadow": 0.0095,
+       "earnings_spike": true,
+       "earnings_spike_status": null,
+       "range_zero": false,
+       "kind": "候補（④不成立）",
+       "followup": {
+        "state": "evaluated",
+        "elapsed": 10,
+        "needed": 10,
+        "drawdown": {
+         "min_low": 7993.0,
+         "floor": 7831.5,
+         "pass": true
+        },
+        "gap_hold": {
+         "min_close": 8265.0,
+         "spike_open": 7815.0,
+         "pass": true
+        },
+        "range_contraction": {
+         "after_mean_pct": 3.3943,
+         "before_mean_pct": 2.7427,
+         "threshold_pct": 1.9199,
+         "pass": false,
+         "status": null
+        },
+        "passed_count": 2,
+        "checked_count": 3,
+        "failed_conditions": [
+         "range_contraction"
+        ],
+        "pass": false,
+        "status": null
+       }
+      }
+     ]
+    },
+    {
+     "code": "5803.T",
+     "name": "フジクラ",
+     "layer": "core",
+     "status": null,
+     "as_of": "2026-09-04",
+     "history_days": 5614,
+     "scan_days": 60,
+     "earnings_source": {
+      "status": "ok",
+      "covers_from": "2009-11-02",
+      "truncated": true
+     },
+     "ud": {
+      "value": 0.8865,
+      "pass": false,
+      "days": 50,
+      "up_volume": 1203787600.0,
+      "down_volume": 1357886500.0,
+      "threshold": 1.5,
+      "status": null
+     },
+     "latest": {
+      "date": "2026-09-04",
+      "vol_ratio": 0.5432,
+      "crp": 0.6242,
+      "close": 5053.0,
+      "volume": 34565900.0
+     },
+     "spikes": [
+      {
+       "date": "2026-06-23",
+       "vol_ratio": 2.9927,
+       "vol_sma20": 51535590.0,
+       "volume": 154230200.0,
+       "open": 7023.0,
+       "high": 7068.0,
+       "low": 6314.0,
+       "close": 6487.0,
+       "chg_pct": 5.2913,
+       "crp": 0.2294,
+       "wick_from_close": 0.7706,
+       "upper_shadow": 0.0597,
+       "earnings_spike": false,
+       "earnings_spike_status": null,
+       "range_zero": false,
+       "kind": "売り抜けの疑い"
+      },
+      {
+       "date": "2026-08-07",
+       "vol_ratio": 2.9509,
+       "vol_sma20": 43606595.0,
+       "volume": 128679300.0,
+       "open": 4650.0,
+       "high": 5280.0,
+       "low": 4380.0,
+       "close": 5185.0,
+       "chg_pct": 12.8155,
+       "crp": 0.8944,
+       "wick_from_close": 0.1056,
+       "upper_shadow": 0.1056,
+       "earnings_spike": true,
+       "earnings_spike_status": null,
+       "range_zero": false,
+       "kind": "候補（④不成立）",
+       "followup": {
+        "state": "evaluated",
+        "elapsed": 10,
+        "needed": 10,
+        "drawdown": {
+         "min_low": 4973.0,
+         "floor": 4735.0,
+         "pass": true
+        },
+        "gap_hold": {
+         "min_close": 5016.0,
+         "spike_open": 4650.0,
+         "pass": true
+        },
+        "range_contraction": {
+         "after_mean_pct": 6.7332,
+         "before_mean_pct": 6.7247,
+         "threshold_pct": 4.7073,
+         "pass": false,
+         "status": null
+        },
+        "passed_count": 2,
+        "checked_count": 3,
+        "failed_conditions": [
+         "range_contraction"
+        ],
+        "pass": false,
+        "status": null
+       }
+      },
+      {
+       "date": "2026-08-10",
+       "vol_ratio": 2.481,
+       "vol_sma20": 47785935.0,
+       "volume": 118555300.0,
+       "open": 5210.0,
+       "high": 5730.0,
+       "low": 5122.0,
+       "close": 5580.0,
+       "chg_pct": 7.6181,
+       "crp": 0.7533,
+       "wick_from_close": 0.2467,
+       "upper_shadow": 0.2467,
+       "earnings_spike": true,
+       "earnings_spike_status": null,
+       "range_zero": false,
+       "kind": "候補（④不成立）",
+       "followup": {
+        "state": "evaluated",
+        "elapsed": 10,
+        "needed": 10,
+        "drawdown": {
+         "min_low": 4968.0,
+         "floor": 5276.0,
+         "pass": false
+        },
+        "gap_hold": {
+         "min_close": 5016.0,
+         "spike_open": 5210.0,
+         "pass": false
+        },
+        "range_contraction": {
+         "after_mean_pct": 6.3786,
+         "before_mean_pct": 7.2837,
+         "threshold_pct": 5.0986,
+         "pass": false,
+         "status": null
+        },
+        "passed_count": 0,
+        "checked_count": 3,
+        "failed_conditions": [
+         "drawdown",
+         "gap_hold",
+         "range_contraction"
+        ],
+        "pass": false,
+        "status": null
+       }
+      }
+     ]
+    },
+    {
+     "code": "6740.T",
+     "name": "ジャパンディスプレイ",
+     "layer": "core",
+     "status": null,
+     "as_of": "2026-09-04",
+     "history_days": 3068,
+     "scan_days": 60,
+     "earnings_source": {
+      "status": "スパイクが無いため決算日は照会していない（判別対象のスパイクなし）",
+      "covers_from": null,
+      "truncated": null
+     },
+     "ud": {
+      "value": 0.5993,
+      "pass": false,
+      "days": 50,
+      "up_volume": 349507700.0,
+      "down_volume": 583236800.0,
+      "threshold": 1.5,
+      "status": null
+     },
+     "latest": {
+      "date": "2026-09-04",
+      "vol_ratio": 0.4749,
+      "crp": 1.0,
+      "close": 47.0,
+      "volume": 4385400.0
+     },
+     "spikes": []
+    },
+    {
+     "code": "285A.T",
+     "name": "キオクシアHD",
+     "layer": "core",
+     "status": null,
+     "as_of": "2026-09-04",
+     "history_days": 417,
+     "scan_days": 60,
+     "earnings_source": {
+      "status": "スパイクが無いため決算日は照会していない（判別対象のスパイクなし）",
+      "covers_from": null,
+      "truncated": null
+     },
+     "ud": {
+      "value": 1.085,
+      "pass": false,
+      "days": 50,
+      "up_volume": 1100101200.0,
+      "down_volume": 1013907700.0,
+      "threshold": 1.5,
+      "status": null
+     },
+     "latest": {
+      "date": "2026-09-04",
+      "vol_ratio": 0.8065,
+      "crp": 0.8088,
+      "close": 54460.0,
+      "volume": 30527100.0
+     },
+     "spikes": []
+    },
+    {
+     "code": "8035.T",
+     "name": "東京エレクトロン",
+     "layer": "core",
+     "status": null,
+     "as_of": "2026-09-04",
+     "history_days": 5614,
+     "scan_days": 60,
+     "earnings_source": {
+      "status": "ok",
+      "covers_from": "2013-04-30",
+      "truncated": true
+     },
+     "ud": {
+      "value": 1.123,
+      "pass": false,
+      "days": 50,
+      "up_volume": 104155900.0,
+      "down_volume": 92747800.0,
+      "threshold": 1.5,
+      "status": null
+     },
+     "latest": {
+      "date": "2026-09-04",
+      "vol_ratio": 0.9091,
+      "crp": 0.4583,
+      "close": 53320.0,
+      "volume": 2599600.0
+     },
+     "spikes": [
+      {
+       "date": "2026-07-31",
+       "vol_ratio": 3.2476,
+       "vol_sma20": 4340605.0,
+       "volume": 14096600.0,
+       "open": 59240.0,
+       "high": 59250.0,
+       "low": 54220.0,
+       "close": 55500.0,
+       "chg_pct": 6.2404,
+       "crp": 0.2545,
+       "wick_from_close": 0.7455,
+       "upper_shadow": 0.002,
+       "earnings_spike": true,
+       "earnings_spike_status": null,
+       "range_zero": false,
+       "kind": "売り抜けの疑い"
+      }
+     ]
+    },
+    {
+     "code": "6920.T",
+     "name": "レーザーテック",
+     "layer": "core",
+     "status": null,
+     "as_of": "2026-09-04",
+     "history_days": 4066,
+     "scan_days": 60,
+     "earnings_source": {
+      "status": "ok",
+      "covers_from": "2009-10-30",
+      "truncated": false
+     },
+     "ud": {
+      "value": 0.9867,
+      "pass": false,
+      "days": 50,
+      "up_volume": 79595400.0,
+      "down_volume": 80664400.0,
+      "threshold": 1.5,
+      "status": null
+     },
+     "latest": {
+      "date": "2026-09-04",
+      "vol_ratio": 1.1585,
+      "crp": 0.3571,
+      "close": 33180.0,
+      "volume": 3214400.0
+     },
+     "spikes": [
+      {
+       "date": "2026-06-17",
+       "vol_ratio": 2.538,
+       "vol_sma20": 3040360.0,
+       "volume": 7716500.0,
+       "open": 45870.0,
+       "high": 52980.0,
+       "low": 45770.0,
+       "close": 52700.0,
+       "chg_pct": 13.163,
+       "crp": 0.9612,
+       "wick_from_close": 0.0388,
+       "upper_shadow": 0.0388,
+       "earnings_spike": false,
+       "earnings_spike_status": null,
+       "range_zero": false,
+       "kind": "候補（④不成立）",
+       "followup": {
+        "state": "evaluated",
+        "elapsed": 10,
+        "needed": 10,
+        "drawdown": {
+         "min_low": 46570.0,
+         "floor": 49095.0,
+         "pass": false
+        },
+        "gap_hold": {
+         "min_close": 49200.0,
+         "spike_open": 45870.0,
+         "pass": true
+        },
+        "range_contraction": {
+         "after_mean_pct": 7.3328,
+         "before_mean_pct": 5.3824,
+         "threshold_pct": 3.7677,
+         "pass": false,
+         "status": null
+        },
+        "passed_count": 1,
+        "checked_count": 3,
+        "failed_conditions": [
+         "drawdown",
+         "range_contraction"
+        ],
+        "pass": false,
+        "status": null
+       }
+      },
+      {
+       "date": "2026-06-18",
+       "vol_ratio": 2.3955,
+       "vol_sma20": 3271215.0,
+       "volume": 7836200.0,
+       "open": 53700.0,
+       "high": 57330.0,
+       "low": 51910.0,
+       "close": 56450.0,
+       "chg_pct": 7.1157,
+       "crp": 0.8376,
+       "wick_from_close": 0.1624,
+       "upper_shadow": 0.1624,
+       "earnings_spike": false,
+       "earnings_spike_status": null,
+       "range_zero": false,
+       "kind": "候補（④不成立）",
+       "followup": {
+        "state": "evaluated",
+        "elapsed": 10,
+        "needed": 10,
+        "drawdown": {
+         "min_low": 46570.0,
+         "floor": 53740.0,
+         "pass": false
+        },
+        "gap_hold": {
+         "min_close": 47740.0,
+         "spike_open": 53700.0,
+         "pass": false
+        },
+        "range_contraction": {
+         "after_mean_pct": 6.8083,
+         "before_mean_pct": 5.8336,
+         "threshold_pct": 4.0835,
+         "pass": false,
+         "status": null
+        },
+        "passed_count": 0,
+        "checked_count": 3,
+        "failed_conditions": [
+         "drawdown",
+         "gap_hold",
+         "range_contraction"
+        ],
+        "pass": false,
+        "status": null
+       }
+      }
+     ]
+    },
+    {
+     "code": "6146.T",
+     "name": "ディスコ",
+     "layer": "core",
+     "status": null,
+     "as_of": "2026-09-04",
+     "history_days": 5614,
+     "scan_days": 60,
+     "earnings_source": {
+      "status": "ok",
+      "covers_from": "2013-07-01",
+      "truncated": true
+     },
+     "ud": {
+      "value": 0.974,
+      "pass": false,
+      "days": 50,
+      "up_volume": 41315200.0,
+      "down_volume": 42418800.0,
+      "threshold": 1.5,
+      "status": null
+     },
+     "latest": {
+      "date": "2026-09-04",
+      "vol_ratio": 0.9316,
+      "crp": 0.5294,
+      "close": 54460.0,
+      "volume": 1291800.0
+     },
+     "spikes": [
+      {
+       "date": "2026-06-12",
+       "vol_ratio": 2.082,
+       "vol_sma20": 1752190.0,
+       "volume": 3648100.0,
+       "open": 73750.0,
+       "high": 80100.0,
+       "low": 73310.0,
+       "close": 79900.0,
+       "chg_pct": 14.094,
+       "crp": 0.9705,
+       "wick_from_close": 0.0295,
+       "upper_shadow": 0.0295,
+       "earnings_spike": false,
+       "earnings_spike_status": null,
+       "range_zero": false,
+       "kind": "候補（④不成立）",
+       "followup": {
+        "state": "evaluated",
+        "elapsed": 10,
+        "needed": 10,
+        "drawdown": {
+         "min_low": 77830.0,
+         "floor": 76505.0,
+         "pass": true
+        },
+        "gap_hold": {
+         "min_close": 78510.0,
+         "spike_open": 73750.0,
+         "pass": true
+        },
+        "range_contraction": {
+         "after_mean_pct": 5.9889,
+         "before_mean_pct": 5.2593,
+         "threshold_pct": 3.6815,
+         "pass": false,
+         "status": null
+        },
+        "passed_count": 2,
+        "checked_count": 3,
+        "failed_conditions": [
+         "range_contraction"
+        ],
+        "pass": false,
+        "status": null
+       }
+      },
+      {
+       "date": "2026-06-15",
+       "vol_ratio": 2.4131,
+       "vol_sma20": 1807365.0,
+       "volume": 4361400.0,
+       "open": 82650.0,
+       "high": 86140.0,
+       "low": 80450.0,
+       "close": 85250.0,
+       "chg_pct": 6.6959,
+       "crp": 0.8436,
+       "wick_from_close": 0.1564,
+       "upper_shadow": 0.1564,
+       "earnings_spike": false,
+       "earnings_spike_status": null,
+       "range_zero": false,
+       "kind": "候補（④不成立）",
+       "followup": {
+        "state": "evaluated",
+        "elapsed": 10,
+        "needed": 10,
+        "drawdown": {
+         "min_low": 75330.0,
+         "floor": 82405.0,
+         "pass": false
+        },
+        "gap_hold": {
+         "min_close": 78510.0,
+         "spike_open": 82650.0,
+         "pass": false
+        },
+        "range_contraction": {
+         "after_mean_pct": 5.857,
+         "before_mean_pct": 5.128,
+         "threshold_pct": 3.5896,
+         "pass": false,
+         "status": null
+        },
+        "passed_count": 0,
+        "checked_count": 3,
+        "failed_conditions": [
+         "drawdown",
+         "gap_hold",
+         "range_contraction"
+        ],
+        "pass": false,
+        "status": null
+       }
+      },
+      {
+       "date": "2026-07-24",
+       "vol_ratio": 3.1625,
+       "vol_sma20": 1537380.0,
+       "volume": 4862000.0,
+       "open": 62800.0,
+       "high": 63020.0,
+       "low": 59420.0,
+       "close": 60890.0,
+       "chg_pct": -12.2749,
+       "crp": 0.4083,
+       "wick_from_close": 0.5917,
+       "upper_shadow": 0.0611,
+       "earnings_spike": true,
+       "earnings_spike_status": null,
+       "range_zero": false,
+       "kind": "高出来高（終値位置は中間）"
+      },
+      {
+       "date": "2026-07-31",
+       "vol_ratio": 2.2984,
+       "vol_sma20": 1853605.0,
+       "volume": 4260400.0,
+       "open": 59870.0,
+       "high": 60990.0,
+       "low": 57430.0,
+       "close": 58480.0,
+       "chg_pct": 12.7434,
+       "crp": 0.2949,
+       "wick_from_close": 0.7051,
+       "upper_shadow": 0.3146,
+       "earnings_spike": false,
+       "earnings_spike_status": null,
+       "range_zero": false,
+       "kind": "売り抜けの疑い"
+      }
+     ]
+    },
+    {
+     "code": "6857.T",
+     "name": "アドバンテスト",
+     "layer": "core",
+     "status": null,
+     "as_of": "2026-09-04",
+     "history_days": 5614,
+     "scan_days": 60,
+     "earnings_source": {
+      "status": "スパイクが無いため決算日は照会していない（判別対象のスパイクなし）",
+      "covers_from": null,
+      "truncated": null
+     },
+     "ud": {
+      "value": 0.8654,
+      "pass": false,
+      "days": 50,
+      "up_volume": 208918000.0,
+      "down_volume": 241425700.0,
+      "threshold": 1.5,
+      "status": null
+     },
+     "latest": {
+      "date": "2026-09-04",
+      "vol_ratio": 0.9254,
+      "crp": 0.9901,
+      "close": 33090.0,
+      "volume": 7464900.0
+     },
+     "spikes": []
+    },
+    {
+     "code": "7735.T",
+     "name": "SCREEN",
+     "layer": "core",
+     "status": null,
+     "as_of": "2026-09-04",
+     "history_days": 5614,
+     "scan_days": 60,
+     "earnings_source": {
+      "status": "ok",
+      "covers_from": "2009-11-09",
+      "truncated": false
+     },
+     "ud": {
+      "value": 1.1779,
+      "pass": false,
+      "days": 50,
+      "up_volume": 86121200.0,
+      "down_volume": 73115500.0,
+      "threshold": 1.5,
+      "status": null
+     },
+     "latest": {
+      "date": "2026-09-04",
+      "vol_ratio": 0.6784,
+      "crp": 0.3288,
+      "close": 13030.0,
+      "volume": 1576000.0
+     },
+     "spikes": [
+      {
+       "date": "2026-07-31",
+       "vol_ratio": 2.2844,
+       "vol_sma20": 3744365.0,
+       "volume": 8553700.0,
+       "open": 13780.0,
+       "high": 13800.0,
+       "low": 12385.0,
+       "close": 12600.0,
+       "chg_pct": 5.1753,
+       "crp": 0.1519,
+       "wick_from_close": 0.8481,
+       "upper_shadow": 0.0141,
+       "earnings_spike": false,
+       "earnings_spike_status": null,
+       "range_zero": false,
+       "kind": "売り抜けの疑い"
+      }
+     ]
+    },
+    {
+     "code": "6723.T",
+     "name": "ルネサス",
+     "layer": "core",
+     "status": null,
+     "as_of": "2026-09-04",
+     "history_days": 5614,
+     "scan_days": 60,
+     "earnings_source": {
+      "status": "ok",
+      "covers_from": "2016-06-28",
+      "truncated": true
+     },
+     "ud": {
+      "value": 0.7455,
+      "pass": false,
+      "days": 50,
+      "up_volume": 308768600.0,
+      "down_volume": 414184700.0,
+      "threshold": 1.5,
+      "status": null
+     },
+     "latest": {
+      "date": "2026-09-04",
+      "vol_ratio": 0.8969,
+      "crp": 0.7043,
+      "close": 3302.0,
+      "volume": 9905200.0
+     },
+     "spikes": [
+      {
+       "date": "2026-08-03",
+       "vol_ratio": 2.4955,
+       "vol_sma20": 15347680.0,
+       "volume": 38300100.0,
+       "open": 3792.0,
+       "high": 4044.0,
+       "low": 3627.0,
+       "close": 3905.0,
+       "chg_pct": 13.4515,
+       "crp": 0.6667,
+       "wick_from_close": 0.3333,
+       "upper_shadow": 0.3333,
+       "earnings_spike": true,
+       "earnings_spike_status": null,
+       "range_zero": false,
+       "kind": "高出来高（終値位置は中間）"
+      }
+     ]
+    },
+    {
+     "code": "6526.T",
+     "name": "ソシオネクスト",
+     "layer": "core",
+     "status": null,
+     "as_of": "2026-09-04",
+     "history_days": 955,
+     "scan_days": 60,
+     "earnings_source": {
+      "status": "スパイクが無いため決算日は照会していない（判別対象のスパイクなし）",
+      "covers_from": null,
+      "truncated": null
+     },
+     "ud": {
+      "value": 0.9895,
+      "pass": false,
+      "days": 50,
+      "up_volume": 211389800.0,
+      "down_volume": 213627200.0,
+      "threshold": 1.5,
+      "status": null
+     },
+     "latest": {
+      "date": "2026-09-04",
+      "vol_ratio": 0.6043,
+      "crp": 0.3663,
+      "close": 1954.0,
+      "volume": 3974100.0
+     },
+     "spikes": []
+    },
+    {
+     "code": "4063.T",
+     "name": "信越化学",
+     "layer": "core",
+     "status": null,
+     "as_of": "2026-09-04",
+     "history_days": 5614,
+     "scan_days": 60,
+     "earnings_source": {
+      "status": "ok",
+      "covers_from": "2010-01-21",
+      "truncated": true
+     },
+     "ud": {
+      "value": 0.9557,
+      "pass": false,
+      "days": 50,
+      "up_volume": 177128900.0,
+      "down_volume": 185341000.0,
+      "threshold": 1.5,
+      "status": null
+     },
+     "latest": {
+      "date": "2026-09-04",
+      "vol_ratio": 1.1617,
+      "crp": 0.0,
+      "close": 5786.0,
+      "volume": 6593000.0
+     },
+     "spikes": [
+      {
+       "date": "2026-07-27",
+       "vol_ratio": 2.0516,
+       "vol_sma20": 7247665.0,
+       "volume": 14869000.0,
+       "open": 6473.0,
+       "high": 6520.0,
+       "low": 6137.0,
+       "close": 6146.0,
+       "chg_pct": -8.296,
+       "crp": 0.0235,
+       "wick_from_close": 0.9765,
+       "upper_shadow": 0.1227,
+       "earnings_spike": true,
+       "earnings_spike_status": null,
+       "range_zero": false,
+       "kind": "売り抜けの疑い"
+      },
+      {
+       "date": "2026-07-28",
+       "vol_ratio": 2.0531,
+       "vol_sma20": 7544740.0,
+       "volume": 15490100.0,
+       "open": 6000.0,
+       "high": 6176.0,
+       "low": 5846.0,
+       "close": 5872.0,
+       "chg_pct": -4.4582,
+       "crp": 0.0788,
+       "wick_from_close": 0.9212,
+       "upper_shadow": 0.5333,
+       "earnings_spike": true,
+       "earnings_spike_status": null,
+       "range_zero": false,
+       "kind": "売り抜けの疑い"
+      },
+      {
+       "date": "2026-07-31",
+       "vol_ratio": 2.2342,
+       "vol_sma20": 8408265.0,
+       "volume": 18785700.0,
+       "open": 5917.0,
+       "high": 6042.0,
+       "low": 5800.0,
+       "close": 5800.0,
+       "chg_pct": 0.7644,
+       "crp": 0.0,
+       "wick_from_close": 1.0,
+       "upper_shadow": 0.5165,
+       "earnings_spike": false,
+       "earnings_spike_status": null,
+       "range_zero": false,
+       "kind": "売り抜けの疑い"
+      }
+     ]
+    },
+    {
+     "code": "3436.T",
+     "name": "SUMCO",
+     "layer": "core",
+     "status": null,
+     "as_of": "2026-09-04",
+     "history_days": 5614,
+     "scan_days": 60,
+     "earnings_source": {
+      "status": "ok",
+      "covers_from": "2010-05-06",
+      "truncated": true
+     },
+     "ud": {
+      "value": 0.9263,
+      "pass": false,
+      "days": 50,
+      "up_volume": 411358400.0,
+      "down_volume": 444096700.0,
+      "threshold": 1.5,
+      "status": null
+     },
+     "latest": {
+      "date": "2026-09-04",
+      "vol_ratio": 0.7754,
+      "crp": 0.5503,
+      "close": 3229.0,
+      "volume": 10189800.0
+     },
+     "spikes": [
+      {
+       "date": "2026-07-01",
+       "vol_ratio": 2.1998,
+       "vol_sma20": 13167945.0,
+       "volume": 28967100.0,
+       "open": 4166.0,
+       "high": 4729.0,
+       "low": 4112.0,
+       "close": 4729.0,
+       "chg_pct": 17.374,
+       "crp": 1.0,
+       "wick_from_close": 0.0,
+       "upper_shadow": 0.0,
+       "earnings_spike": false,
+       "earnings_spike_status": null,
+       "range_zero": false,
+       "kind": "候補（④不成立）",
+       "followup": {
+        "state": "evaluated",
+        "elapsed": 10,
+        "needed": 10,
+        "drawdown": {
+         "min_low": 4119.0,
+         "floor": 4420.5,
+         "pass": false
+        },
+        "gap_hold": {
+         "min_close": 4507.0,
+         "spike_open": 4166.0,
+         "pass": true
+        },
+        "range_contraction": {
+         "after_mean_pct": 11.0552,
+         "before_mean_pct": 7.993,
+         "threshold_pct": 5.5951,
+         "pass": false,
+         "status": null
+        },
+        "passed_count": 1,
+        "checked_count": 3,
+        "failed_conditions": [
+         "drawdown",
+         "range_contraction"
+        ],
+        "pass": false,
+        "status": null
+       }
+      },
+      {
+       "date": "2026-07-13",
+       "vol_ratio": 2.5084,
+       "vol_sma20": 16126560.0,
+       "volume": 40452300.0,
+       "open": 5344.0,
+       "high": 5939.0,
+       "low": 5133.0,
+       "close": 5133.0,
+       "chg_pct": -2.1167,
+       "crp": 0.0,
+       "wick_from_close": 1.0,
+       "upper_shadow": 0.7382,
+       "earnings_spike": false,
+       "earnings_spike_status": null,
+       "range_zero": false,
+       "kind": "売り抜けの疑い"
+      }
+     ]
+    }
+   ]
+  },
+  "universe": {
+   "label": "層2 攻め（発掘ユニバース）",
+   "enabled": false,
+   "status": "ユニバース未構築（Step3未実施）",
+   "results": [],
+   "n_targets": 0,
+   "filters": {
+    "market_cap_min_oku": 300,
+    "market_cap_max_oku": 5000,
+    "avg_turnover_min_oku": 3,
+    "avg_turnover_days": 20,
+    "min_listed_bdays": 300,
+    "exclude_keywords": [
+     "ETF",
+     "ETN",
+     "REIT",
+     "投資法人",
+     "整理",
+     "内国株預託証券"
+    ]
+   },
+   "source": {
+    "name": "JPX 上場銘柄一覧 (Excel)",
+    "url": "https://www.jpx.co.jp/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_j.xls"
+   }
+  }
+ },
+ "accumulation": [],
+ "distribution": [
+  {
+   "code": "8035.T",
+   "name": "東京エレクトロン",
+   "layer": "core",
+   "date": "2026-07-31",
+   "vol_ratio": 3.2476,
+   "vol_sma20": 4340605.0,
+   "volume": 14096600.0,
+   "open": 59240.0,
+   "high": 59250.0,
+   "low": 54220.0,
+   "close": 55500.0,
+   "chg_pct": 6.2404,
+   "crp": 0.2545,
+   "wick_from_close": 0.7455,
+   "upper_shadow": 0.002,
+   "earnings_spike": true,
+   "earnings_spike_status": null,
+   "range_zero": false,
+   "kind": "売り抜けの疑い"
+  },
+  {
+   "code": "7735.T",
+   "name": "SCREEN",
+   "layer": "core",
+   "date": "2026-07-31",
+   "vol_ratio": 2.2844,
+   "vol_sma20": 3744365.0,
+   "volume": 8553700.0,
+   "open": 13780.0,
+   "high": 13800.0,
+   "low": 12385.0,
+   "close": 12600.0,
+   "chg_pct": 5.1753,
+   "crp": 0.1519,
+   "wick_from_close": 0.8481,
+   "upper_shadow": 0.0141,
+   "earnings_spike": false,
+   "earnings_spike_status": null,
+   "range_zero": false,
+   "kind": "売り抜けの疑い"
+  },
+  {
+   "code": "6146.T",
+   "name": "ディスコ",
+   "layer": "core",
+   "date": "2026-07-31",
+   "vol_ratio": 2.2984,
+   "vol_sma20": 1853605.0,
+   "volume": 4260400.0,
+   "open": 59870.0,
+   "high": 60990.0,
+   "low": 57430.0,
+   "close": 58480.0,
+   "chg_pct": 12.7434,
+   "crp": 0.2949,
+   "wick_from_close": 0.7051,
+   "upper_shadow": 0.3146,
+   "earnings_spike": false,
+   "earnings_spike_status": null,
+   "range_zero": false,
+   "kind": "売り抜けの疑い"
+  },
+  {
+   "code": "4063.T",
+   "name": "信越化学",
+   "layer": "core",
+   "date": "2026-07-31",
+   "vol_ratio": 2.2342,
+   "vol_sma20": 8408265.0,
+   "volume": 18785700.0,
+   "open": 5917.0,
+   "high": 6042.0,
+   "low": 5800.0,
+   "close": 5800.0,
+   "chg_pct": 0.7644,
+   "crp": 0.0,
+   "wick_from_close": 1.0,
+   "upper_shadow": 0.5165,
+   "earnings_spike": false,
+   "earnings_spike_status": null,
+   "range_zero": false,
+   "kind": "売り抜けの疑い"
+  },
+  {
+   "code": "4063.T",
+   "name": "信越化学",
+   "layer": "core",
+   "date": "2026-07-28",
+   "vol_ratio": 2.0531,
+   "vol_sma20": 7544740.0,
+   "volume": 15490100.0,
+   "open": 6000.0,
+   "high": 6176.0,
+   "low": 5846.0,
+   "close": 5872.0,
+   "chg_pct": -4.4582,
+   "crp": 0.0788,
+   "wick_from_close": 0.9212,
+   "upper_shadow": 0.5333,
+   "earnings_spike": true,
+   "earnings_spike_status": null,
+   "range_zero": false,
+   "kind": "売り抜けの疑い"
+  },
+  {
+   "code": "4063.T",
+   "name": "信越化学",
+   "layer": "core",
+   "date": "2026-07-27",
+   "vol_ratio": 2.0516,
+   "vol_sma20": 7247665.0,
+   "volume": 14869000.0,
+   "open": 6473.0,
+   "high": 6520.0,
+   "low": 6137.0,
+   "close": 6146.0,
+   "chg_pct": -8.296,
+   "crp": 0.0235,
+   "wick_from_close": 0.9765,
+   "upper_shadow": 0.1227,
+   "earnings_spike": true,
+   "earnings_spike_status": null,
+   "range_zero": false,
+   "kind": "売り抜けの疑い"
+  },
+  {
+   "code": "3436.T",
+   "name": "SUMCO",
+   "layer": "core",
+   "date": "2026-07-13",
+   "vol_ratio": 2.5084,
+   "vol_sma20": 16126560.0,
+   "volume": 40452300.0,
+   "open": 5344.0,
+   "high": 5939.0,
+   "low": 5133.0,
+   "close": 5133.0,
+   "chg_pct": -2.1167,
+   "crp": 0.0,
+   "wick_from_close": 1.0,
+   "upper_shadow": 0.7382,
+   "earnings_spike": false,
+   "earnings_spike_status": null,
+   "range_zero": false,
+   "kind": "売り抜けの疑い"
+  },
+  {
+   "code": "5803.T",
+   "name": "フジクラ",
+   "layer": "core",
+   "date": "2026-06-23",
+   "vol_ratio": 2.9927,
+   "vol_sma20": 51535590.0,
+   "volume": 154230200.0,
+   "open": 7023.0,
+   "high": 7068.0,
+   "low": 6314.0,
+   "close": 6487.0,
+   "chg_pct": 5.2913,
+   "crp": 0.2294,
+   "wick_from_close": 0.7706,
+   "upper_shadow": 0.0597,
+   "earnings_spike": false,
+   "earnings_spike_status": null,
+   "range_zero": false,
+   "kind": "売り抜けの疑い"
+  }
+ ],
+ "tracking": [],
+ "insufficient": [],
+ "candidates_tracked": 4
+}
