@@ -304,12 +304,15 @@ def _econ_highlight(facts: dict) -> str | None:
         return None
     head = hi[0]
     extra = f" ほか{len(hi) - 1}件" if len(hi) > 1 else ""
-    when = head.get("time_jst") or "時刻未定"
     # 指標名に既に国名が入っている（例「米雇用統計」）ときに「米米雇用統計」にしない
     cc = head.get("country_label") or head.get("country") or ""
     name = head["name"]
     prefix = "" if (cc and name.startswith(cc)) else f"{cc} "
-    return f"⚠️ **本日{when} {prefix}{name}**{extra}"
+    when = head.get("time_jst")
+    if when:
+        return f"⚠️ **本日{when} {prefix}{name}**{extra}"
+    # 時刻が決まっていない指標（日銀の結果公表など）は時刻を作らない
+    return f"⚠️ **本日 {prefix}{name}（時刻未定）**{extra}"
 
 
 def _holdings_field(facts: dict) -> dict:

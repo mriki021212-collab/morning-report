@@ -169,7 +169,95 @@ earnings:
 #     source_url: "https://www.bls.gov/schedule/news_release/empsit.htm"
 econ_calendar:
   upcoming_days: 7     # 「今後の予定」として何日先まで出すか
-  events: []
+
+  # ---- 登録済みの日程の出所（2026-09-21 記入） ----
+  # FOMC : Fed公式の2027年日程プレスリリースと各会合ページ
+  #        https://www.federalreserve.gov/newsevents/pressreleases/monetary20250905a.htm
+  #        https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm
+  #        声明は「会合2日目の米東部14:00」と同プレスリリースに明記。下の time_jst と
+  #        date は、その 14:00 ET を zoneinfo で JST へ機械換算した値（手計算していない）。
+  #        米国の夏時間の有無で 03:00 と 04:00 に分かれるのは換算結果であって誤記ではない。
+  #        いずれも「会合2日目の翌日 未明」なので、日付は会合日そのものではない。
+  # 日銀 : 公式PDF「2026年/2027年の金融政策決定会合等の日程」
+  #        https://www.boj.or.jp/mopo/mpmsche_minu/m_ref/mref250731a.pdf (2026年)
+  #        https://www.boj.or.jp/mopo/mpmsche_minu/m_ref/mref260731a.pdf (2027年)
+  #        結果公表の時刻は会合終了次第で固定されていないため time_jst は書かない（画面は「—」）。
+  #        日付は会合2日目。
+  #
+  # ★注意: 記入した環境から federalreserve.gov / boj.or.jp へ直接アクセスできず
+  #        （egressで遮断）、上記URLのページ本文を開いて目視確認できていない。
+  #        日程はいずれも公式サイトの検索結果（公式ページのタイトル・本文）由来で、
+  #        全28日付について曜日が実カレンダーと一致することは機械照合済み。
+  #        それでも一次情報の目視確認には代えられないので、上の2つのURLを一度開いて
+  #        突き合わせること。ズレを見つけたらここを直すだけでよい。
+  #
+  # 雇用統計・CPI・GDP・PCE・ISM は未登録。毎月日付が動き、BLS/BEAの発表スケジュールを
+  # 確認しないと書けないため、推測では埋めていない。登録済みの最終日を過ぎると
+  # status が「要更新」に変わる（「本日は予定なし」とは別表示になる）。
+  events:
+    # ===== FOMC（日付・時刻はJST。会合2日目の米東部14:00の換算値）=====
+    - {date: "2026-10-29", time_jst: "03:00", country: "US", importance: "high",
+       name: "FOMC 政策金利発表（会合10/27-28）",
+       source_url: "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm"}
+    - {date: "2026-12-10", time_jst: "04:00", country: "US", importance: "high",
+       name: "FOMC 政策金利発表（会合12/8-9）",
+       source_url: "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm"}
+    - {date: "2027-01-28", time_jst: "04:00", country: "US", importance: "high",
+       name: "FOMC 政策金利発表（会合1/26-27）",
+       source_url: "https://www.federalreserve.gov/newsevents/pressreleases/monetary20250905a.htm"}
+    - {date: "2027-03-18", time_jst: "03:00", country: "US", importance: "high",
+       name: "FOMC 政策金利発表（会合3/16-17）",
+       source_url: "https://www.federalreserve.gov/newsevents/pressreleases/monetary20250905a.htm"}
+    - {date: "2027-04-29", time_jst: "03:00", country: "US", importance: "high",
+       name: "FOMC 政策金利発表（会合4/27-28）",
+       source_url: "https://www.federalreserve.gov/newsevents/pressreleases/monetary20250905a.htm"}
+    - {date: "2027-06-10", time_jst: "03:00", country: "US", importance: "high",
+       name: "FOMC 政策金利発表（会合6/8-9）",
+       source_url: "https://www.federalreserve.gov/newsevents/pressreleases/monetary20250905a.htm"}
+    - {date: "2027-07-29", time_jst: "03:00", country: "US", importance: "high",
+       name: "FOMC 政策金利発表（会合7/27-28）",
+       source_url: "https://www.federalreserve.gov/newsevents/pressreleases/monetary20250905a.htm"}
+    - {date: "2027-09-16", time_jst: "03:00", country: "US", importance: "high",
+       name: "FOMC 政策金利発表（会合9/14-15）",
+       source_url: "https://www.federalreserve.gov/newsevents/pressreleases/monetary20250905a.htm"}
+    - {date: "2027-10-28", time_jst: "03:00", country: "US", importance: "high",
+       name: "FOMC 政策金利発表（会合10/26-27）",
+       source_url: "https://www.federalreserve.gov/newsevents/pressreleases/monetary20250905a.htm"}
+    - {date: "2027-12-09", time_jst: "04:00", country: "US", importance: "high",
+       name: "FOMC 政策金利発表（会合12/7-8）",
+       source_url: "https://www.federalreserve.gov/newsevents/pressreleases/monetary20250905a.htm"}
+
+    # ===== 日銀 金融政策決定会合（日付は会合2日目。結果公表の時刻は不定のため書かない）=====
+    - {date: "2026-10-30", country: "JP", importance: "high",
+       name: "日銀 金融政策決定会合 結果公表（10/29-30）",
+       source_url: "https://www.boj.or.jp/mopo/mpmsche_minu/m_ref/mref250731a.pdf"}
+    - {date: "2026-12-18", country: "JP", importance: "high",
+       name: "日銀 金融政策決定会合 結果公表（12/17-18）",
+       source_url: "https://www.boj.or.jp/mopo/mpmsche_minu/m_ref/mref250731a.pdf"}
+    - {date: "2027-01-22", country: "JP", importance: "high",
+       name: "日銀 金融政策決定会合 結果公表（1/21-22）",
+       source_url: "https://www.boj.or.jp/mopo/mpmsche_minu/m_ref/mref260731a.pdf"}
+    - {date: "2027-03-18", country: "JP", importance: "high",
+       name: "日銀 金融政策決定会合 結果公表（3/17-18）",
+       source_url: "https://www.boj.or.jp/mopo/mpmsche_minu/m_ref/mref260731a.pdf"}
+    - {date: "2027-04-28", country: "JP", importance: "high",
+       name: "日銀 金融政策決定会合 結果公表（4/27-28）",
+       source_url: "https://www.boj.or.jp/mopo/mpmsche_minu/m_ref/mref260731a.pdf"}
+    - {date: "2027-06-11", country: "JP", importance: "high",
+       name: "日銀 金融政策決定会合 結果公表（6/10-11）",
+       source_url: "https://www.boj.or.jp/mopo/mpmsche_minu/m_ref/mref260731a.pdf"}
+    - {date: "2027-07-22", country: "JP", importance: "high",
+       name: "日銀 金融政策決定会合 結果公表（7/21-22）",
+       source_url: "https://www.boj.or.jp/mopo/mpmsche_minu/m_ref/mref260731a.pdf"}
+    - {date: "2027-09-22", country: "JP", importance: "high",
+       name: "日銀 金融政策決定会合 結果公表（9/21-22）",
+       source_url: "https://www.boj.or.jp/mopo/mpmsche_minu/m_ref/mref260731a.pdf"}
+    - {date: "2027-10-29", country: "JP", importance: "high",
+       name: "日銀 金融政策決定会合 結果公表（10/28-29）",
+       source_url: "https://www.boj.or.jp/mopo/mpmsche_minu/m_ref/mref260731a.pdf"}
+    - {date: "2027-12-17", country: "JP", importance: "high",
+       name: "日銀 金融政策決定会合 結果公表（12/16-17）",
+       source_url: "https://www.boj.or.jp/mopo/mpmsche_minu/m_ref/mref260731a.pdf"}
 
 # ===== 機関投資家の買い集め検出 (accumulation) =====
 # 考え方: 「出来高が増えた株」ではなく「出来高が増えた後も売られない株」を探す。
