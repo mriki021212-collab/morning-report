@@ -170,6 +170,16 @@ earnings:
 econ_calendar:
   upcoming_days: 7     # 「今後の予定」として何日先まで出すか
 
+  # ---- 登録できていない期間を明示する ----
+  # events が「空」なら未設定と分かるが、途中に穴が空いている場合は
+  # その日に「本日は予定なし」と表示されてしまい、穴と無風の区別がつかない。
+  # 穴を自己申告させるための欄。ここに書いた文言はカレンダーに常時併記される。
+  # 埋めたら消すこと（消し忘れても実害は無いが、ノイズになる）。
+  gaps:
+    - "米雇用統計・米CPI の 2026年11月発表分（10月データ）は発表日を確認できていないため未登録"
+    - "米雇用統計・米CPI の 2027年分は未登録"
+    - "米GDP・PCE・ISM は全期間未登録"
+
   # ---- 登録済みの日程の出所（2026-09-21 記入） ----
   # FOMC : Fed公式の2027年日程プレスリリースと各会合ページ
   #        https://www.federalreserve.gov/newsevents/pressreleases/monetary20250905a.htm
@@ -258,6 +268,27 @@ econ_calendar:
     - {date: "2027-12-17", country: "JP", importance: "high",
        name: "日銀 金融政策決定会合 結果公表（12/16-17）",
        source_url: "https://www.boj.or.jp/mopo/mpmsche_minu/m_ref/mref260731a.pdf"}
+
+    # ===== 米雇用統計 / 米CPI（BLS）=====
+    # BLSの発表は米東部 08:30。下の time_jst はそれを zoneinfo で JST へ機械換算した値。
+    # 米国の夏時間の有無で 21:30 と 22:30 に分かれるのは換算結果であって誤記ではない。
+    # 出所: https://www.bls.gov/schedule/news_release/empsit.htm （雇用統計）
+    #       https://www.bls.gov/schedule/news_release/cpi.htm    （CPI）
+    #       月別: https://www.bls.gov/schedule/2026/10_sched_list.htm など
+    # ★2026年11月発表分と2027年分は、上記ページの本文を取得できず未登録（gaps: 参照）。
+    #   毎月日付が動くので「例年この辺」では埋めない。BLSのページを見て追記すること。
+    - {date: "2026-10-02", time_jst: "21:30", country: "US", importance: "high",
+       name: "米雇用統計（9月分）",
+       source_url: "https://www.bls.gov/schedule/news_release/empsit.htm"}
+    - {date: "2026-10-14", time_jst: "21:30", country: "US", importance: "high",
+       name: "米CPI（9月分）",
+       source_url: "https://www.bls.gov/schedule/news_release/cpi.htm"}
+    - {date: "2026-12-04", time_jst: "22:30", country: "US", importance: "high",
+       name: "米雇用統計（11月分）",
+       source_url: "https://www.bls.gov/schedule/news_release/empsit.htm"}
+    - {date: "2026-12-10", time_jst: "22:30", country: "US", importance: "high",
+       name: "米CPI（11月分）",
+       source_url: "https://www.bls.gov/schedule/news_release/cpi.htm"}
 
 # ===== 機関投資家の買い集め検出 (accumulation) =====
 # 考え方: 「出来高が増えた株」ではなく「出来高が増えた後も売られない株」を探す。

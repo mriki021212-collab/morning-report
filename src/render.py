@@ -163,6 +163,10 @@ def _econ_section(facts: dict) -> list[str]:
     up = e.get("upcoming") or []
     if up:
         _tbl(up, f"今後{e.get('upcoming_days')}日")
+    # 未登録期間は常に併記する。穴のある日に「予定なし」とだけ書くと、
+    # 発表が無いのか登録が無いのか読み手が区別できない。
+    for g in e.get("gaps") or []:
+        L.append(f"\n> ⚠️ 未登録: {g}")
     if e.get("invalid"):
         L.append(f"\n_書式不正で採用しなかった行が{len(e['invalid'])}件ある（該当ゼロではない）: "
                  + " / ".join(e["invalid"][:5]) + "_")

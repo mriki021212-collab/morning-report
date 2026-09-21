@@ -278,7 +278,8 @@ def _econ_field(facts: dict) -> dict:
     up = e.get("upcoming") or []
     if not today and st and st != "ok":
         # 未設定 / 要更新 / 全件書式不正。「予定なし」と読ませてはいけない。
-        return {"name": "📅 今日の重要指標", "value": f"⚠️ {st}", "inline": False}
+        v = "\n".join([f"⚠️ {st}"] + [f"⚠️ 未登録: {g}" for g in (e.get("gaps") or [])[:3]])
+        return {"name": "📅 今日の重要指標", "value": v[:1024], "inline": False}
 
     lines = []
     for x in today:
@@ -292,6 +293,9 @@ def _econ_field(facts: dict) -> dict:
                      + " / ".join(f"{x['date'][5:]} {x['name']}" for x in up[:4]))
     if st and st != "ok":
         lines.append(f"⚠️ {st}")
+    # 未登録期間。「発表が無い」と「登録が無い」を同じ沈黙にしない。
+    for g in (e.get("gaps") or [])[:3]:
+        lines.append(f"⚠️ 未登録: {g}")
     body = "\n".join(lines)
     return {"name": "📅 今日の重要指標", "value": body[:1024], "inline": False}
 

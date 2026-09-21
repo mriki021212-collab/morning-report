@@ -149,12 +149,14 @@ def _econ_block(facts: dict) -> tuple[dict | None, str | None]:
                  "coverageUntil": e.get("coverage_until"),
                  "upcomingDays": e.get("upcoming_days"),
                  "nRegistered": e.get("n_registered"),
+                 "gaps": e.get("gaps") or [],
                  "invalid": e.get("invalid") or []} if e.get("n_registered") else None), st
     return {
         "today": rows("today"), "upcoming": rows("upcoming"),
         "coverageUntil": e.get("coverage_until"),
         "upcomingDays": e.get("upcoming_days"),
         "nRegistered": e.get("n_registered"),
+        "gaps": e.get("gaps") or [],
         "invalid": e.get("invalid") or [],
     }, None
 

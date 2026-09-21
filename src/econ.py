@@ -127,6 +127,7 @@ def build(cfg: dict, today: dt.date | None = None) -> dict:
         "today": [],
         "upcoming": [],
         "invalid": [],
+        "gaps": [],
         "sources": ["config.yaml econ_calendar（人が公式サイトで確認して記入した日程）"],
         "method": "手動管理。自動取得元は未採用（econ.py のモジュールdocstringに調査結果）。",
     }
@@ -134,6 +135,9 @@ def build(cfg: dict, today: dt.date | None = None) -> dict:
         spec = (cfg or {}).get("econ_calendar") or {}
         raw = spec.get("events") or []
         days = int(spec.get("upcoming_days") or DEFAULT_UPCOMING_DAYS)
+        # 登録できていない期間の自己申告。events の途中に空いた穴は coverage_until では
+        # 捕まらず、その日が「本日は予定なし」と表示されてしまう。穴は人が書いて常時併記する。
+        gaps = [str(g) for g in (spec.get("gaps") or []) if str(g).strip()]
     except Exception as e:
         return {**out, "status": f"取得失敗: {type(e).__name__}: {e}"}
 
@@ -146,6 +150,7 @@ def build(cfg: dict, today: dt.date | None = None) -> dict:
             events.append(norm)
     events.sort(key=_sort_key)
 
+    out["gaps"] = gaps
     out["today"] = [e for e in events if e["date"] == today.isoformat()]
     horizon = (today + dt.timedelta(days=days)).isoformat()
     out["upcoming"] = [e for e in events
