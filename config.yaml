@@ -63,6 +63,21 @@ macro:
   - {code: "^N225",  name: "日経平均"}
   - {code: "NIY=F",  name: "日経平均先物(CME円建)"}
 
+# ===== ドル円(USD/JPY) =====
+# FX学習用のブロック。macro: の "JPY=X" とは別枠にする。
+#   macro:  他の指標と同じ1行サマリ（終値と前日比だけ）
+#   fx:     20MA乖離・20日高安・前日の1時間足高安・日米金利差まで出す専用ブロック
+# 同じティッカーを2回取りに行くことになるが、日足の本数(260)と1時間足が必要で
+# 既存の snapshot() とは取得条件が違うため、collect 側に相乗りさせない。
+fx:
+  enabled: true
+  pair: "JPY=X"        # yfinance の USD/JPY。1ドル何円かの表記
+  daily_bars: 260      # 日足の保持本数
+  hourly_days: 5       # 1時間足の取得日数
+  # 日本10年国債利回りの取得元（日米金利差に使う）。財務省の一次情報。
+  # これが取れない間、金利差は「算出不可」と表示される（推定値では埋めない）。
+  jgb10y_csv: "https://www.mof.go.jp/jgbs/reference/interest_rate/jgbcm.csv"
+
 overseas_semis:
   - {code: "NVDA", name: "NVIDIA"}
   - {code: "SNDK", name: "SanDisk (NAND)"}
@@ -122,6 +137,39 @@ earnings:
   #     period: "2027/3期 1Q"
   #     source_url: "https://www.j-display.com/ir/"
   manual: {}
+
+# ===== 重要経済指標カレンダー =====
+# 自動取得元は未採用。理由と調査結果は src/econ.py のモジュールdocstringに全部書いてある
+# （開発環境からは金融データ系ホストが全て egress で遮断され、到達性も応答形式も実測できなかった）。
+# 実機で `python src/econ.py --probe` を回すと候補への到達性を印字するので、
+# 到達できるものが見つかったら自動取得層を足すこと。それまではここに手で書く。
+#
+# 【絶対ルール】ここに書いてよいのは公式サイトで実際に確認した日付だけ。
+#   「例年この時期だから」で埋めない（earnings.py の manual: と同じ方針）。
+#   1件も無ければ画面には「未設定」と出る。これは「本日は予定なし」とは別の表示になる。
+#   登録済みの最終日が過ぎると status が「要更新」に変わり、
+#   更新が止まっていることが黙って「予定なし」に化けないようになっている。
+#
+# 一次情報の出典:
+#   FOMC日程        https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm
+#   日銀 金融政策決定会合  https://www.boj.or.jp/mopo/mpmsche_minu/index.htm
+#   米雇用統計/CPI(BLS)   https://www.bls.gov/schedule/news_release/
+#   米GDP/PCE(BEA)        https://www.bea.gov/news/schedule
+#   ISM                   https://www.ismworld.org/supply-management-news-and-reports/reports/ism-report-on-business/
+#   日本のGDP/景気指標(内閣府) https://www.esri.cao.go.jp/jp/sna/kouhyou.html
+#
+# 書式（forecast / previous は取れた時だけ。取れないものは書かない = 画面では「—」）:
+#   - date:       "2026-10-02"        必須 / YYYY-MM-DD
+#     time_jst:   "21:30"             発表時刻をJSTで。未定なら省略（画面は「—」）
+#     country:    "US"                US / JP / EU など
+#     name:       "米雇用統計(9月)"    必須
+#     importance: "high"              high / medium / low。high の日はDiscordの先頭で強調される
+#     forecast:   "+5.0万人"          任意
+#     previous:   "+2.2万人"          任意
+#     source_url: "https://www.bls.gov/schedule/news_release/empsit.htm"
+econ_calendar:
+  upcoming_days: 7     # 「今後の予定」として何日先まで出すか
+  events: []
 
 # ===== 機関投資家の買い集め検出 (accumulation) =====
 # 考え方: 「出来高が増えた株」ではなく「出来高が増えた後も売られない株」を探す。

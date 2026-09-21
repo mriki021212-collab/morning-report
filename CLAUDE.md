@@ -81,6 +81,28 @@ Collector modules (`src/collect.py`, `src/jquants.py`, `src/news.py`, `src/tdnet
 - **`tdnet.py`** — TDnet regulatory disclosures via the yanoshin API, fetched directly by stock code
   (not keyword-matched) so litigation/earnings-revision disclosures can't be missed by a keyword miss.
   Same failure-vs-empty distinction applies.
+- **`fx.py`** — USD/JPY only (`JPY=X`): 260 daily bars + 5 days of 1h bars, 20MA and its
+  deviation, 20d high/low, the previous day's 1h high/low, and the US-JP 10y spread.
+  Two rules that were deliberate, not incidental: (a) FX trades 24h, so a daily bar dated
+  *today* (JST) can still be forming — it is excluded from close/MA/high-low and surfaced
+  separately as `forming_bar`, because a forming value printed as 前日終値 is exactly the
+  silent-wrongness failure this repo exists to prevent; (b) there is no exchange close, so
+  the "previous day" for the hourly bars is a JST calendar day, chosen to match the daily
+  bar's date when possible and annotated (`fallback_note`) when it can't. The US 10y is
+  reused from `facts["macro"]["^TNX"]` with **no unit conversion** and a range check
+  (Yahoo has quoted ^TNX at 10x in the past); the JP 10y comes from MOF's official
+  jgbcm.csv with strict parsing (wareki dates, header check, age and range checks) and
+  falls back to 算出不可 rather than a plausible-looking number. The MOF parser has not
+  been verified against a live response — the dev container cannot reach any finance host.
+- **`econ.py`** — US/JP economic calendar. **There is no automatic source**: every candidate
+  (investing.com, Trading Economics, FMP, Nasdaq, Yahoo, ForexFactory mirror, FRED, BLS,
+  federalreserve.gov, boj.or.jp) was probed and all were blocked by the dev container's
+  egress proxy, so none could be verified — the full table is in the module docstring.
+  Dates therefore come from `config.yaml econ_calendar.events`, written by hand from the
+  official pages (never derived from "it's usually the first Friday"). `python src/econ.py
+  --probe` re-runs the reachability check from a machine with network. The important safety
+  property: when the last registered date is in the past, `status` becomes 要更新 rather
+  than the calendar silently reading as 本日は予定なし.
 - **`analogs.py`** — "similar past chart pattern" search: normalizes the last N days' log-return series,
   finds the closest-distance historical windows since 2005, and reports the *empirical* forward-return
   distribution of those matches. This is how the system produces an "up probability" without the LLM
@@ -116,7 +138,8 @@ Output modules:
   silence (see `main.py`'s holiday branch comment — this was a deliberate fix after a real missed-alert incident).
 
 `config.yaml` defines the tracked instruments (`holdings`, `watch`, `sector`, `sector_groups`,
-`funds`, `macro`, `overseas_semis`), the
+`funds`, `macro`, `overseas_semis`), the `fx` block (pair / bar counts / JGB CSV URL), the
+hand-maintained `econ_calendar.events` list, the
 `peer_proxy` substitution for stocks with too little history, `analog` search parameters, the RSS
 source list for layer C, and the Claude model/max_tokens used.
 

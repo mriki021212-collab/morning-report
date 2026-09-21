@@ -10,7 +10,7 @@ import jpholiday
 import yaml
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
-import accumulation, analogs, collect, dashboard, earnings, jquants, news, notify, render, tdnet  # noqa: E402
+import accumulation, analogs, collect, dashboard, earnings, econ, fx, jquants, news, notify, render, tdnet  # noqa: E402
 import postguard  # noqa: E402
 import yahoo_jp  # noqa: E402
 
@@ -262,6 +262,22 @@ def build_facts(cfg: dict, session: str = "morning") -> dict:
             "analog_available": facts["analog"].get(c, {}).get("status") is None}
         for c in _tracked_codes(cfg) + ["^N225"]
     }
+
+    # ドル円。macro の "JPY=X" 1行とは別に、20MA乖離・20日高安・前日の1時間足高安・
+    # 日米金利差まで出す専用ブロック。落ちてもレポート全体は止めない（status を持って出る）。
+    if (cfg.get("fx") or {}).get("enabled", True):
+        try:
+            facts["fx"] = fx.build(facts["macro"], cfg)
+        except Exception as e:
+            facts["fx"] = {"status": f"取得失敗: {type(e).__name__}: {e}"}
+    else:
+        facts["fx"] = {"status": "未設定（config.yaml の fx.enabled が false）"}
+
+    # 重要経済指標カレンダー。config.yaml の手動管理（econ.py の docstring に採用理由）。
+    try:
+        facts["econ_calendar"] = econ.build(cfg)
+    except Exception as e:
+        facts["econ_calendar"] = {"status": f"取得失敗: {type(e).__name__}: {e}"}
 
     facts["margin_short"] = jquants.margin_and_short(_tracked_codes(cfg))
     facts["trades_spec"] = jquants.trades_spec()

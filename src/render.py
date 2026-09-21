@@ -61,6 +61,8 @@ def render(facts: dict) -> str:
                  f"({g['implied_gap_pct']:+.2f}%)**")
         L.append(f"- 注: {g['note']}")
 
+    L += _fx_section(facts)
+
     # ③ 保有株 + ウォッチ（非保有）
     # watch は保有から外れた銘柄だが、分析の時系列を切らさないため同じ深さで出す。
     # 見出しで保有/非保有を必ず区別する（金額判断に直結するので混ぜてはいけない）。
@@ -76,6 +78,97 @@ def render(facts: dict) -> str:
     _sector_section(L, facts)
     _funds_section(L, facts)
     return _rest_of_morning(L, facts)
+
+
+def _fx_section(facts: dict) -> list[str]:
+    """ドル円。値は全て fx.py の計算結果。取れないものは理由を書いて空欄にしない。"""
+    L = [_sec("②-2 ドル円（USD/JPY）")]
+    f = facts.get("fx")
+    if not f:
+        L.append("**現時点では確認できない（fx ブロックが生成されていない）**")
+        return L
+    if f.get("status"):
+        L.append(f"**{f['status']}**")
+        return L
+    if f.get("stale_warning"):
+        L.append(f"> ⚠️ **{f['stale_warning']}**")
+    if f.get("prev_gap_warning"):
+        L.append(f"> ⚠️ **{f['prev_gap_warning']}**")
+    fb = f.get("forming_bar")
+    if fb:
+        L.append(f"> ℹ️ 当日({fb['date']})付けの足 {_n(fb.get('close'),'円',3)} は形成中のため、"
+                 "以下の数値には含めていない（確定した終値ではない）。")
+        L.append("")
+    chg_y = f.get("chg_yen")
+    L.append(f"前日終値（{f['as_of']}）**{_n(f['close'],'円',3)}** / "
+             f"前日比 {('取得不可' if chg_y is None else f'{chg_y:+.3f}円')} "
+             f"（{_arrow(f.get('chg_pct'))}）")
+    L.append("")
+    L.append("| 項目 | 値 | 項目 | 値 |")
+    L.append("|---|---:|---|---:|")
+    L.append(f"| 20日移動平均 | {_n(f.get('ma20'),'円',3)} | 20MA乖離 | {_arrow(f.get('dev_ma20_pct'))} |")
+    L.append(f"| 20日高値 | {_n(f.get('high_20d'),'円',3)} | 20日安値 | {_n(f.get('low_20d'),'円',3)} |")
+    h = f.get("hourly") or {}
+    if h.get("status"):
+        L.append(f"| 前日1時間足 高値 | {h['status']} | 前日1時間足 安値 | ― |")
+    else:
+        L.append(f"| 前日1時間足 高値 | {_n(h.get('high'),'円',3)} | 前日1時間足 安値 | "
+                 f"{_n(h.get('low'),'円',3)} |")
+    r = f.get("rates") or {}
+    us, jp = r.get("us10y") or {}, r.get("jp10y") or {}
+    L.append(f"| 米10年金利 | {_n(us.get('value_pct'),'%',3) if us.get('value_pct') is not None else '取得不可'} "
+             f"| 日本10年金利 | {_n(jp.get('value_pct'),'%',3) if jp.get('value_pct') is not None else '取得不可'} |")
+    if r.get("spread_pt") is not None:
+        L.append(f"| **日米金利差** | **{r['spread_pt']:+.3f}%pt** | 基準日 | "
+                 f"米{us.get('as_of','―')} / 日{jp.get('as_of','―')} |")
+    else:
+        L.append(f"| **日米金利差** | **算出不可** | 理由 | {r.get('spread_status','―')} |")
+    if not h.get("status"):
+        L.append(f"\n_1時間足は {h.get('date_jst')} の {h.get('bars')}本（"
+                 f"{h.get('first_bar_jst')}〜{h.get('last_bar_jst')} JST）。{h.get('note','')}_")
+        if h.get("mismatch_note"):
+            L.append(f"\n> ⚠️ **{h['mismatch_note']}**")
+    if us.get("status"):
+        L.append(f"\n_米10年金利: {us['status']}_")
+    if jp.get("status"):
+        L.append(f"\n_日本10年金利: {jp['status']}_")
+    return L
+
+
+def _econ_section(facts: dict) -> list[str]:
+    """本日の重要経済指標。日付は config.yaml に人が書いたものだけ（推定日は出さない）。"""
+    L = [_sec("⑨ 本日の重要経済指標")]
+    e = facts.get("econ_calendar")
+    if not e:
+        L.append("**現時点では確認できない（econ_calendar が生成されていない）**")
+        return L
+    st = e.get("status")
+    if st and st != "ok":
+        L.append(f"**{st}**")
+
+    def _tbl(rows: list, head: str) -> None:
+        L.append(f"\n**{head}**\n")
+        L.append("| 時刻(JST) | 国 | 指標 | 重要度 | 予想 | 前回 |")
+        L.append("|---|---|---|---|---:|---:|")
+        for x in rows:
+            L.append(f"| {x.get('time_jst') or '—'} | {x.get('country_label') or x['country']} | "
+                     f"{x['name']} | {x['importance_label']} | {x.get('forecast') or '—'} | "
+                     f"{x.get('previous') or '—'} |")
+
+    today = e.get("today") or []
+    if today:
+        _tbl(today, f"本日（{e.get('date')}）")
+    elif st == "ok":
+        L.append("本日の登録は0件（カレンダー自体は最新まで登録済み）。")
+    up = e.get("upcoming") or []
+    if up:
+        _tbl(up, f"今後{e.get('upcoming_days')}日")
+    if e.get("invalid"):
+        L.append(f"\n_書式不正で採用しなかった行が{len(e['invalid'])}件ある（該当ゼロではない）: "
+                 + " / ".join(e["invalid"][:5]) + "_")
+    L.append(f"\n_登録{e.get('n_registered', 0)}件 / 登録済みの最終日 {e.get('coverage_until') or '―'}。"
+             "自動取得元は未採用のため、日程は config.yaml の手動登録のみ。_")
+    return L
 
 
 def _stock_block(L: list, facts: dict, group: dict) -> None:
@@ -262,6 +355,7 @@ def _rest_of_morning(L: list, facts: dict) -> str:
         L.append(f"- {n['title']} — {n['source']} / {n['published']}")
 
     L += _accumulation_section(facts)
+    L += _econ_section(facts)
 
     # 欠損一覧
     L.append(_sec("データ欠損一覧"))
@@ -458,7 +552,9 @@ def render_afternoon(facts: dict) -> str:
         if not m.get("status") and m.get("prev_gap_warning"):
             L.append(f"> ⚠️ **{m['name']}: {m['prev_gap_warning']}**")
 
+    L += _fx_section(facts)
     L.extend(_earnings_section(facts))
+    L += _econ_section(facts)
 
     # ⑤ 本日出た開示・ニュース
     L.append(_sec("⑤ 本日の適時開示（TDnet）"))
