@@ -7,6 +7,8 @@
 出力の契約（news_dashboard.html がこのキーを読む。勝手に変えないこと）:
   generated_at : ISO8601 (JST)
   markets      : [{name, code, close, chg_pct, as_of, age_bdays, stale, stale_warning}]
+                 値を作れなかった行は close=null + status を持つ（画面は赤い「取得失敗」
+                 タイルにする）。「古い(stale)」とは別の状態なので混ぜない。
   jgb          : {base_date, age_days, curve:{年限:利回り}, stale} / 取れなければ {status}
   headlines    : {status, items:[...], by_category:{カテゴリ:[...]}}
   failed       : ["取得できなかったソース名: 理由", ...]
@@ -30,6 +32,7 @@ import requests
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 import collect  # noqa: E402
+import fx  # noqa: E402
 
 JST = dt.timezone(dt.timedelta(hours=9))
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -101,12 +104,94 @@ JGB_TENORS = ("2年", "5年", "10年", "20年", "30年", "40年")
 
 # ---------------------------------------------------------------------------
 # 市況タイル
+#
+# ドル円(JPY=X)だけは Yahoo の日足を使わない。
+# collect.fetch_history("JPY=X") が返す Yahoo の日足は、確定した足の Close が
+# その日の引けではなく「始値の直後の値」になっている（実測 2026-09-23、直近30本の確定足:
+# |Close-Open| は中央値 0.010% / 最大 0.035% なのに対し、|Close - 翌足のOpen| は
+# 中央値 0.25% / 最大 2.07%）。さらに Yahoo の日足には形成中の当日足も入るので、
+# 場中のライブ値が「確定した終値」として as_of 付きでタイルに出る。
+# 実際にそうなっていた（2026-09-23 の out/newsdash.json: 157.451 / +0.2579% / as_of 9-22。
+# 1時間足から組んだ確定足は 157.470 / +0.101% / 9-22 で、yfinance の
+# fast_info previousClose 157.47000122 と一致する）。
+# 詳しい測定は src/fx.py の docstring にある。
+#
+# そこで本編レポート(facts["fx"] / ②-2)と同じ fx.build の確定日足をそのまま使う。
+# 集計を書き写さず fx.py に任せるのは、同じ「ドル円の前日終値」が画面ごとに
+# 違う数字になる状態を作らないため（それが元のバグの正体）。
+# 組めなければ値は出さず status を返す。壊れた日足には絶対に戻さない。
+#
+# 他の指標は触らない: 2026-09-23 に実測して Close が始値に張り付く現象が出たのは
+# JPY=X だけで、CL=F / GC=F / NIY=F の日足 Close はそうなっていない
+# （|Close-Open| の中央値 1.32% / 0.88% / 0.25%）。
 # ---------------------------------------------------------------------------
+# newsdash は日米金利差を出さないので、財務省CSVは取りに行かない。
+# 「取らなかった」と書いて渡すだけで、値は作らない（fx.build は status を素通しする）。
+FX_JGB_SKIP = {"status": "newsdash では日米金利差を表示しないため取得していない"}
+
+
+def _cfg() -> dict:
+    """config.yaml（fx: セクション）を本編レポートと共有する。
+
+    読めなければ空を返し、fx.py の既定値（JPY=X / 60日）で動く。
+    どちらの経路でも出る値は実データの集計結果で、既定値に落ちても数字は作らない。
+    """
+    try:
+        import yaml
+        return yaml.safe_load((ROOT / "config.yaml").read_text(encoding="utf-8")) or {}
+    except Exception:
+        return {}
+
+
+def fetch_usdjpy(code: str, name: str) -> tuple[dict, list[str]]:
+    """ドル円タイルを1時間足由来の確定日足から作る。
+
+    返すのは (markets の1行, failed に積む行)。
+    値を作れないときは close を入れずに status を付けて返す。
+    news_dashboard.html の renderTiles() は status のある行を赤い「取得失敗」タイルにし、
+    stale（古い＝琥珀）とは別の見た目で出す。「取れなかった」と「古い」を混ぜない。
+    """
+    row = {"name": name, "code": code, "close": None, "chg_pct": None, "as_of": None,
+           "age_bdays": None, "stale": False, "stale_warning": None}
+    try:
+        b = fx.build(None, _cfg(), jgb=dict(FX_JGB_SKIP))
+    except Exception as e:
+        s = f"確定日足を組めなかった {type(e).__name__}: {e}"
+        return {**row, "status": s}, [f"{name}: {s}"]
+    if b.get("status"):
+        return {**row, "status": b["status"]}, [f"{name}: {b['status']}"]
+    if b.get("close") is None or b.get("as_of") is None:
+        s = "確定日足はあるが終値または基準日が入っていない"
+        return {**row, "status": s}, [f"{name}: {s}"]
+
+    notes = []
+    if b.get("prev_gap_warning"):      # 前営業日の足が欠けていて前日比が出せない
+        notes.append(f"{name}: 前日比は算出不可 — {b['prev_gap_warning']}")
+    row.update({
+        "close": b["close"],
+        "chg_pct": b.get("chg_pct"),   # 欠損があれば fx 側で None。埋めない
+        "as_of": b["as_of"],
+        "age_bdays": b.get("data_age_bdays"),
+        "stale": bool(b.get("stale")),
+        "stale_warning": b.get("stale_warning"),
+        # この数字の出どころを JSON 自体に残す（画面では使っていない）。
+        "close_basis": b.get("close_basis"),
+        "as_of_window_jst": b.get("as_of_window_jst"),
+    })
+    return row, notes
+
+
 def fetch_markets() -> tuple[list[dict], list[str]]:
-    """9指標の終値と前日比。collect.snapshot をそのまま使い、鮮度判定も引き継ぐ。"""
+    """9指標の終値と前日比。collect.snapshot をそのまま使い、鮮度判定も引き継ぐ。
+    ドル円だけは上のコメントの理由で fx.build の確定日足から作る。"""
     rows, failed = [], []
     for code, name in MARKETS:
         try:
+            if code == fx.PAIR:
+                row, notes = fetch_usdjpy(code, name)
+                rows.append(row)          # 失敗時も行は残す（タイルとして赤で出す）
+                failed.extend(notes)
+                continue
             if code == "998405.T":
                 # TOPIXは yfinance に配信が無い。株のダッシュボードと同じ別ソースを使う。
                 import yahoo_jp
