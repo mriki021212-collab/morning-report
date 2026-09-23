@@ -273,6 +273,16 @@ def build_facts(cfg: dict, session: str = "morning") -> dict:
     else:
         facts["fx"] = {"status": "未設定（config.yaml の fx.enabled が false）"}
 
+    # macro の "JPY=X" 行は collect.snapshot（= Yahoo の日足）由来なので、ドル円の前日終値が
+    # ①の表と ②-2 で食い違っていた。同じ数字を2通り出すのは、どちらかが必ず嘘という状態。
+    # fx が成立していれば macro 行を fx の確定日足で置き換え、成立していなければ値は作らず
+    # 警告だけ貼る（詳細は fx.reconcile_macro_row）。他のティッカーには触らない:
+    # 実測 2026-09-23 で Close≈Open の破れ方をしていたのは JPY=X だけで、
+    # CL=F/GC=F/NIY=F の日足 Close は始値に張り付いていない。
+    if fx.PAIR in facts["macro"]:
+        facts["macro"][fx.PAIR] = fx.reconcile_macro_row(
+            facts["macro"][fx.PAIR], facts.get("fx"))
+
     # 重要経済指標カレンダー。config.yaml の手動管理（econ.py の docstring に採用理由）。
     try:
         facts["econ_calendar"] = econ.build(cfg)

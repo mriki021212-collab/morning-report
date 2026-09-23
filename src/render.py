@@ -24,6 +24,29 @@ def _sec(title):
     return f"\n\n## {title}\n"
 
 
+def _macro_table(facts: dict) -> list[str]:
+    """①/③ のマクロ表。値を出せなかった/値の出どころが怪しい理由は必ず併記する。
+
+    無言の空欄は取得失敗と区別がつかないし、注釈の無い数字は「正しい終値」に見える。
+    """
+    L = ["| 指標 | 終値 | 前日比 | 日付 |", "|---|---:|---:|---|"]
+    for code, s in facts["macro"].items():
+        if s.get("status"):
+            L.append(f"| {code} | 取得不可 | ― | ― |")
+            continue
+        L.append(f"| {s['name']} | {_n(s['close'])} | {_arrow(s['chg_pct'])} | {s['as_of']} |")
+    for m in facts["macro"].values():
+        if m.get("status"):
+            continue
+        if m.get("prev_gap_warning"):
+            L.append(f"> ⚠️ **{m['name']}: {m['prev_gap_warning']}**")
+        # 終値の出どころが本来の引けでない行（fx で置き換えられなかったドル円）。
+        # 値は消さないが、そのまま前日終値として読まれないようにする。
+        if m.get("close_basis_warning"):
+            L.append(f"> ⚠️ **{m['name']}: {m['close_basis_warning']}**")
+    return L
+
+
 def render(facts: dict) -> str:
     L = [f"# モーニングレポート（数値編）",
          f"生成: {facts['generated_at_jst'][:19]} JST / 東証: "
@@ -32,17 +55,7 @@ def render(facts: dict) -> str:
 
     # ① 米国市場・マクロ
     L.append(_sec("① 前日の米国市場・マクロ"))
-    L.append("| 指標 | 終値 | 前日比 | 日付 |")
-    L.append("|---|---:|---:|---|")
-    for code, s in facts["macro"].items():
-        if s.get("status"):
-            L.append(f"| {code} | 取得不可 | ― | ― |")
-            continue
-        L.append(f"| {s['name']} | {_n(s['close'])} | {_arrow(s['chg_pct'])} | {s['as_of']} |")
-    # 前日比を「―」にした理由は必ず書く。無言の空欄は取得失敗と区別がつかない。
-    for m in facts["macro"].values():
-        if not m.get("status") and m.get("prev_gap_warning"):
-            L.append(f"> ⚠️ **{m['name']}: {m['prev_gap_warning']}**")
+    L += _macro_table(facts)
 
     # ② 日経ギャップ
     L.append(_sec("② 日経平均の寄り付き示唆（先物-現物の機械計算）"))
@@ -103,6 +116,9 @@ def _fx_section(facts: dict) -> list[str]:
     L.append(f"前日終値（{f['as_of']}）**{_n(f['close'],'円',3)}** / "
              f"前日比 {('取得不可' if chg_y is None else f'{chg_y:+.3f}円')} "
              f"（{_arrow(f.get('chg_pct'))}）")
+    # ①/③ の表のドル円も同じ値。別々に測った2つの数字ではない、と分かるようにしておく
+    # （以前は macro 行が Yahoo の日足由来で、ここと違う数字が出ていた）。
+    L.append("_マクロ表のドル円も同じ確定日足の値（別ソースの二重掲載ではない）。_")
     L.append("")
     L.append("| 項目 | 値 | 項目 | 値 |")
     L.append("|---|---:|---|---:|")
@@ -546,17 +562,7 @@ def render_afternoon(facts: dict) -> str:
 
     # ③ 米国市場（これから動く材料）
     L.append(_sec("③ 米国市場・マクロ（前日終値／今夜これから動く）"))
-    L.append("| 指標 | 終値 | 前日比 | 日付 |")
-    L.append("|---|---:|---:|---|")
-    for code, s in facts["macro"].items():
-        if s.get("status"):
-            L.append(f"| {code} | 取得不可 | ― | ― |")
-            continue
-        L.append(f"| {s['name']} | {_n(s['close'])} | {_arrow(s['chg_pct'])} | {s['as_of']} |")
-    # 前日比を「―」にした理由は必ず書く。無言の空欄は取得失敗と区別がつかない。
-    for m in facts["macro"].values():
-        if not m.get("status") and m.get("prev_gap_warning"):
-            L.append(f"> ⚠️ **{m['name']}: {m['prev_gap_warning']}**")
+    L += _macro_table(facts)
 
     L += _fx_section(facts)
     L.extend(_earnings_section(facts))

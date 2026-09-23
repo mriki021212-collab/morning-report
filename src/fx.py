@@ -75,6 +75,27 @@ JP10Y_SANE = (-2.0, 5.0)
 JGB_MAX_AGE_DAYS = 14   # CSV最終行がこれより古ければ「古い」として値を出さない
 
 
+# macro 行に残しておく注記。なぜ上書きしたのかを facts だけ見て追えるようにする。
+MACRO_BASIS_NOTE = (
+    "この行の close / prev_close / chg_pct / as_of は facts['fx'] の確定日足"
+    "（1時間足を London 00:00 区切りで束ねたもの）で置き換えている。"
+    "collect.snapshot が使う Yahoo の JPY=X 日足は Close が始値直後の値になっており、"
+    "実際の引けと最大約2.8円ずれるため（fx.py の docstring に実測）。"
+)
+# 上書きできない項目。ここを黙って残すと「直っている行」に見えるので必ず明記する。
+MACRO_RESIDUAL_NOTE = (
+    "ただし RSI・移動平均・乖離率・60日/52週高安・ATR・HV・ローソク足形状などは"
+    "依然として Yahoo の日足 Close 系列からの計算値であり、その系列の Close は"
+    "「始値直後の値」である。ドル円のテクニカルは facts['fx'] 側の値を使うこと。"
+)
+# fx が落ちていて上書きできなかった場合に行へ貼る警告。値は触らない（作らない）。
+MACRO_UNCORRECTED_WARNING = (
+    "この終値は Yahoo の JPY=X 日足の Close で、実際の引けではない"
+    "（始値直後の値。実測で最大約2.8円の乖離）。fx ブロックが{why}ため、"
+    "1時間足から組んだ確定日足に置き換えられていない。前日終値として読まないこと。"
+)
+
+
 def _f(x, d: int = 4):
     """NaN/Inf を None に落として JSON 安全にする（collect._f と同じ方針）"""
     if x is None:
@@ -427,3 +448,58 @@ def build(macro: dict | None = None, cfg: dict | None = None, *,
     if jgb.get("source"):
         out["sources"].append(f"{jgb['source']} {jgb.get('source_url','')}".strip())
     return out
+
+
+def reconcile_macro_row(row: dict | None, block: dict | None) -> dict | None:
+    """facts["macro"]["JPY=X"] を fx ブロックの確定日足に合わせる。
+
+    macro 行は collect.snapshot()、すなわち Yahoo の JPY=X 日足から作られている。
+    その Close は始値直後の値なので、同じ「ドル円の前日終値」が ①の表と ②-2 で
+    別の数字になっていた（実測 2026-09-23: macro 157.874 / fx 157.470）。
+    しかも Yahoo の日足には形成中の当日足も入るため、macro 行の close は
+    「まだ終わっていない日のライブ値」を前日終値の欄に出していた。
+
+    やること:
+      - fx が成立しているとき: close / prev_close / chg_pct / as_of と、
+        それに対応する鮮度・欠損の警告を fx の値で置き換える。
+        消した値は superseded_yahoo_daily に残す（黙って上書きしない）。
+      - fx が成立していないとき: 値は一切作らない・触らない。
+        代わりに close_basis_warning を貼り、間違った終値だと画面側から分かるようにする。
+      - macro 行自体が取得失敗しているとき: 何もしない（欠損は欠損のまま）。
+    テクニカル指標は元の系列由来のまま残るので、その旨も注記に書く。
+    """
+    if not row or row.get("status"):
+        return row
+    why = None
+    if not block:
+        why = "生成されていない"
+    elif block.get("status"):
+        why = f"使用不可（{block['status']}）な"
+    elif block.get("close") is None or block.get("as_of") is None:
+        why = "確定日足の終値を持っていない"
+    if why:
+        row["close_basis_warning"] = MACRO_UNCORRECTED_WARNING.format(why=why)
+        return row
+
+    row["superseded_yahoo_daily"] = {
+        "close": row.get("close"), "prev_close": row.get("prev_close"),
+        "chg_pct": row.get("chg_pct"), "as_of": row.get("as_of"),
+        "note": "置き換え前の Yahoo 日足の値。参照用に残すだけで、表示してはならない。",
+    }
+    row.update({
+        "close": block.get("close"),
+        "prev_close": block.get("prev_close"),
+        "chg_pct": block.get("chg_pct"),
+        "as_of": block.get("as_of"),
+        # 日付が変わるので鮮度・欠損の判定も fx 側のものに揃える。
+        # 片方だけ残すと「9/22 の終値に 9/23 基準の鮮度」というちぐはぐな行になる。
+        "data_age_bdays": block.get("data_age_bdays"),
+        "stale": block.get("stale"),
+        "stale_warning": block.get("stale_warning"),
+        "prev_gap_bdays": block.get("prev_gap_bdays"),
+        "prev_gap_warning": block.get("prev_gap_warning"),
+        "close_basis": MACRO_BASIS_NOTE + MACRO_RESIDUAL_NOTE,
+        "close_basis_warning": None,
+        "as_of_window_jst": block.get("as_of_window_jst"),
+    })
+    return row

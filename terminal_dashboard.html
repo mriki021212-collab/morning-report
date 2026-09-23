@@ -835,10 +835,10 @@ function adaptMacro(macro){
   const slots = CONFIG.quoteSlots.map(slot=>{
     const cands = new Set([slot.label, ...(slot.as||[])].map(normLabel));
     const idx = macro.findIndex((m,i)=>!used.has(i) && cands.has(normLabel(m.k)));
-    if(idx>=0){ used.add(idx); const m=macro[idx]; return {label:slot.label, v:m.v, c:m.c, has:true}; }
+    if(idx>=0){ used.add(idx); const m=macro[idx]; return {label:slot.label, v:m.v, c:m.c, has:true, warn:m.warn}; }
     return {label:slot.label, v:null, c:null, has:false};
   });
-  const extra = macro.filter((m,i)=>!used.has(i)).map(m=>({label:m.k, v:m.v, c:m.c, has:true}));
+  const extra = macro.filter((m,i)=>!used.has(i)).map(m=>({label:m.k, v:m.v, c:m.c, has:true, warn:m.warn}));
   return slots.concat(extra);
 }
 
@@ -870,14 +870,20 @@ function renderStrip(macro, fx, fxStatus){
   const cells = adaptMacro(macro);
   const tip = fxTip(fx, fxStatus);
   document.getElementById("strip").innerHTML = cells.map(c=>{
-    const t = (c.label === "USD/JPY" && tip) ? ` title="${esc(tip)}"` : "";
+    /* セルの説明。USD/JPY には fx の詳細を、終値の出どころが本来の引けでない行には
+       その警告を出す。警告はホバーだけに隠さず、ラベルにも ⚠ を出して画面から見えるようにする
+       （見えない注意書きは無いのと同じ）。 */
+    const note = [c.warn ? "⚠ "+c.warn : null,
+                  (c.label === "USD/JPY" ? tip : null)].filter(Boolean).join("\n\n");
+    const t = note ? ` title="${esc(note)}"` : "";
+    const lb = esc(c.label) + (c.warn ? ' <b class="dn">⚠</b>' : "");
     if(!c.has){
-      return `<div class="qc"${t}><div class="lb">${esc(c.label)}</div><div class="vl na">—</div><div class="ch na">データなし</div></div>`;
+      return `<div class="qc"${t}><div class="lb">${lb}</div><div class="vl na">—</div><div class="ch na">データなし</div></div>`;
     }
     const key = "macro:"+c.label;
     const numVal = parseFloat(String(c.v).replace(/,/g,""));
     const flash = flashClass(key, numVal);
-    return `<div class="qc"${t}><div class="lb">${esc(c.label)}</div>
+    return `<div class="qc"${t}><div class="lb">${lb}</div>
       <div class="vl num flashable ${flash}" data-ck="${esc(key)}" data-cv="${numVal}" data-cd="2">${esc(c.v)}</div>
       <div class="ch num ${cls(c.c)}">${pc(c.c)}</div></div>`;
   }).join("");

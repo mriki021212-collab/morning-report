@@ -95,15 +95,22 @@ def _conclusion(facts: dict, audit_result: str) -> str:
 
 def _macro_field(facts: dict) -> dict:
     macro = facts.get("macro", {}) if facts else {}
-    lines = []
+    lines, warns = [], []
     for code, s in macro.items():
         if s.get("status"):
             lines.append(f"{code:<10} 取得不可")
             continue
         name = s.get("name", code)
         lines.append(f"{name:<10} {s['close']:>12,.2f}  {_pct(s.get('chg_pct'))}")
+        # 終値の出どころが本来の引けでない行（fx で置き換えられなかったドル円）。
+        # 数字だけ並べると正しい終値に見えるので、同じフィールド内で必ず断る。
+        if s.get("close_basis_warning"):
+            warns.append(f"⚠️ {name}: {s['close_basis_warning']}")
     body = "\n".join(lines) if lines else "データなし"
-    return {"name": "📊 米国市場・マクロ", "value": f"```\n{body}\n```", "inline": False}
+    value = f"```\n{body}\n```"
+    if warns:
+        value = (value + "\n" + "\n".join(warns))[:1024]
+    return {"name": "📊 米国市場・マクロ", "value": value, "inline": False}
 
 
 def _gap_field(facts: dict) -> dict:

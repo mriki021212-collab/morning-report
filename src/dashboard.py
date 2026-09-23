@@ -180,8 +180,10 @@ def build(facts: dict, hist: dict) -> dict:
     for code, label in macro_keys:
         m = facts.get("macro", {}).get(code, {})
         if m.get("close") is not None:
+            # warn: 値は出せるが、その終値の出どころが本来の引けではない行に付く
+            #（fx で置き換えられなかったドル円）。HTML 側はこれをセルの説明に出す。
             macro.append({"k": label, "v": f"{m['close']:,.2f}", "c": m.get("chg_pct", 0),
-                          "asof": m.get("as_of")})
+                          "asof": m.get("as_of"), "warn": m.get("close_basis_warning")})
 
     tape = []
     for code, s in facts.get("sector", {}).items():

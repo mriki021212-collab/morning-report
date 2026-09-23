@@ -87,6 +87,19 @@ Collector modules (`src/collect.py`, `src/jquants.py`, `src/news.py`, `src/tdnet
   **Yahoo's own JPY=X daily bars are not used**: measured 2026-09-22, every finalized bar's
   Close is the price just after the open (≈ Open), off from the real close by up to ~2.8 yen,
   while Yahoo's quote `previousClose` agreed with the 1h-derived close.
+  Because `facts["macro"]["JPY=X"]` comes from `collect.snapshot()` — i.e. those same broken
+  daily bars — `build_facts()` reconciles that row against this block via
+  `fx.reconcile_macro_row()`: same close/prev_close/chg_pct/as_of, the replaced values kept
+  under `superseded_yahoo_daily`, and a `close_basis` note. Without it the ① macro table and
+  the dashboard strip disagreed with the ②-2 block about the same number (measured 2026-09-23:
+  macro 157.863 as of 09-23 — actually the *still-forming* day's live price — vs fx 157.470
+  as of 09-22, which is what Yahoo's own `fast_info.previousClose` returned). When `fx` fails
+  the row is left exactly as it was — no substitute value is invented — and carries
+  `close_basis_warning`, which `render.py`'s macro table, `dashboard.py` (`macro[].warn`, shown
+  as a red ⚠ on the strip cell) and `notify.py`'s macro field all surface. **Only `JPY=X` is
+  corrected**: measured 2026-09-23 over 30 finalized bars, its median |Close−Open| is 0.010%
+  (max 0.035%), while CL=F 1.32%, GC=F 0.88% and NIY=F 0.25% (max 4.05%) have ordinary bars —
+  do not extend this to other 24h instruments without re-measuring.
   Two rules that were deliberate, not incidental: (a) FX trades 24h, so a daily bar whose
   window has not closed yet is still forming — it is excluded from close/MA/high-low and surfaced
   separately as `forming_bar`, because a forming value printed as 前日終値 is exactly the
