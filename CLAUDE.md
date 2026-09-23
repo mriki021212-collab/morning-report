@@ -188,13 +188,21 @@ needs a corresponding update (e.g. a new "if this key is null, say so explicitly
   so any Japanese text in a script silently corrupts on save/read (noted explicitly in `setup-desktop.ps1`).
 - `push.ps1` exists because two machines (laptop + desktop) share this repo via manual sync (not just
   scheduled pulls) — it refuses to stage `.venv/`, `out/`, `*.key`, `.env`.
-- `src/quotes.py` writes `out/quotes.json` (intraday prices). The wiring EXISTS — `run-quotes.ps1` is
-  committed and `setup-desktop.ps1` registers a `MorningReport-Quotes` task (weekdays 09:00-15:30, every
-  15 min) — but the task is not actually registered on the desktop, because `setup-desktop.ps1` has not
-  been re-run since that commit (2026-08-26). Measured 2026-08-31: `out/quotes.json` is still frozen at
-  2026-08-26 15:20 JST while the 08:30/16:00 tasks kept running normally through 8/28. **The fix is to
-  run `setup-desktop.ps1` once on the desktop, not to write more code.** The dashboard guards against the
-  stale file regardless: `liveFor()` discards any quote older than `CONFIG.quoteMaxAgeSec` (6h) so it can
-  never overwrite the confirmed close (it did, for 21 days, before that guard). Keep the guard.
+- `src/quotes.py` writes `out/quotes.json` (intraday prices), driven by the committed `run-quotes.ps1`
+  and a `MorningReport-Quotes` scheduled task (weekdays 09:00-15:30, every 15 min). That task went
+  unregistered for three weeks (2026-08-26 → 08-31) because `setup-desktop.ps1` had not been re-run;
+  it was re-registered on 2026-08-31. **Verified 2026-09-23**: `MorningReport-Quotes` is registered and
+  firing every 15 min with rc=0 (`out/task.log` shows all 4 tickers fetched, `取得できない: (なし)`),
+  alongside `MorningReport` 08:30, `MorningReport-PM` 16:00 and `MorningReport-News` 09:30/12:35/15:45.
+  **A stale-looking `out/quotes.json` is usually correct, not a fault.** `run-quotes.ps1` commits only
+  when a *price* changed — it diffs the file while ignoring `generated_at_jst`, and otherwise runs
+  `git checkout -- out/quotes.json`. So on a holiday or a flat lunch break the file's mtime advances
+  while its contents revert to the last committed version. Read `out/task.log` before concluding the
+  task is broken. The dashboard guards against a genuinely stale file regardless: `liveFor()` discards
+  any quote older than `CONFIG.quoteMaxAgeSec` (6h) so it can never overwrite the confirmed close
+  (it did, for 21 days, before that guard). Keep the guard.
+- **Don't re-run `setup-desktop.ps1` just to add or repair one task.** It `Unregister`s and recreates
+  *every* task, rewrites `run-daily.ps1` from the here-string, and re-runs `pip install`. Without
+  Administrator it also silently skips the wake-timer step. Register the single task you need instead.
 - `out/` accumulates daily `facts_YYYYMMDD.json` and `report_YYYYMMDD.md` — these are real historical
   outputs (used by `score.py`), not disposable build artifacts; don't delete them as part of unrelated cleanup.
