@@ -246,6 +246,16 @@
   .ev-list li.past{color:var(--mut-dim)}
   .ev-list li.soon{color:var(--accent);font-weight:600}
   .ev-list .tz{color:var(--mut);font-size:8.5px;border:1px solid var(--line);padding:0 3px;border-radius:2px}
+  /* 経済指標の行。市場の開閉(固定枠)と見分けがつくよう左にアクセントバーを出す。
+     重要度は色だけでなく ★ の数（文字）でも示す。 */
+  .ev-list li.econ{padding-left:7px;position:relative}
+  .ev-list li.econ::before{content:"";position:absolute;left:0;top:4px;bottom:4px;
+                           width:2px;background:var(--accent);border-radius:1px}
+  .ev-list li.econ .txt{color:var(--txt);font-weight:600}
+  .ev-list li.econ.past .txt{font-weight:400}
+  .ev-list .txt a{text-decoration:none;border-bottom:1px dotted var(--line)}
+  .ev-list .imp{color:var(--accent);font-size:9px;white-space:nowrap}
+  .ev-list .fcp{color:var(--mut);font-size:9.5px;white-space:nowrap}
 
   /* ---- earnings calendar ---- */
   .ern-list{margin:0;padding:0;list-style:none}
@@ -529,7 +539,7 @@
         </div>
 
         <div class="panel" id="panel-events">
-          <h2>本日のイベント時系列<span class="note">日付予定なし・祝日判定なし</span></h2>
+          <h2>本日のイベント時系列<span class="note">市場の開閉＋経済指標・祝日判定なし</span></h2>
           <div class="body" id="events-body"></div>
         </div>
 
@@ -825,23 +835,55 @@ function adaptMacro(macro){
   const slots = CONFIG.quoteSlots.map(slot=>{
     const cands = new Set([slot.label, ...(slot.as||[])].map(normLabel));
     const idx = macro.findIndex((m,i)=>!used.has(i) && cands.has(normLabel(m.k)));
-    if(idx>=0){ used.add(idx); const m=macro[idx]; return {label:slot.label, v:m.v, c:m.c, has:true}; }
+    if(idx>=0){ used.add(idx); const m=macro[idx]; return {label:slot.label, v:m.v, c:m.c, has:true, warn:m.warn}; }
     return {label:slot.label, v:null, c:null, has:false};
   });
-  const extra = macro.filter((m,i)=>!used.has(i)).map(m=>({label:m.k, v:m.v, c:m.c, has:true}));
+  const extra = macro.filter((m,i)=>!used.has(i)).map(m=>({label:m.k, v:m.v, c:m.c, has:true, warn:m.warn}));
   return slots.concat(extra);
 }
 
-function renderStrip(macro){
+/* USD/JPY のセルにだけ、fx ブロックの詳細（20MA乖離・20日高安・日米金利差）を
+   ホバーの説明として足す。ストリップの枠自体は増やさない（USD/JPY は既に固定枠にある）。
+   fx が取れていなければ、その status をそのまま説明に出す（黙って通常表示にしない）。 */
+function fxTip(fx, fxStatus){
+  if(fxStatus) return `ドル円の詳細: ${fxStatus}`;
+  if(!fx) return null;
+  const n = (v,u,d)=> (typeof v === "number" ? v.toFixed(d==null?3:d)+(u||"") : "取得不可");
+  const h1 = fx.h1 ? `${n(fx.h1.high)} / ${n(fx.h1.low)}（${fx.h1.date}）`
+                   : (fx.h1Status || "取得不可");
+  const r = fx.rates || {};
+  const sp = (typeof r.spread === "number")
+    ? `${r.spread > 0 ? "+" : ""}${r.spread.toFixed(3)}%pt`
+    : `算出不可（${r.spreadStatus || "理由不明"}）`;
+  return [
+    `前日終値 ${n(fx.px)}（${fx.asof || "―"}）`,
+    `20MA ${n(fx.ma20)} / 乖離 ${n(fx.devMa20, "%", 2)}`,
+    `20日高安 ${n(fx.high20)} / ${n(fx.low20)}`,
+    `前日1時間足 高安 ${h1}`,
+    `日米金利差 ${sp}`,
+    r.spreadWarn ? `⚠ ${r.spreadWarn}` : null,
+    fx.warn ? `⚠ ${fx.warn}` : null,
+  ].filter(Boolean).join("\n");
+}
+
+function renderStrip(macro, fx, fxStatus){
   const cells = adaptMacro(macro);
+  const tip = fxTip(fx, fxStatus);
   document.getElementById("strip").innerHTML = cells.map(c=>{
+    /* セルの説明。USD/JPY には fx の詳細を、終値の出どころが本来の引けでない行には
+       その警告を出す。警告はホバーだけに隠さず、ラベルにも ⚠ を出して画面から見えるようにする
+       （見えない注意書きは無いのと同じ）。 */
+    const note = [c.warn ? "⚠ "+c.warn : null,
+                  (c.label === "USD/JPY" ? tip : null)].filter(Boolean).join("\n\n");
+    const t = note ? ` title="${esc(note)}"` : "";
+    const lb = esc(c.label) + (c.warn ? ' <b class="dn">⚠</b>' : "");
     if(!c.has){
-      return `<div class="qc"><div class="lb">${esc(c.label)}</div><div class="vl na">—</div><div class="ch na">データなし</div></div>`;
+      return `<div class="qc"${t}><div class="lb">${lb}</div><div class="vl na">—</div><div class="ch na">データなし</div></div>`;
     }
     const key = "macro:"+c.label;
     const numVal = parseFloat(String(c.v).replace(/,/g,""));
     const flash = flashClass(key, numVal);
-    return `<div class="qc"><div class="lb">${esc(c.label)}</div>
+    return `<div class="qc"${t}><div class="lb">${lb}</div>
       <div class="vl num flashable ${flash}" data-ck="${esc(key)}" data-cv="${numVal}" data-cd="2">${esc(c.v)}</div>
       <div class="ch num ${cls(c.c)}">${pc(c.c)}</div></div>`;
   }).join("");
@@ -1415,18 +1457,75 @@ function renderNews(d){
   }).join("");
 }
 
-/* ---- 本日のイベント時系列（毎日固定・日付予定なし） ---- */
+/* ---- 本日のイベント時系列 ----
+   固定枠(CONFIG.dailySchedule = 市場の開閉時刻)と、dashboard.json の econ_calendar
+   (本日の重要経済指標)を1本の時系列にマージする。
+
+   時刻はJST固定。閲覧者のPCのタイムゾーンで「済/まもなく」を判定すると、
+   JST表記の時刻を現地時刻と比べることになり、海外から見たときに静かにズレる。
+   econ_status は必ず注記として出す: 「本日は指標なし」と「カレンダーが未設定/更新停止」は
+   別の状態で、固定枠だけが並ぶ同じ画面に見えてしまうため。 */
+function jstNowMinutes(){
+  const p = new Intl.DateTimeFormat("en-GB",
+    {timeZone:"Asia/Tokyo", hour:"2-digit", minute:"2-digit", hour12:false}).formatToParts(new Date());
+  const h = Number(p.find(x=>x.type==="hour").value);
+  const m = Number(p.find(x=>x.type==="minute").value);
+  return h*60+m;
+}
+
 function renderSchedule(){
-  const now = new Date();
-  const nowMin = now.getHours()*60+now.getMinutes();
-  const rows = CONFIG.dailySchedule.map(e=>{
-    const [hh,mm] = e.t.split(":").map(Number);
-    const diff = (hh*60+mm) - nowMin; // 日跨ぎ(翌朝05:00等)は単純な時刻比較のみ。日付の前後関係までは判定しない
-    const past = diff < 0;
-    const soon = !past && diff <= 30;
-    return `<li class="${past?'past':''}${soon?'soon':''}"><span class="tm num">${e.t}</span><span class="tz">${e.tz}</span>${esc(e.label)}</li>`;
+  const nowMin = jstNowMinutes();
+  const econ = (STATE.data && STATE.data.econ_calendar) || null;
+  const econStatus = STATE.data ? STATE.data.econ_status : null;
+
+  const items = CONFIG.dailySchedule.map(e=>({
+    t: e.t, tz: e.tz, label: e.label, econ: false,
+  }));
+  // 時刻未定(time=null)の指標も落とさない。時刻欄を「—」にして末尾へ置く。
+  for(const x of (econ && econ.today) || []){
+    items.push({t: x.time || null, tz: x.cc || "", label: x.nm, econ: true,
+                imp: x.impLabel || "", fc: x.fc, prev: x.prev, url: x.url});
+  }
+  items.sort((a,b)=>{
+    if(a.t === b.t) return (a.econ?1:0) - (b.econ?1:0);
+    if(a.t === null) return 1;
+    if(b.t === null) return -1;
+    return a.t < b.t ? -1 : 1;
+  });
+
+  const rows = items.map(e=>{
+    let cls = e.econ ? "econ" : "";
+    if(e.t !== null){
+      const [hh,mm] = e.t.split(":").map(Number);
+      const diff = (hh*60+mm) - nowMin; // 日跨ぎ(翌朝05:00等)は単純な時刻比較のみ。日付の前後関係までは判定しない
+      if(diff < 0) cls += " past";
+      else if(diff <= 30) cls += " soon";
+    }
+    const imp = e.econ && e.imp ? `<span class="imp">${esc(e.imp)}</span>` : "";
+    // 予想/前回は取れたときだけ出す。無いものは「—」（空欄にしない）。
+    const fcp = e.econ
+      ? `<span class="fcp">予想 ${esc(e.fc == null ? "—" : e.fc)} / 前回 ${esc(e.prev == null ? "—" : e.prev)}</span>`
+      : "";
+    const label = e.econ && e.url
+      ? `<a href="${esc(e.url)}" target="_blank" rel="noopener">${esc(e.label)}</a>`
+      : esc(e.label);
+    return `<li class="${cls.trim()}"><span class="tm num">${esc(e.t || "—")}</span>`
+         + `<span class="tz">${esc(e.tz)}</span><span class="txt">${label}</span>${imp}${fcp}</li>`;
   }).join("");
-  document.getElementById("events-body").innerHTML = `<ul class="ev-list">${rows}</ul>`;
+
+  const notes = [];
+  if(econStatus) notes.push(`⚠️ 経済指標カレンダー: ${esc(econStatus)}`);
+  else if(!STATE.data) notes.push("経済指標は dashboard.json の読み込み後に表示されます。");
+  else if(!econ || !(econ.today||[]).length)
+    notes.push(`本日の重要指標の登録は0件${econ && econ.coverageUntil ? `（カレンダーは ${esc(econ.coverageUntil)} まで登録済み）` : ""}。`);
+  // 未登録期間。穴のある日に「0件」とだけ出すと、発表が無いのか登録が無いのか読めない。
+  for(const g of (econ && econ.gaps) || []) notes.push(`⚠️ 未登録: ${esc(g)}`);
+  if(econ && (econ.invalid||[]).length)
+    notes.push(`書式不正で採用しなかった行が${econ.invalid.length}件あります（該当ゼロではありません）。`);
+  notes.push("時刻はすべてJST。市場の開閉は毎日固定枠、経済指標は config.yaml の手動登録。祝日判定はしていません。");
+
+  document.getElementById("events-body").innerHTML =
+    `<ul class="ev-list">${rows}</ul><div class="def">${notes.join("<br>")}</div>`;
 }
 
 /* ---- 決算カレンダー ----
@@ -2259,7 +2358,7 @@ function renderSectorBreakdown(d){
 /* ---- top-level paint ---- */
 function renderAll(){
   const d = STATE.data;
-  renderStrip(d.macro);
+  renderStrip(d.macro, d.fx, d.fx_status);
   const mood = moodOf(d.macro);
   const moodEl = document.getElementById("mood");
   if(mood==null){ moodEl.className="mood na"; moodEl.textContent="判定不能"; }
@@ -2279,6 +2378,8 @@ function renderAll(){
   renderNewsFilters();
   renderNews(d);
   renderEarnings();
+  // 経済指標は dashboard.json 側にある。データ到着後に時系列を描き直す。
+  renderSchedule();
   renderAlerts(d);
   renderSentiment(d);
   renderPortfolio(d.holds);

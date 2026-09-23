@@ -87,6 +87,82 @@ def _mean_chg(snaps: dict) -> tuple[float | None, int]:
     return round(sum(vals) / len(vals), 4), len(vals)
 
 
+def _fx_block(facts: dict) -> tuple[dict | None, str | None]:
+    """ドル円。値と status を別キーで返す。
+
+    「取得できていない」と「値が0/空」を画面が取り違えないよう、status は必ず別に出す。
+    status が None のときだけ fx に数値が入る。
+    """
+    f = facts.get("fx")
+    if not f:
+        return None, "取得できていません（fx ブロックが生成されていません）"
+    if f.get("status"):
+        return None, f["status"]
+    r = f.get("rates") or {}
+    h = f.get("hourly") or {}
+    return {
+        "code": f.get("code"), "nm": f.get("name"),
+        "px": f.get("close"), "prev": f.get("prev_close"),
+        "chgYen": f.get("chg_yen"), "chg": f.get("chg_pct"),
+        "ma20": f.get("ma20"), "devMa20": f.get("dev_ma20_pct"),
+        "high20": f.get("high_20d"), "low20": f.get("low_20d"),
+        "asof": f.get("as_of"),
+        "stale": bool(f.get("stale")),
+        "warn": f.get("stale_warning") or f.get("prev_gap_warning"),
+        # 当日(JST)付けの形成中の足。確定値ではないので px とは別キーで渡す。
+        "forming": f.get("forming_bar"),
+        # 前日の1時間足。取得できていなければ status だけを持つ（値は出さない）。
+        "h1": ({"date": h.get("date_jst"), "high": h.get("high"), "low": h.get("low"),
+                "bars": h.get("bars"), "note": h.get("mismatch_note")}
+               if not h.get("status") else None),
+        "h1Status": h.get("status"),
+        # 日米金利差。片方でも欠ければ spread は None のまま status に理由が入る。
+        "rates": {
+            "us10y": (r.get("us10y") or {}).get("value_pct"),
+            "us10yStatus": (r.get("us10y") or {}).get("status"),
+            "jp10y": (r.get("jp10y") or {}).get("value_pct"),
+            "jp10yStatus": (r.get("jp10y") or {}).get("status"),
+            "spread": r.get("spread_pt"),
+            "spreadStatus": r.get("spread_status"),
+            # 値は出せるが基準日が古い/ズレている場合の注意書き（値と混ぜない）
+            "spreadWarn": r.get("spread_warning"),
+        },
+    }, None
+
+
+def _econ_block(facts: dict) -> tuple[dict | None, str | None]:
+    """重要経済指標カレンダー。今日 / 今後 を分けて渡す。
+
+    「未設定」「要更新」「本日は予定なし」は全部意味が違うので、
+    空配列ひとつにまとめず status で区別できるようにする。
+    """
+    e = facts.get("econ_calendar")
+    if not e:
+        return None, "取得できていません（econ_calendar が生成されていません）"
+    st = e.get("status")
+    rows = lambda key: [{
+        "date": x["date"], "time": x.get("time_jst"), "cc": x.get("country_label") or x.get("country"),
+        "nm": x["name"], "imp": x["importance"], "impLabel": x.get("importance_label"),
+        "fc": x.get("forecast"), "prev": x.get("previous"), "url": x.get("source_url"),
+    } for x in (e.get(key) or [])]
+    if st and st != "ok":
+        # 未設定/要更新でも、登録済みの予定があるなら隠さずに出す
+        return ({"today": rows("today"), "upcoming": rows("upcoming"),
+                 "coverageUntil": e.get("coverage_until"),
+                 "upcomingDays": e.get("upcoming_days"),
+                 "nRegistered": e.get("n_registered"),
+                 "gaps": e.get("gaps") or [],
+                 "invalid": e.get("invalid") or []} if e.get("n_registered") else None), st
+    return {
+        "today": rows("today"), "upcoming": rows("upcoming"),
+        "coverageUntil": e.get("coverage_until"),
+        "upcomingDays": e.get("upcoming_days"),
+        "nRegistered": e.get("n_registered"),
+        "gaps": e.get("gaps") or [],
+        "invalid": e.get("invalid") or [],
+    }, None
+
+
 def build(facts: dict, hist: dict) -> dict:
     holds = _rows(facts.get("holdings", {}), hist)
     watch = _rows(facts.get("watch", {}), hist)
@@ -104,8 +180,10 @@ def build(facts: dict, hist: dict) -> dict:
     for code, label in macro_keys:
         m = facts.get("macro", {}).get(code, {})
         if m.get("close") is not None:
+            # warn: 値は出せるが、その終値の出どころが本来の引けではない行に付く
+            #（fx で置き換えられなかったドル円）。HTML 側はこれをセルの説明に出す。
             macro.append({"k": label, "v": f"{m['close']:,.2f}", "c": m.get("chg_pct", 0),
-                          "asof": m.get("as_of")})
+                          "asof": m.get("as_of"), "warn": m.get("close_basis_warning")})
 
     tape = []
     for code, s in facts.get("sector", {}).items():
@@ -188,6 +266,15 @@ def build(facts: dict, hist: dict) -> dict:
            # feedが空配列なだけでは両者を見分けられない。
            "tdnet_status": facts.get("tdnet", {}).get("status"),
            "news_status": facts.get("news", {}).get("status")}
+
+    # ドル円 / 重要経済指標。いずれも値と status を別キーで出す（既存キーには触らない）。
+    fx_block, fx_status = _fx_block(facts)
+    out["fx"] = fx_block
+    out["fx_status"] = fx_status
+    econ_block, econ_status = _econ_block(facts)
+    out["econ_calendar"] = econ_block
+    out["econ_status"] = econ_status
+
     if sectors:
         out["sectors"] = sectors
     if sector_defs:

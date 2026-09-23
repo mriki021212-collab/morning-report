@@ -50,7 +50,14 @@ def audit(report: str, facts: dict, model: str) -> str:
         max_tokens=2000,
         system=("あなたはファクトチェッカー。レポート中の数値を1つずつFACTSと突き合わせ、"
                 "FACTSに存在しない/矛盾する数値のみを列挙せよ。問題が無ければ `OK` の2文字だけ返せ。"
-                "説明・前置きは不要。"),
+                "説明・前置きは不要。\n"
+                "突き合わせ対象には以下も必ず含めること:\n"
+                "- fx: 前日終値/前日比(円・%)/20MAと乖離率/20日高安/前日1時間足の高安/"
+                "日米金利差(rates.spread_pt)。fx.status がある場合、または値が null の場合に"
+                "レポートが具体的な数値を書いていれば不一致として挙げる。\n"
+                "- econ_calendar: 指標名・発表時刻(JST)・予想・前回。"
+                "today/upcoming に存在しない指標や時刻、null の予想/前回を数値で埋めている"
+                "記述は不一致として挙げる。"),
         messages=[{"role": "user", "content":
                    f"# REPORT\n{report}\n\n# FACTS\n```json\n"
                    + json.dumps(facts, ensure_ascii=False, default=str) + "\n```"}],

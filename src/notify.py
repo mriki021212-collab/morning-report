@@ -61,6 +61,10 @@ def _is_audit_clean(verdict: str) -> bool:
 def _conclusion(facts: dict, audit_result: str) -> str:
     """embed descriptionに載せる結論。優先度: 要注意開示 → 地合い → 急変銘柄 → 監査警告"""
     lines = []
+    # 重要度最高の経済指標は最上段。地合いより先に目に入る位置に置く。
+    hl = _econ_highlight(facts) if facts else None
+    if hl:
+        lines.append(hl)
     hs = (facts.get("tdnet", {}) or {}).get("high_signal", []) if facts else []
     if hs:
         i = hs[0]
@@ -91,15 +95,22 @@ def _conclusion(facts: dict, audit_result: str) -> str:
 
 def _macro_field(facts: dict) -> dict:
     macro = facts.get("macro", {}) if facts else {}
-    lines = []
+    lines, warns = [], []
     for code, s in macro.items():
         if s.get("status"):
             lines.append(f"{code:<10} 取得不可")
             continue
         name = s.get("name", code)
         lines.append(f"{name:<10} {s['close']:>12,.2f}  {_pct(s.get('chg_pct'))}")
+        # 終値の出どころが本来の引けでない行（fx で置き換えられなかったドル円）。
+        # 数字だけ並べると正しい終値に見えるので、同じフィールド内で必ず断る。
+        if s.get("close_basis_warning"):
+            warns.append(f"⚠️ {name}: {s['close_basis_warning']}")
     body = "\n".join(lines) if lines else "データなし"
-    return {"name": "📊 米国市場・マクロ", "value": f"```\n{body}\n```", "inline": False}
+    value = f"```\n{body}\n```"
+    if warns:
+        value = (value + "\n" + "\n".join(warns))[:1024]
+    return {"name": "📊 米国市場・マクロ", "value": value, "inline": False}
 
 
 def _gap_field(facts: dict) -> dict:
@@ -220,6 +231,101 @@ def _accumulation_field(facts: dict) -> dict | None:
             "inline": False}
 
 
+def _fx_field(facts: dict) -> dict:
+    """💱 USD/JPY。既存フィールドと同じくコードブロックの表形式。
+
+    取れなかった項目を空欄にしない。「取得できていません」「算出不可」と書く
+    （沈黙は「変化なし」にも「正常」にも読めてしまうため）。
+    """
+    f = (facts or {}).get("fx")
+    if not f:
+        return {"name": "💱 USD/JPY",
+                "value": "取得できていません（fx ブロックが生成されていません）", "inline": False}
+    if f.get("status"):
+        return {"name": "💱 USD/JPY", "value": f["status"], "inline": False}
+
+    def _v(x, unit="円", d=3):
+        return f"{x:,.{d}f}{unit}" if isinstance(x, (int, float)) else "取得不可"
+
+    chg_y = f.get("chg_yen")
+    lines = [
+        f"{'前日終値':<10}{_v(f.get('close')):>12}  {_pct(f.get('chg_pct'))}",
+        f"{'前日比(円)':<10}{(f'{chg_y:+.3f}円' if isinstance(chg_y,(int,float)) else '取得不可'):>12}",
+        f"{'20日移動平均':<8}{_v(f.get('ma20')):>12}  乖離 {_pct(f.get('dev_ma20_pct'))}",
+        f"{'20日高安':<10}{_v(f.get('high_20d')):>12} / {_v(f.get('low_20d'))}",
+    ]
+    h = f.get("hourly") or {}
+    if h.get("status"):
+        lines.append(f"{'前日1H高安':<9}{h['status']}")
+    else:
+        lines.append(f"{'前日1H高安':<9}{_v(h.get('high')):>12} / {_v(h.get('low'))}"
+                     f"  ({h.get('date_jst')})")
+    r = f.get("rates") or {}
+    if r.get("spread_pt") is not None:
+        lines.append(f"{'日米金利差':<9}{r['spread_pt']:+.3f}%pt"
+                     f"  (米{_v((r.get('us10y') or {}).get('value_pct'), '%')}"
+                     f" / 日{_v((r.get('jp10y') or {}).get('value_pct'), '%')})")
+    else:
+        lines.append(f"{'日米金利差':<9}算出不可")
+    body = "\n".join(lines)
+    if f.get("stale_warning") or f.get("prev_gap_warning"):
+        body += "\n⚠ " + (f.get("stale_warning") or f.get("prev_gap_warning"))
+    return {"name": f"💱 USD/JPY（{f.get('as_of','―')}）",
+            "value": f"```\n{body[:990]}\n```", "inline": False}
+
+
+def _econ_field(facts: dict) -> dict:
+    """📅 今日の重要指標。「未設定」「要更新」「本日は0件」を同じ沈黙にしない。"""
+    e = (facts or {}).get("econ_calendar")
+    if not e:
+        return {"name": "📅 今日の重要指標",
+                "value": "取得できていません（econ_calendar が生成されていません）", "inline": False}
+    st = e.get("status")
+    today = e.get("today") or []
+    up = e.get("upcoming") or []
+    if not today and st and st != "ok":
+        # 未設定 / 要更新 / 全件書式不正。「予定なし」と読ませてはいけない。
+        v = "\n".join([f"⚠️ {st}"] + [f"⚠️ 未登録: {g}" for g in (e.get("gaps") or [])[:3]])
+        return {"name": "📅 今日の重要指標", "value": v[:1024], "inline": False}
+
+    lines = []
+    for x in today:
+        lines.append(f"{x.get('importance_label','')} {x.get('time_jst') or '—'} "
+                     f"[{x.get('country_label') or x['country']}] {x['name']}"
+                     f"（予想 {x.get('forecast') or '—'} / 前回 {x.get('previous') or '—'}）")
+    if not lines:
+        lines.append(f"本日の登録は0件（カレンダーは {e.get('coverage_until')} まで登録済み）。")
+    if up:
+        lines.append(f"— 今後{e.get('upcoming_days')}日: "
+                     + " / ".join(f"{x['date'][5:]} {x['name']}" for x in up[:4]))
+    if st and st != "ok":
+        lines.append(f"⚠️ {st}")
+    # 未登録期間。「発表が無い」と「登録が無い」を同じ沈黙にしない。
+    for g in (e.get("gaps") or [])[:3]:
+        lines.append(f"⚠️ 未登録: {g}")
+    body = "\n".join(lines)
+    return {"name": "📅 今日の重要指標", "value": body[:1024], "inline": False}
+
+
+def _econ_highlight(facts: dict) -> str | None:
+    """重要度 high の指標がある日だけ、embed先頭に1行で出す。"""
+    e = (facts or {}).get("econ_calendar") or {}
+    hi = e.get("high_today") or []
+    if not hi:
+        return None
+    head = hi[0]
+    extra = f" ほか{len(hi) - 1}件" if len(hi) > 1 else ""
+    # 指標名に既に国名が入っている（例「米雇用統計」）ときに「米米雇用統計」にしない
+    cc = head.get("country_label") or head.get("country") or ""
+    name = head["name"]
+    prefix = "" if (cc and name.startswith(cc)) else f"{cc} "
+    when = head.get("time_jst")
+    if when:
+        return f"⚠️ **本日{when} {prefix}{name}**{extra}"
+    # 時刻が決まっていない指標（日銀の結果公表など）は時刻を作らない
+    return f"⚠️ **本日 {prefix}{name}（時刻未定）**{extra}"
+
+
 def _holdings_field(facts: dict) -> dict:
     h = facts.get("holdings", {}) if facts else {}
     lines = []
@@ -249,9 +355,11 @@ def _session_close_field(facts: dict) -> dict | None:
             "inline": False}
 
 
-def post(report: str, audit_result: str = "OK", facts: dict | None = None) -> None:
-    url = os.environ["DISCORD_WEBHOOK_URL"]
-    now = dt.datetime.now(JST)
+def build_payload(report: str, audit_result: str = "OK", facts: dict | None = None,
+                  now: dt.datetime | None = None) -> dict:
+    """embedのpayloadを組み立てる。post() から切り出してあるのは、
+    Discordに投げずに中身だけ確認できるようにするため（本番チャンネルを汚さない）。"""
+    now = now or dt.datetime.now(JST)
     afternoon = bool(facts) and facts.get("session") == "afternoon"
     stale_close = afternoon and not (facts.get("session_close") or {}).get("confirmed")
 
@@ -275,6 +383,9 @@ def post(report: str, audit_result: str = "OK", facts: dict | None = None) -> No
         if hs:
             fields.append(_alert_field(hs))
         fields.append(_holdings_field(facts))
+        # ドル円と経済指標は朝の判断材料なので保有銘柄の直後（上の方）に置く。
+        fields.append(_fx_field(facts))
+        fields.append(_econ_field(facts))
         af = _accumulation_field(facts)
         if af:
             fields.append(af)
@@ -289,12 +400,9 @@ def post(report: str, audit_result: str = "OK", facts: dict | None = None) -> No
         # facts["news"] 自体は今も収集していて、添付の .md とダッシュボードには載る。
     fields.append(_dashboard_field())
 
-    prefix = "afternoon" if afternoon else "morning"
-    files = {"file": (f"{prefix}_{now:%Y%m%d}.md",
-                      io.BytesIO(report.encode("utf-8")), "text/markdown")}
     title = (f"🌇 アフタヌーンレポート {now:%Y/%m/%d (%a) %H:%M} JST"
              if afternoon else f"🗾 モーニングレポート {now:%Y/%m/%d (%a) %H:%M} JST")
-    payload = {
+    return {
         "username": "Morning Strategist",
         "embeds": [{
             "title": title,
@@ -305,6 +413,16 @@ def post(report: str, audit_result: str = "OK", facts: dict | None = None) -> No
             "footer": {"text": "自動生成レポート・投資助言ではありません"},
         }],
     }
+
+
+def post(report: str, audit_result: str = "OK", facts: dict | None = None) -> None:
+    url = os.environ["DISCORD_WEBHOOK_URL"]
+    now = dt.datetime.now(JST)
+    afternoon = bool(facts) and facts.get("session") == "afternoon"
+    payload = build_payload(report, audit_result, facts, now)
+    prefix = "afternoon" if afternoon else "morning"
+    files = {"file": (f"{prefix}_{now:%Y%m%d}.md",
+                      io.BytesIO(report.encode("utf-8")), "text/markdown")}
     r = requests.post(url, data={"payload_json": json.dumps(payload)},
                       files=files, timeout=30)
     # レポート本文はコードブロックに分割して連投していたが、Discordでは6通に膨れて

@@ -81,6 +81,46 @@ Collector modules (`src/collect.py`, `src/jquants.py`, `src/news.py`, `src/tdnet
 - **`tdnet.py`** — TDnet regulatory disclosures via the yanoshin API, fetched directly by stock code
   (not keyword-matched) so litigation/earnings-revision disclosures can't be missed by a keyword miss.
   Same failure-vs-empty distinction applies.
+- **`fx.py`** — USD/JPY only (`JPY=X`): 60 days of 1h bars, from which the daily bars are
+  built (London-midnight windows, the same boundary Yahoo's own daily bars use), 20MA and its
+  deviation, 20d high/low, the previous day's 1h high/low, and the US-JP 10y spread.
+  **Yahoo's own JPY=X daily bars are not used**: measured 2026-09-22, every finalized bar's
+  Close is the price just after the open (≈ Open), off from the real close by up to ~2.8 yen,
+  while Yahoo's quote `previousClose` agreed with the 1h-derived close.
+  Because `facts["macro"]["JPY=X"]` comes from `collect.snapshot()` — i.e. those same broken
+  daily bars — `build_facts()` reconciles that row against this block via
+  `fx.reconcile_macro_row()`: same close/prev_close/chg_pct/as_of, the replaced values kept
+  under `superseded_yahoo_daily`, and a `close_basis` note. Without it the ① macro table and
+  the dashboard strip disagreed with the ②-2 block about the same number (measured 2026-09-23:
+  macro 157.863 as of 09-23 — actually the *still-forming* day's live price — vs fx 157.470
+  as of 09-22, which is what Yahoo's own `fast_info.previousClose` returned). When `fx` fails
+  the row is left exactly as it was — no substitute value is invented — and carries
+  `close_basis_warning`, which `render.py`'s macro table, `dashboard.py` (`macro[].warn`, shown
+  as a red ⚠ on the strip cell) and `notify.py`'s macro field all surface. **Only `JPY=X` is
+  corrected**: measured 2026-09-23 over 30 finalized bars, its median |Close−Open| is 0.010%
+  (max 0.035%), while CL=F 1.32%, GC=F 0.88% and NIY=F 0.25% (max 4.05%) have ordinary bars —
+  do not extend this to other 24h instruments without re-measuring.
+  Two rules that were deliberate, not incidental: (a) FX trades 24h, so a daily bar whose
+  window has not closed yet is still forming — it is excluded from close/MA/high-low and surfaced
+  separately as `forming_bar`, because a forming value printed as 前日終値 is exactly the
+  silent-wrongness failure this repo exists to prevent; (b) there is no exchange close, so
+  the "previous day" for the hourly bars is a JST calendar day, chosen to match the daily
+  bar's date when possible and annotated (`fallback_note`) when it can't. The US 10y is
+  reused from `facts["macro"]["^TNX"]` with **no unit conversion** and a range check
+  (Yahoo has quoted ^TNX at 10x in the past); the JP 10y comes from MOF's official
+  jgbcm.csv with strict parsing (wareki dates, header check, age and range checks) and
+  falls back to 算出不可 rather than a plausible-looking number. The MOF parser was verified
+  against the live CSV on 2026-09-22 (current-month file only, cp932, header on line 2, ends
+  with a blank row and a ※ note row that the parser skips; publication lags ~1 business day).
+- **`econ.py`** — US/JP economic calendar. **There is no automatic source**: every candidate
+  (investing.com, Trading Economics, FMP, Nasdaq, Yahoo, ForexFactory mirror, FRED, BLS,
+  federalreserve.gov, boj.or.jp) was probed and all were blocked by the dev container's
+  egress proxy, so none could be verified — the full table is in the module docstring.
+  Dates therefore come from `config.yaml econ_calendar.events`, written by hand from the
+  official pages (never derived from "it's usually the first Friday"). `python src/econ.py
+  --probe` re-runs the reachability check from a machine with network. The important safety
+  property: when the last registered date is in the past, `status` becomes 要更新 rather
+  than the calendar silently reading as 本日は予定なし.
 - **`analogs.py`** — "similar past chart pattern" search: normalizes the last N days' log-return series,
   finds the closest-distance historical windows since 2005, and reports the *empirical* forward-return
   distribution of those matches. This is how the system produces an "up probability" without the LLM
@@ -116,7 +156,8 @@ Output modules:
   silence (see `main.py`'s holiday branch comment — this was a deliberate fix after a real missed-alert incident).
 
 `config.yaml` defines the tracked instruments (`holdings`, `watch`, `sector`, `sector_groups`,
-`funds`, `macro`, `overseas_semis`), the
+`funds`, `macro`, `overseas_semis`), the `fx` block (pair / bar counts / JGB CSV URL), the
+hand-maintained `econ_calendar.events` list, the
 `peer_proxy` substitution for stocks with too little history, `analog` search parameters, the RSS
 source list for layer C, and the Claude model/max_tokens used.
 
