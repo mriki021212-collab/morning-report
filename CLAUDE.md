@@ -81,10 +81,14 @@ Collector modules (`src/collect.py`, `src/jquants.py`, `src/news.py`, `src/tdnet
 - **`tdnet.py`** — TDnet regulatory disclosures via the yanoshin API, fetched directly by stock code
   (not keyword-matched) so litigation/earnings-revision disclosures can't be missed by a keyword miss.
   Same failure-vs-empty distinction applies.
-- **`fx.py`** — USD/JPY only (`JPY=X`): 260 daily bars + 5 days of 1h bars, 20MA and its
+- **`fx.py`** — USD/JPY only (`JPY=X`): 60 days of 1h bars, from which the daily bars are
+  built (London-midnight windows, the same boundary Yahoo's own daily bars use), 20MA and its
   deviation, 20d high/low, the previous day's 1h high/low, and the US-JP 10y spread.
-  Two rules that were deliberate, not incidental: (a) FX trades 24h, so a daily bar dated
-  *today* (JST) can still be forming — it is excluded from close/MA/high-low and surfaced
+  **Yahoo's own JPY=X daily bars are not used**: measured 2026-09-22, every finalized bar's
+  Close is the price just after the open (≈ Open), off from the real close by up to ~2.8 yen,
+  while Yahoo's quote `previousClose` agreed with the 1h-derived close.
+  Two rules that were deliberate, not incidental: (a) FX trades 24h, so a daily bar whose
+  window has not closed yet is still forming — it is excluded from close/MA/high-low and surfaced
   separately as `forming_bar`, because a forming value printed as 前日終値 is exactly the
   silent-wrongness failure this repo exists to prevent; (b) there is no exchange close, so
   the "previous day" for the hourly bars is a JST calendar day, chosen to match the daily
@@ -92,8 +96,9 @@ Collector modules (`src/collect.py`, `src/jquants.py`, `src/news.py`, `src/tdnet
   reused from `facts["macro"]["^TNX"]` with **no unit conversion** and a range check
   (Yahoo has quoted ^TNX at 10x in the past); the JP 10y comes from MOF's official
   jgbcm.csv with strict parsing (wareki dates, header check, age and range checks) and
-  falls back to 算出不可 rather than a plausible-looking number. The MOF parser has not
-  been verified against a live response — the dev container cannot reach any finance host.
+  falls back to 算出不可 rather than a plausible-looking number. The MOF parser was verified
+  against the live CSV on 2026-09-22 (current-month file only, cp932, header on line 2, ends
+  with a blank row and a ※ note row that the parser skips; publication lags ~1 business day).
 - **`econ.py`** — US/JP economic calendar. **There is no automatic source**: every candidate
   (investing.com, Trading Economics, FMP, Nasdaq, Yahoo, ForexFactory mirror, FRED, BLS,
   federalreserve.gov, boj.or.jp) was probed and all were blocked by the dev container's

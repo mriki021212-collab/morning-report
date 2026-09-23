@@ -67,13 +67,13 @@ macro:
 # FX学習用のブロック。macro: の "JPY=X" とは別枠にする。
 #   macro:  他の指標と同じ1行サマリ（終値と前日比だけ）
 #   fx:     20MA乖離・20日高安・前日の1時間足高安・日米金利差まで出す専用ブロック
-# 同じティッカーを2回取りに行くことになるが、日足の本数(260)と1時間足が必要で
-# 既存の snapshot() とは取得条件が違うため、collect 側に相乗りさせない。
+# 同じティッカーを2回取りに行くことになるが、fx は1時間足から日足を組み立てるため
+# 既存の snapshot() とは取得条件が違い、collect 側に相乗りさせない。
+# （Yahoo の JPY=X 日足は Close が始値直後の値になっていて使えない。理由は fx.py の docstring）
 fx:
   enabled: true
   pair: "JPY=X"        # yfinance の USD/JPY。1ドル何円かの表記
-  daily_bars: 260      # 日足の保持本数
-  hourly_days: 5       # 1時間足の取得日数
+  hourly_days: 60      # 1時間足の取得日数。確定日足25本以上を組むのに必要な分
   # 日本10年国債利回りの取得元（日米金利差に使う）。財務省の一次情報。
   # これが取れない間、金利差は「算出不可」と表示される（推定値では埋めない）。
   jgb10y_csv: "https://www.mof.go.jp/jgbs/reference/interest_rate/jgbcm.csv"

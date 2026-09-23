@@ -123,6 +123,8 @@ def _fx_section(facts: dict) -> list[str]:
                  f"米{us.get('as_of','―')} / 日{jp.get('as_of','―')} |")
     else:
         L.append(f"| **日米金利差** | **算出不可** | 理由 | {r.get('spread_status','―')} |")
+    if r.get("spread_warning"):
+        L.append(f"\n> ⚠️ **{r['spread_warning']}**")
     if not h.get("status"):
         L.append(f"\n_1時間足は {h.get('date_jst')} の {h.get('bars')}本（"
                  f"{h.get('first_bar_jst')}〜{h.get('last_bar_jst')} JST）。{h.get('note','')}_")

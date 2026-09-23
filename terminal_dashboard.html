@@ -861,6 +861,7 @@ function fxTip(fx, fxStatus){
     `20日高安 ${n(fx.high20)} / ${n(fx.low20)}`,
     `前日1時間足 高安 ${h1}`,
     `日米金利差 ${sp}`,
+    r.spreadWarn ? `⚠ ${r.spreadWarn}` : null,
     fx.warn ? `⚠ ${fx.warn}` : null,
   ].filter(Boolean).join("\n");
 }

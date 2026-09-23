@@ -124,6 +124,8 @@ def _fx_block(facts: dict) -> tuple[dict | None, str | None]:
             "jp10yStatus": (r.get("jp10y") or {}).get("status"),
             "spread": r.get("spread_pt"),
             "spreadStatus": r.get("spread_status"),
+            # 値は出せるが基準日が古い/ズレている場合の注意書き（値と混ぜない）
+            "spreadWarn": r.get("spread_warning"),
         },
     }, None
 
