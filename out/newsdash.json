@@ -1,15 +1,15 @@
 {
-  "generated_at": "2026-09-24T07:30:02+09:00",
+  "generated_at": "2026-09-24T12:35:02+09:00",
   "markets": [
     {
       "name": "日経平均",
       "code": "^N225",
-      "close": 65018.9492,
-      "chg_pct": 1.3763,
-      "as_of": "2026-09-18",
-      "age_bdays": 4,
-      "stale": true,
-      "stale_warning": "最新確定値が4営業日前(2026-09-18)。yfinance無料データの欠損/未確定のため、直近の実勢と乖離する場合がある。"
+      "close": 65883.4062,
+      "chg_pct": 1.3295,
+      "as_of": "2026-09-24",
+      "age_bdays": 0,
+      "stale": false,
+      "stale_warning": null
     },
     {
       "name": "TOPIX",
@@ -23,10 +23,10 @@
     {
       "name": "ドル円",
       "code": "JPY=X",
-      "close": 158.273,
-      "chg_pct": 0.5744,
-      "as_of": "2026-09-23",
-      "age_bdays": 1,
+      "close": 158.064,
+      "chg_pct": 0.381,
+      "as_of": "2026-09-24",
+      "age_bdays": 0,
       "stale": false,
       "stale_warning": null
     },
@@ -43,7 +43,7 @@
     {
       "name": "NYダウ",
       "code": "^DJI",
-      "close": 51511.5898,
+      "close": 51511.6016,
       "chg_pct": null,
       "as_of": "2026-09-23",
       "age_bdays": 1,
@@ -73,8 +73,8 @@
     {
       "name": "WTI原油",
       "code": "CL=F",
-      "close": 92.65,
-      "chg_pct": -2.051,
+      "close": 91.31,
+      "chg_pct": -3.4676,
       "as_of": "2026-09-23",
       "age_bdays": 1,
       "stale": false,
@@ -92,15 +92,15 @@
     }
   ],
   "jgb": {
-    "base_date": "2026-09-17",
-    "age_days": 7,
+    "base_date": "2026-09-18",
+    "age_days": 6,
     "curve": {
-      "2年": 1.868,
-      "5年": 2.322,
-      "10年": 2.993,
-      "20年": 3.824,
-      "30年": 4.047,
-      "40年": 4.036
+      "2年": 1.849,
+      "5年": 2.305,
+      "10年": 2.981,
+      "20年": 3.812,
+      "30年": 4.044,
+      "40年": 4.033
     },
     "stale": true
   },
@@ -108,87 +108,78 @@
     "status": "ok",
     "items": [
       {
-        "title": "NY円相場、続落　1ドル=158円30〜40銭　米長期金利の上昇が重荷",
-        "link": "https://www.nikkei.com/article/DGXZQOFL233020T20C26A9000000/",
-        "source": "日経 速報",
-        "category": "主要・速報",
-        "published": "2026-09-24T07:04",
+        "title": "株価 値上がり 連休中の米ハイテク関連銘柄の上昇背景に",
+        "link": "https://news.web.nhk/newsweb/na/nd-20260924de52130",
+        "source": "NHK 経済",
+        "category": "マーケット・経済",
+        "published": "2026-09-24T12:01",
         "tier": "高",
-        "score": 9,
-        "hits": [
-          "長期金利",
-          "金利",
-          "相場"
-        ]
-      },
-      {
-        "title": "シカゴ日本株先物概況・23日　日経平均先物は1045円安の6万5925円",
-        "link": "https://www.nikkei.com/article/DGXZQOFL2402K0U6A920C2000000/",
-        "source": "日経 速報",
-        "category": "主要・速報",
-        "published": "2026-09-24T06:34",
-        "tier": "高",
-        "score": 6,
-        "hits": [
-          "円安",
-          "日経平均"
-        ]
-      },
-      {
-        "title": "日経平均先物、大取の夜間取引で上昇　840円高の6万5940円",
-        "link": "https://www.nikkei.com/article/DGXZQOFL2402F0U6A920C2000000/",
-        "source": "日経 速報",
-        "category": "主要・速報",
-        "published": "2026-09-24T06:13",
-        "tier": "高",
-        "score": 6,
-        "hits": [
-          "円高",
-          "日経平均"
-        ]
-      },
-      {
-        "title": "〈幹部直撃〉セールスフォースが出した｢SaaS終末論｣への答え…アンソロピック､エヌビディアと相次ぐ提携の舞台裏 | ビジネス | 東洋経済オンライン",
-        "link": "https://toyokeizai.net/articles/-/958585?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-        "source": "東洋経済",
-        "category": "企業・ビジネス",
-        "published": "2026-09-24T06:00",
-        "tier": "高",
-        "score": 9,
+        "score": 7,
         "hits": [
           "株価",
-          "決算",
-          "提携",
-          "経済"
-        ]
-      },
-      {
-        "title": "〈半導体分野でも存在感〉ヤマ発はAI特需を起爆剤にどこまで成長するか？ ロボティクス事業｢第3の柱｣への期待と課題 | ビジネス | 東洋経済オンライン",
-        "link": "https://toyokeizai.net/articles/-/958496?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-        "source": "東洋経済",
-        "category": "企業・ビジネス",
-        "published": "2026-09-24T06:00",
-        "tier": "高",
-        "score": 8,
-        "hits": [
           "半導体",
-          "AI",
-          "経済",
-          "企業",
           "市場"
         ]
       },
       {
-        "title": "円急落158円台、レートチェック前水準に　米長期金利5.1%に上昇",
-        "link": "https://www.nikkei.com/article/DGXZQOGN232KE0T20C26A9000000/",
+        "title": "円相場 1ドル＝157円台後半 連休中は円安が進む",
+        "link": "https://news.web.nhk/newsweb/na/nd-20260924de52121",
+        "source": "NHK 経済",
+        "category": "マーケット・経済",
+        "published": "2026-09-24T11:56",
+        "tier": "高",
+        "score": 14,
+        "hits": [
+          "日銀",
+          "為替",
+          "円安",
+          "相場",
+          "市場",
+          "政府"
+        ]
+      },
+      {
+        "title": "ソフトバンクG株価一時7.5%高　米AI半導体株高、英アームも上昇",
+        "link": "https://www.nikkei.com/article/DGXZQOFL240KW0U6A920C2000000/",
         "source": "日経 速報",
         "category": "主要・速報",
-        "published": "2026-09-24T05:58",
+        "published": "2026-09-24T11:00",
+        "tier": "高",
+        "score": 8,
+        "hits": [
+          "株価",
+          "半導体",
+          "AI"
+        ]
+      },
+      {
+        "title": "長期金利 3.055％まで上昇 1996年9月以来の高水準",
+        "link": "https://news.web.nhk/newsweb/na/nd-20260924de52101",
+        "source": "NHK 経済",
+        "category": "マーケット・経済",
+        "published": "2026-09-24T09:49",
+        "tier": "高",
+        "score": 11,
+        "hits": [
+          "長期金利",
+          "金利",
+          "国債",
+          "市場",
+          "証券"
+        ]
+      },
+      {
+        "title": "NY株続落し352ドル安　原油高による企業業績悪化懸念で売り注文優勢",
+        "link": "https://www.sankei.com/article/20260924-7QSFGN4775OOFMVU2UCC4P4MQE/",
+        "source": "産経 経済",
+        "category": "マーケット・経済",
+        "published": "2026-09-24T07:23",
         "tier": "高",
         "score": 6,
         "hits": [
-          "長期金利",
-          "金利"
+          "業績",
+          "原油",
+          "企業"
         ]
       },
       {
@@ -204,21 +195,6 @@
           "半導体",
           "AI",
           "データセンター"
-        ]
-      },
-      {
-        "title": "NVIDIA、HBMの省電力化技術　クラウド大手のAI半導体囲い込み",
-        "link": "https://xtech.nikkei.com/atcl/nxt/column/18/00001/12021/",
-        "source": "日経クロステック",
-        "category": "テクノロジー",
-        "published": "2026-09-24T05:00",
-        "tier": "高",
-        "score": 11,
-        "hits": [
-          "NVIDIA",
-          "半導体",
-          "AI",
-          "クラウド"
         ]
       },
       {
@@ -269,26 +245,40 @@
         ]
       },
       {
-        "title": "地方の景色と経済を変えるAI・半導体ブーム　裾野広がる投資対象と関連銘柄の〝目利き〟",
-        "link": "https://www.sankei.com/article/20260923-ELRMTK7J5ROP5D7VYBIICJT5R4/",
-        "source": "産経 経済",
+        "title": "きょうのおはBiz 9月24日(木) 消費税減税とセットの新制度とは",
+        "link": "https://news.web.nhk/newsweb/na/nd-20260924de52108",
+        "source": "NHK 経済",
         "category": "マーケット・経済",
-        "published": "2026-09-23T08:00",
-        "tier": "高",
-        "score": 7,
+        "published": "2026-09-24T12:09",
+        "tier": "中",
+        "score": 3,
         "hits": [
-          "半導体",
-          "AI",
           "経済",
-          "投資"
+          "企業",
+          "税"
+        ]
+      },
+      {
+        "title": "オープンAIのAIモデル 豪医療統計関連サイトに不正アクセス",
+        "link": "https://news.web.nhk/newsweb/na/nd-20260924de52128",
+        "source": "NHK 主要",
+        "category": "主要・速報",
+        "published": "2026-09-24T12:05",
+        "tier": "中",
+        "score": 5,
+        "hits": [
+          "AI",
+          "企業",
+          "政府",
+          "首相"
         ]
       },
       {
         "title": "中国 習近平主席がアメリカに到着 米中首脳会談へ",
         "link": "https://news.web.nhk/newsweb/na/nd-20260924de52079",
-        "source": "NHK 主要",
-        "category": "主要・速報",
-        "published": "2026-09-24T07:08",
+        "source": "NHK 国際",
+        "category": "国際・政治",
+        "published": "2026-09-24T11:50",
         "tier": "中",
         "score": 5,
         "hits": [
@@ -299,16 +289,185 @@
         ]
       },
       {
-        "title": "NY株ハイライト　米金利急騰、リスク資産に打撃　原油高で一段安も",
-        "link": "https://www.nikkei.com/article/DGXZQOFL232PF0T20C26A9000000/",
+        "title": "ホンダが米国にHV新工場　オハイオ州で最終調整、4000億円規模投資",
+        "link": "https://www.nikkei.com/article/DGXZQOUC266ZU0W6A820C2000000/",
+        "source": "日経 ビジネス",
+        "category": "企業・ビジネス",
+        "published": "2026-09-24T11:43",
+        "tier": "中",
+        "score": 3,
+        "hits": [
+          "新工場",
+          "投資"
+        ]
+      },
+      {
+        "title": "国連安保理 AI制御不能リスクで企業トップが国際連携訴え",
+        "link": "https://news.web.nhk/newsweb/na/nd-20260924de52118",
+        "source": "NHK 主要",
+        "category": "主要・速報",
+        "published": "2026-09-24T11:42",
+        "tier": "中",
+        "score": 3,
+        "hits": [
+          "AI",
+          "企業"
+        ]
+      },
+      {
+        "title": "単発バイト仲介のタイミー、株価が急伸　ノルウェー銀行が5%超保有",
+        "link": "https://www.nikkei.com/article/DGXZQOFL240PR0U6A920C2000000/",
         "source": "日経 速報",
         "category": "主要・速報",
-        "published": "2026-09-24T07:05",
+        "published": "2026-09-24T11:03",
+        "tier": "中",
+        "score": 4,
+        "hits": [
+          "株価",
+          "銀行"
+        ]
+      },
+      {
+        "title": "東海カーボン社長、半導体関連事業の利益「30年度に2〜3倍にする」",
+        "link": "https://www.nikkei.com/article/DGXZQOUB169J50W6A910C2000000/",
+        "source": "日経 速報",
+        "category": "主要・速報",
+        "published": "2026-09-24T11:00",
+        "tier": "中",
+        "score": 3,
+        "hits": [
+          "半導体"
+        ]
+      },
+      {
+        "title": "外為10時　円相場、下げ渋り　一時157円台後半　中値「ドル売り優勢」",
+        "link": "https://www.nikkei.com/article/DGXZQOFL240BI0U6A920C2000000/",
+        "source": "日経 速報",
+        "category": "主要・速報",
+        "published": "2026-09-24T10:29",
+        "tier": "中",
+        "score": 3,
+        "hits": [
+          "相場"
+        ]
+      },
+      {
+        "title": "米国「AI規制で繁栄なし」、中国「国際的なAI統治に貢献」　国連安保理で対照的な姿勢",
+        "link": "https://www.sankei.com/article/20260924-46NXHJ23KNKQJEMLR4GXOI343I/",
+        "source": "産経 経済",
+        "category": "マーケット・経済",
+        "published": "2026-09-24T10:18",
+        "tier": "中",
+        "score": 3,
+        "hits": [
+          "AI",
+          "規制"
+        ]
+      },
+      {
+        "title": "物価高騰対策で奈良・広陵町は全世帯に「指定ごみ袋」無料引換券配布へ",
+        "link": "https://www.sankei.com/article/20260924-OFCEL63LZJJK3C6LKQ36RNBCEU/",
+        "source": "産経 政治",
+        "category": "国際・政治",
+        "published": "2026-09-24T10:00",
+        "tier": "中",
+        "score": 3,
+        "hits": [
+          "物価"
+        ]
+      },
+      {
+        "title": "米中が｢貿易休戦｣を1月10日まで2カ月延長することで合意…トランプ氏は習氏をアンドルーズ統合基地で異例の出迎え | 政治・経済・投資 | 東洋経済オンライン",
+        "link": "https://toyokeizai.net/articles/-/958937?utm_source=rss&utm_medium=http&utm_campaign=link_back",
+        "source": "東洋経済",
+        "category": "企業・ビジネス",
+        "published": "2026-09-24T09:10",
         "tier": "中",
         "score": 5,
         "hits": [
-          "金利",
-          "原油"
+          "統合",
+          "経済",
+          "投資",
+          "貿易"
+        ]
+      },
+      {
+        "title": "米マクドが1兆3000億円投資へ　フランチャイズ加盟店のAI導入支援、運営を効率化",
+        "link": "https://www.sankei.com/article/20260924-DGX7LMPW4RILHCVPLSVIHPLH7M/",
+        "source": "産経 経済",
+        "category": "マーケット・経済",
+        "published": "2026-09-24T08:54",
+        "tier": "中",
+        "score": 3,
+        "hits": [
+          "AI",
+          "投資"
+        ]
+      },
+      {
+        "title": "OECD 物価上昇率予測 来年3.6％に引き上げ エネルギー高騰受け",
+        "link": "https://news.web.nhk/newsweb/na/nd-20260924de52090",
+        "source": "NHK 経済",
+        "category": "マーケット・経済",
+        "published": "2026-09-24T08:50",
+        "tier": "中",
+        "score": 4,
+        "hits": [
+          "物価",
+          "経済"
+        ]
+      },
+      {
+        "title": "「BYDラッコ、いや驚きました」世界首位のBEVメーカーが本気で造った軽自動車の仕上がりを正直レビュー - フェルディナント・ヤマグチの走りながら考える",
+        "link": "https://diamond.jp/articles/-/399567",
+        "source": "ダイヤモンド",
+        "category": "企業・ビジネス",
+        "published": "2026-09-24T08:25",
+        "tier": "中",
+        "score": 3,
+        "hits": [
+          "EV",
+          "市場"
+        ]
+      },
+      {
+        "title": "NY円下落、158円台　米利上げ観測で円売りドル買いが優勢",
+        "link": "https://www.sankei.com/article/20260924-HCSAGQPWV5NGLADFTG5QULRLBU/",
+        "source": "産経 経済",
+        "category": "マーケット・経済",
+        "published": "2026-09-24T08:14",
+        "tier": "中",
+        "score": 3,
+        "hits": [
+          "利上げ"
+        ]
+      },
+      {
+        "title": "AI大手3社幹部､国連安保理で警鐘　｢うまく管理できなければ､AIは人類全体への脅威になる｣ | 政治・経済・投資 | 東洋経済オンライン",
+        "link": "https://toyokeizai.net/articles/-/958931?utm_source=rss&utm_medium=http&utm_campaign=link_back",
+        "source": "東洋経済",
+        "category": "企業・ビジネス",
+        "published": "2026-09-24T08:00",
+        "tier": "中",
+        "score": 5,
+        "hits": [
+          "AI",
+          "経済",
+          "企業",
+          "投資"
+        ]
+      },
+      {
+        "title": "公認会計士が「斬新な試み」と絶賛。図解で決算書が「ひと目でわかる」一冊とは？ - サンキー図で「お金の流れ」が1秒でわかる　見るだけ決算書",
+        "link": "https://diamond.jp/articles/-/399617",
+        "source": "ダイヤモンド",
+        "category": "企業・ビジネス",
+        "published": "2026-09-24T08:00",
+        "tier": "中",
+        "score": 4,
+        "hits": [
+          "決算",
+          "企業"
         ]
       },
       {
@@ -327,23 +486,10 @@
         ]
       },
       {
-        "title": "生成AIは「コロナ禍」に似ている…その先に生まれる、まだ名前もない「新しい習慣」 - 概念シフト",
-        "link": "https://diamond.jp/articles/-/399372",
-        "source": "ダイヤモンド",
-        "category": "企業・ビジネス",
-        "published": "2026-09-24T06:45",
-        "tier": "中",
-        "score": 4,
-        "hits": [
-          "AI",
-          "生成AI"
-        ]
-      },
-      {
         "title": "米中晩さん会、GMやNVIDIAトップ出席　中国企業は参加せずと米報道",
         "link": "https://www.nikkei.com/article/DGXZQOGN232XC0T20C26A9000000/",
-        "source": "日経 速報",
-        "category": "主要・速報",
+        "source": "日経 ビジネス",
+        "category": "企業・ビジネス",
         "published": "2026-09-24T06:29",
         "tier": "中",
         "score": 5,
@@ -353,55 +499,16 @@
         ]
       },
       {
-        "title": "【92歳 現役投資家が教える】株初心者が無意識に陥る「落とし穴」ワースト2 - 「株ノート」で60歳から1億円",
-        "link": "https://diamond.jp/articles/-/395143",
-        "source": "ダイヤモンド",
-        "category": "企業・ビジネス",
-        "published": "2026-09-24T06:25",
-        "tier": "中",
-        "score": 4,
-        "hits": [
-          "相場",
-          "投資"
-        ]
-      },
-      {
-        "title": "NY債券、長期債大幅続落　10年債利回り5.11%　米インフレ懸念で一時07年以来高水準",
-        "link": "https://www.nikkei.com/article/DGXZQOFL233010T20C26A9000000/",
-        "source": "日経 速報",
-        "category": "主要・速報",
-        "published": "2026-09-24T06:16",
-        "tier": "中",
-        "score": 3,
-        "hits": [
-          "インフレ"
-        ]
-      },
-      {
         "title": "メタのAI「ミューズ」登場、旅行予約や金融株が急落　顧客離れを懸念",
         "link": "https://www.nikkei.com/article/DGXZQOFD2339C0T20C26A9000000/",
-        "source": "日経 速報",
-        "category": "主要・速報",
+        "source": "日経 ビジネス",
+        "category": "企業・ビジネス",
         "published": "2026-09-24T06:05",
         "tier": "中",
         "score": 3,
         "hits": [
           "AI",
           "金融"
-        ]
-      },
-      {
-        "title": "｢唐王朝は存在しない｣荒唐無稽な歴史議論に中国共産党が本気で激怒…当局が｢歴史の解釈権｣を掌握したい3つの理由 | 政治・経済・投資 | 東洋経済オンライン",
-        "link": "https://toyokeizai.net/articles/-/958488?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-        "source": "東洋経済",
-        "category": "企業・ビジネス",
-        "published": "2026-09-24T06:00",
-        "tier": "中",
-        "score": 4,
-        "hits": [
-          "AI",
-          "経済",
-          "投資"
         ]
       },
       {
@@ -428,32 +535,6 @@
         "hits": [
           "再編",
           "政府"
-        ]
-      },
-      {
-        "title": "中国半導体の1〜6月純利益7.2倍　AI活況、製造装置などに波及",
-        "link": "https://www.nikkei.com/article/DGXZQOGM174J40X10C26A9000000/",
-        "source": "日経 ビジネス",
-        "category": "企業・ビジネス",
-        "published": "2026-09-24T05:00",
-        "tier": "中",
-        "score": 5,
-        "hits": [
-          "半導体",
-          "AI"
-        ]
-      },
-      {
-        "title": "アキッパ、「泥臭い営業」強みにこぎつけた上場　M&Aで規模拡大へ",
-        "link": "https://www.nikkei.com/article/DGXZQOUF144AM0U6A910C2000000/",
-        "source": "日経 ビジネス",
-        "category": "企業・ビジネス",
-        "published": "2026-09-24T05:00",
-        "tier": "中",
-        "score": 4,
-        "hits": [
-          "M&A",
-          "上場"
         ]
       },
       {
@@ -508,34 +589,6 @@
         ]
       },
       {
-        "title": "AI覇権争いは米中とも｢開発にブレーキをかける余裕なし｣…米中首脳の利害は一致 | 政治・経済・投資 | 東洋経済オンライン",
-        "link": "https://toyokeizai.net/articles/-/958903?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-        "source": "東洋経済",
-        "category": "企業・ビジネス",
-        "published": "2026-09-23T22:01",
-        "tier": "中",
-        "score": 4,
-        "hits": [
-          "AI",
-          "経済",
-          "投資"
-        ]
-      },
-      {
-        "title": "高市首相 国連総会出席や日米首脳会談終え帰国の途",
-        "link": "https://news.web.nhk/newsweb/na/nd-20260923de52031",
-        "source": "NHK 国際",
-        "category": "国際・政治",
-        "published": "2026-09-23T19:35",
-        "tier": "中",
-        "score": 3,
-        "hits": [
-          "政府",
-          "首相",
-          "大統領"
-        ]
-      },
-      {
         "title": "2027年のG20インフレ率3.6%に引き上げ　OECD予測、資源高を反映",
         "link": "https://www.nikkei.com/article/DGXZQOGR222BN0S6A920C2000000/",
         "source": "日経 政治・経済",
@@ -558,6 +611,296 @@
         "hits": [
           "AI",
           "大統領"
+        ]
+      },
+      {
+        "title": "北朝鮮 拉致被害者の家族がアメリカで解決に向けた協力訴える",
+        "link": "https://news.web.nhk/newsweb/na/nd-20260924de52125",
+        "source": "NHK 国際",
+        "category": "国際・政治",
+        "published": "2026-09-24T12:04",
+        "tier": "低",
+        "score": 2,
+        "hits": [
+          "政府",
+          "大統領"
+        ]
+      },
+      {
+        "title": "こんなに愛してるのに､なぜ嫌われる…？TikTokで50万人超に愛された《飼い主大嫌い系ハムスター》との切なすぎる日常 | ライフ | 東洋経済オンライン",
+        "link": "https://toyokeizai.net/articles/-/958060?utm_source=rss&utm_medium=http&utm_campaign=link_back",
+        "source": "東洋経済",
+        "category": "企業・ビジネス",
+        "published": "2026-09-24T12:00",
+        "tier": "低",
+        "score": 1,
+        "hits": [
+          "経済"
+        ]
+      },
+      {
+        "title": "習氏握る3つの対米カード、貿易・イラン・北朝鮮　台湾支援阻む狙い",
+        "link": "https://www.nikkei.com/article/DGXZQOGM167UY0W6A910C2000000/",
+        "source": "日経 速報",
+        "category": "主要・速報",
+        "published": "2026-09-24T11:00",
+        "tier": "低",
+        "score": 1,
+        "hits": [
+          "貿易"
+        ]
+      },
+      {
+        "title": "東京都心の中古マンション価格、4カ月連続下落　高値維持も鈍る投資",
+        "link": "https://www.nikkei.com/article/DGXZQOUB171HP0X10C26A9000000/",
+        "source": "日経 速報",
+        "category": "主要・速報",
+        "published": "2026-09-24T11:00",
+        "tier": "低",
+        "score": 1,
+        "hits": [
+          "投資"
+        ]
+      },
+      {
+        "title": "過去50年に世界中の文化を個人主義に向かわせているものと､集団主義が人々を不幸せにする理由 | ライフ | 東洋経済オンライン",
+        "link": "https://toyokeizai.net/articles/-/943816?utm_source=rss&utm_medium=http&utm_campaign=link_back",
+        "source": "東洋経済",
+        "category": "企業・ビジネス",
+        "published": "2026-09-24T11:00",
+        "tier": "低",
+        "score": 1,
+        "hits": [
+          "経済"
+        ]
+      },
+      {
+        "title": "オープンAIとウクライナ、サイバー民間防衛で協力　ロシアから年間6000件の攻撃",
+        "link": "https://www.sankei.com/article/20260924-PRMPYIAKBNP3VHZ5RLZK5VR5NA/",
+        "source": "産経 経済",
+        "category": "マーケット・経済",
+        "published": "2026-09-24T10:41",
+        "tier": "低",
+        "score": 2,
+        "hits": [
+          "AI"
+        ]
+      },
+      {
+        "title": "香港株寄り付き　続落　中東情勢を懸念　テックや金融に売り",
+        "link": "https://www.nikkei.com/article/DGXZQOFL240RW0U6A920C2000000/",
+        "source": "日経 速報",
+        "category": "主要・速報",
+        "published": "2026-09-24T10:39",
+        "tier": "低",
+        "score": 1,
+        "hits": [
+          "金融"
+        ]
+      },
+      {
+        "title": "メタ、眼鏡に独自AI「ミューズ」搭載　販売1000万台超えへ",
+        "link": "https://www.nikkei.com/article/DGXZQOGN232VG0T20C26A9000000/",
+        "source": "日経 速報",
+        "category": "主要・速報",
+        "published": "2026-09-24T10:30",
+        "tier": "低",
+        "score": 2,
+        "hits": [
+          "AI"
+        ]
+      },
+      {
+        "title": "｢批判は\"統計\"で処理できる！｣—何をやってもうまくいく人が実践する｢最強の思考習慣｣〜Testosterone×中野優作 | ライフ | 東洋経済オンライン",
+        "link": "https://toyokeizai.net/articles/-/956649?utm_source=rss&utm_medium=http&utm_campaign=link_back",
+        "source": "東洋経済",
+        "category": "企業・ビジネス",
+        "published": "2026-09-24T10:30",
+        "tier": "低",
+        "score": 1,
+        "hits": [
+          "経済"
+        ]
+      },
+      {
+        "title": "カリフォルニアがクルマ好き一色に､世界的イベント｢モントレー･カー･ウィーク｣で日本車が熱狂の中心になった理由 | ライフ | 東洋経済オンライン",
+        "link": "https://toyokeizai.net/articles/-/958558?utm_source=rss&utm_medium=http&utm_campaign=link_back",
+        "source": "東洋経済",
+        "category": "企業・ビジネス",
+        "published": "2026-09-24T10:00",
+        "tier": "低",
+        "score": 1,
+        "hits": [
+          "経済"
+        ]
+      },
+      {
+        "title": "高市早苗首相が日米首脳会談を終え帰国　10月召集の臨時国会に向け準備",
+        "link": "https://www.sankei.com/article/20260924-NROB7LMEBNO2FDJ5WGAETSEK74/",
+        "source": "産経 政治",
+        "category": "国際・政治",
+        "published": "2026-09-24T09:41",
+        "tier": "低",
+        "score": 1,
+        "hits": [
+          "首相"
+        ]
+      },
+      {
+        "title": "ゼレンスキー大統領 国連総会でロシアの資金源断つこと訴える",
+        "link": "https://news.web.nhk/newsweb/na/nd-20260924de52093",
+        "source": "NHK 国際",
+        "category": "国際・政治",
+        "published": "2026-09-24T09:31",
+        "tier": "低",
+        "score": 2,
+        "hits": [
+          "貿易",
+          "大統領"
+        ]
+      },
+      {
+        "title": "｢うちの子､反抗期がない｣と思っていたら不登校に…発達障害･グレーゾーンの子に起きている\"新しい反抗期\" | キャリア・教育 | 東洋経済オンライン",
+        "link": "https://toyokeizai.net/articles/-/956384?utm_source=rss&utm_medium=http&utm_campaign=link_back",
+        "source": "東洋経済",
+        "category": "企業・ビジネス",
+        "published": "2026-09-24T09:30",
+        "tier": "低",
+        "score": 1,
+        "hits": [
+          "経済"
+        ]
+      },
+      {
+        "title": "しんのすけをあえて封印で賛否両論！｢クレヨンしんちゃん｣脚本担当で話題の芸人･蓮見翔とは何者？ | ライフ | 東洋経済オンライン",
+        "link": "https://toyokeizai.net/articles/-/958892?utm_source=rss&utm_medium=http&utm_campaign=link_back",
+        "source": "東洋経済",
+        "category": "企業・ビジネス",
+        "published": "2026-09-24T09:00",
+        "tier": "低",
+        "score": 1,
+        "hits": [
+          "経済"
+        ]
+      },
+      {
+        "title": "｢1番になれるものがない｣は不利ではない《上位30%に入れるものが3つ》あればいい……MBA卒業生5000人調査が示した希望 | ライフ | 東洋経済オンライン",
+        "link": "https://toyokeizai.net/articles/-/956995?utm_source=rss&utm_medium=http&utm_campaign=link_back",
+        "source": "東洋経済",
+        "category": "企業・ビジネス",
+        "published": "2026-09-24T08:30",
+        "tier": "低",
+        "score": 1,
+        "hits": [
+          "経済"
+        ]
+      },
+      {
+        "title": "「自衛の戦い恐れない」イラン大統領が対米抗戦の構え、対話の用意も表明　国連総会演説",
+        "link": "https://www.sankei.com/article/20260924-BYGXTLDWTFI53IW4XRFBNRP3WY/",
+        "source": "産経 国際",
+        "category": "国際・政治",
+        "published": "2026-09-24T08:17",
+        "tier": "低",
+        "score": 1,
+        "hits": [
+          "大統領"
+        ]
+      },
+      {
+        "title": "お相手は｢大卒以上｣｢ビジネスの才能があれば話は別｣　\"人を見る目がある\"と自負する人事部･アラフィフ女性の迷走婚活 | ライフ | 東洋経済オンライン",
+        "link": "https://toyokeizai.net/articles/-/958602?utm_source=rss&utm_medium=http&utm_campaign=link_back",
+        "source": "東洋経済",
+        "category": "企業・ビジネス",
+        "published": "2026-09-24T08:00",
+        "tier": "低",
+        "score": 1,
+        "hits": [
+          "経済"
+        ]
+      },
+      {
+        "title": "特殊詐欺被害防止に向け10月から総力戦　奈良県と県警、金融機関が「非常事態宣言」",
+        "link": "https://www.sankei.com/article/20260924-4HWVOEYSJNIBNMP6YIYGQIZQDU/",
+        "source": "産経 政治",
+        "category": "国際・政治",
+        "published": "2026-09-24T08:00",
+        "tier": "低",
+        "score": 1,
+        "hits": [
+          "金融"
+        ]
+      },
+      {
+        "title": "アルゼンチンのミレイ大統領、国連でフォークランド諸島の領有権を主張　英国に協議を要求",
+        "link": "https://www.sankei.com/article/20260924-FXSL2ICM4JNRHBOUXL5TX3UUWQ/",
+        "source": "産経 国際",
+        "category": "国際・政治",
+        "published": "2026-09-24T07:59",
+        "tier": "低",
+        "score": 1,
+        "hits": [
+          "大統領"
+        ]
+      },
+      {
+        "title": "30代から「誰にも相談されなくなる人」の特徴・ワースト1 - 自分の言葉で話せるようになりましょう。",
+        "link": "https://diamond.jp/articles/-/399621",
+        "source": "ダイヤモンド",
+        "category": "企業・ビジネス",
+        "published": "2026-09-24T07:45",
+        "tier": "低",
+        "score": 2,
+        "hits": [
+          "上場"
+        ]
+      },
+      {
+        "title": "ゼレンスキー氏「早ければ来年にもAIが戦況決める」　国連総会で警鐘、和平の必要性強調",
+        "link": "https://www.sankei.com/article/20260924-AYXK52DQ4ROJHARJOYRDMUHQWE/",
+        "source": "産経 国際",
+        "category": "国際・政治",
+        "published": "2026-09-24T07:45",
+        "tier": "低",
+        "score": 2,
+        "hits": [
+          "AI"
+        ]
+      },
+      {
+        "title": "｢1日1万歩より優れている｣\"ボケ予防と転倒防止\"に毎日1分の片足立ち→｢骨に与える負荷｣｢バランス制御能力｣がポイント | ライフ | 東洋経済オンライン",
+        "link": "https://toyokeizai.net/articles/-/957794?utm_source=rss&utm_medium=http&utm_campaign=link_back",
+        "source": "東洋経済",
+        "category": "企業・ビジネス",
+        "published": "2026-09-24T07:30",
+        "tier": "低",
+        "score": 1,
+        "hits": [
+          "経済"
+        ]
+      },
+      {
+        "title": "G20入り目指すポーランド　ＧＤＰ1兆ドル超え…米国が首脳会議招待　日本企業進出相次ぐ",
+        "link": "https://www.yomiuri.co.jp/economy/20260924-GYT1T00137/",
+        "source": "読売 経済",
+        "category": "マーケット・経済",
+        "published": "2026-09-24T07:23",
+        "tier": "低",
+        "score": 1,
+        "hits": [
+          "企業"
+        ]
+      },
+      {
+        "title": "習近平氏がワシントン到着、トランプ氏が歓迎式典　米中閣僚は貿易「休戦」延長など再協議",
+        "link": "https://www.sankei.com/article/20260924-UJBQ52SA2BKUTKZ52LYWOV3XVE/",
+        "source": "産経 国際",
+        "category": "国際・政治",
+        "published": "2026-09-24T07:23",
+        "tier": "低",
+        "score": 1,
+        "hits": [
+          "貿易"
         ]
       },
       {
@@ -598,15 +941,15 @@
         ]
       },
       {
-        "title": "AIに仕事を奪われるより怖い？ 毎日使う人の中で静かに進んでいる「ある変化」 - 「うまく言葉にできない」がなくなる　言語化大全",
-        "link": "https://diamond.jp/articles/-/399428",
-        "source": "ダイヤモンド",
-        "category": "企業・ビジネス",
+        "title": "トランプ氏と習近平氏、きょうワシントンで首脳会談…「米中貿易戦争」「ＡＩ」「台湾問題」など議論へ",
+        "link": "https://www.yomiuri.co.jp/world/20260924-GYT1T00109/",
+        "source": "読売 国際",
+        "category": "国際・政治",
         "published": "2026-09-24T06:50",
         "tier": "低",
-        "score": 2,
+        "score": 1,
         "hits": [
-          "AI"
+          "貿易"
         ]
       },
       {
@@ -615,104 +958,6 @@
         "source": "東洋経済",
         "category": "企業・ビジネス",
         "published": "2026-09-24T06:30",
-        "tier": "低",
-        "score": 1,
-        "hits": [
-          "経済"
-        ]
-      },
-      {
-        "title": "国連安保理がAI会合、OpenAIとアンソロピックCEO｢安全基準で協力を｣",
-        "link": "https://www.nikkei.com/article/DGXZQOGN232Z30T20C26A9000000/",
-        "source": "日経 速報",
-        "category": "主要・速報",
-        "published": "2026-09-24T06:08",
-        "tier": "低",
-        "score": 2,
-        "hits": [
-          "AI"
-        ]
-      },
-      {
-        "title": "業界2位の日本製紙の時価総額が3位のレンゴーと4位の大王より下となった製紙の構造要因…｢脱製紙｣での生き残りの成否 | ビジネス | 東洋経済オンライン",
-        "link": "https://toyokeizai.net/articles/-/958295?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-        "source": "東洋経済",
-        "category": "企業・ビジネス",
-        "published": "2026-09-24T06:00",
-        "tier": "低",
-        "score": 2,
-        "hits": [
-          "経済",
-          "市場"
-        ]
-      },
-      {
-        "title": "｢人を変えて守るセキュリティはうまくいかない｣､元国連CISOが壮絶な経験を経て辿り着いた組織防衛の解 | ビジネス | 東洋経済オンライン",
-        "link": "https://toyokeizai.net/articles/-/958188?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-        "source": "東洋経済",
-        "category": "企業・ビジネス",
-        "published": "2026-09-24T06:00",
-        "tier": "低",
-        "score": 1,
-        "hits": [
-          "経済"
-        ]
-      },
-      {
-        "title": "発達障害のある学生｢10年で約4倍増｣…大学で露呈する深刻なSOS､筑波大学の\"駆け込み寺\"で行っている支援の中身 | キャリア・教育 | 東洋経済オンライン",
-        "link": "https://toyokeizai.net/articles/-/958151?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-        "source": "東洋経済",
-        "category": "企業・ビジネス",
-        "published": "2026-09-24T06:00",
-        "tier": "低",
-        "score": 1,
-        "hits": [
-          "経済"
-        ]
-      },
-      {
-        "title": "OKIが長い構造改革から脱却､森社長が語る｢再成長｣への道筋…｢社員に成長目指す意欲がなかった｣内向き組織への処方箋 | ビジネス | 東洋経済オンライン",
-        "link": "https://toyokeizai.net/articles/-/957998?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-        "source": "東洋経済",
-        "category": "企業・ビジネス",
-        "published": "2026-09-24T06:00",
-        "tier": "低",
-        "score": 2,
-        "hits": [
-          "経済",
-          "企業"
-        ]
-      },
-      {
-        "title": "シールで落とし物を返却 新たな仕組み開発 警視庁などと連携へ",
-        "link": "https://news.web.nhk/newsweb/na/nd-20260923de52064",
-        "source": "NHK 主要",
-        "category": "主要・速報",
-        "published": "2026-09-24T05:56",
-        "tier": "低",
-        "score": 1,
-        "hits": [
-          "企業"
-        ]
-      },
-      {
-        "title": "《ゆっくりコロリ》2000人を看取った在宅緩和ケア医が語る\"理想の最期\"…自宅で穏やかに天寿を全うするための｢3要点｣ | ライフ | 東洋経済オンライン",
-        "link": "https://toyokeizai.net/articles/-/958786?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-        "source": "東洋経済",
-        "category": "企業・ビジネス",
-        "published": "2026-09-24T05:31",
-        "tier": "低",
-        "score": 1,
-        "hits": [
-          "経済"
-        ]
-      },
-      {
-        "title": "健康で長生きするほど《｢ピンピンコロリ｣は99％失敗する》？　2000人を看取った在宅緩和ケア医が明かす\"死に際の真実\" | ライフ | 東洋経済オンライン",
-        "link": "https://toyokeizai.net/articles/-/958783?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-        "source": "東洋経済",
-        "category": "企業・ビジネス",
-        "published": "2026-09-24T05:30",
         "tier": "低",
         "score": 1,
         "hits": [
@@ -733,16 +978,15 @@
         ]
       },
       {
-        "title": "文系･理系の学生が選んだ｢就職人気企業ランキング｣……就活生1万3000人が投票した結果 | ライフ | 東洋経済オンライン",
-        "link": "https://toyokeizai.net/articles/-/958883?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-        "source": "東洋経済",
-        "category": "企業・ビジネス",
+        "title": "イーロン・マスクの反逆思考「頭がおかしいから世界を変えられる」",
+        "link": "https://xtech.nikkei.com/atcl/nxt/column/18/03739/090200014/",
+        "source": "日経クロステック",
+        "category": "テクノロジー",
         "published": "2026-09-24T05:00",
         "tier": "低",
         "score": 2,
         "hits": [
-          "経済",
-          "企業"
+          "再編"
         ]
       },
       {
@@ -758,27 +1002,40 @@
         ]
       },
       {
-        "title": "イーロン・マスクの反逆思考「頭がおかしいから世界を変えられる」",
-        "link": "https://xtech.nikkei.com/atcl/nxt/column/18/03739/090200014/",
+        "title": "三菱マテリアルとセブン銀行のIT幹部が回答、レガシー刷新やDXのポイント",
+        "link": "https://xtech.nikkei.com/atcl/nxt/column/18/03745/091700015/",
         "source": "日経クロステック",
         "category": "テクノロジー",
         "published": "2026-09-24T05:00",
         "tier": "低",
         "score": 2,
         "hits": [
-          "再編"
+          "企業",
+          "銀行"
         ]
       },
       {
-        "title": "米中　貿易や台湾議論へ…今年２回目　２４日に首脳会談",
-        "link": "https://www.yomiuri.co.jp/world/20260924-GYT1T00109/",
-        "source": "読売 国際",
-        "category": "国際・政治",
+        "title": "AIエージェントと組むとプロジェクトマネジャーの頭は疲れるが心は健やかになる",
+        "link": "https://xtech.nikkei.com/atcl/nxt/column/18/00166/091600208/",
+        "source": "日経クロステック",
+        "category": "テクノロジー",
+        "published": "2026-09-24T05:00",
+        "tier": "低",
+        "score": 2,
+        "hits": [
+          "AI"
+        ]
+      },
+      {
+        "title": "折り畳みスマホを手に画面のアスペクト比を改めて考える",
+        "link": "https://xtech.nikkei.com/atcl/nxt/column/18/00138/091602107/",
+        "source": "日経クロステック",
+        "category": "テクノロジー",
         "published": "2026-09-24T05:00",
         "tier": "低",
         "score": 1,
         "hits": [
-          "貿易"
+          "税"
         ]
       },
       {
@@ -791,18 +1048,6 @@
         "score": 1,
         "hits": [
           "大統領"
-        ]
-      },
-      {
-        "title": "ＩＣＣへ「一貫した支持」　首相「法の支配　維持貢献」…国連演説",
-        "link": "https://www.yomiuri.co.jp/politics/20260924-GYT1T00112/",
-        "source": "読売 政治",
-        "category": "国際・政治",
-        "published": "2026-09-24T05:00",
-        "tier": "低",
-        "score": 1,
-        "hits": [
-          "首相"
         ]
       },
       {
@@ -821,18 +1066,6 @@
       {
         "title": "高市首相の一日",
         "link": "https://www.yomiuri.co.jp/politics/20260924-GYT1T00054/",
-        "source": "読売 政治",
-        "category": "国際・政治",
-        "published": "2026-09-24T05:00",
-        "tier": "低",
-        "score": 1,
-        "hits": [
-          "首相"
-        ]
-      },
-      {
-        "title": "首相　ＮＹで積極外交　ゼレンスキー氏と初会談　多国間連携",
-        "link": "https://www.yomiuri.co.jp/politics/20260923-GYT1T00277/",
         "source": "読売 政治",
         "category": "国際・政治",
         "published": "2026-09-24T05:00",
@@ -867,40 +1100,16 @@
         ]
       },
       {
-        "title": "京急最古参､1500形｢真っ赤な電車｣が変えた常識　初採用の仕様あれば最後になった｢伝統｣も | ビジネス | 東洋経済オンライン",
-        "link": "https://toyokeizai.net/articles/-/957778?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-        "source": "東洋経済",
-        "category": "企業・ビジネス",
-        "published": "2026-09-24T04:30",
-        "tier": "低",
-        "score": 1,
-        "hits": [
-          "経済"
-        ]
-      },
-      {
-        "title": "イラン大統領、国連で「われわれこそテロの被害者」米国など非難　米代表は退席",
-        "link": "https://www.sankei.com/article/20260924-XNMNVIOKHJLEFFX3UPC5BRXNF4/",
-        "source": "産経 国際",
+        "title": "米国・ベッセント財務長官と中国・何立峰副首相、ワシントンで貿易戦争の「休戦」など協議か",
+        "link": "https://www.yomiuri.co.jp/world/20260924-GYT1T00124/",
+        "source": "読売 国際",
         "category": "国際・政治",
-        "published": "2026-09-24T00:22",
-        "tier": "低",
-        "score": 1,
-        "hits": [
-          "大統領"
-        ]
-      },
-      {
-        "title": "高市首相 トランプ大統領 国連総会で演説 日米首脳会談も",
-        "link": "https://news.web.nhk/newsweb/na/nd-20260923de52038",
-        "source": "NHK 国際",
-        "category": "国際・政治",
-        "published": "2026-09-23T22:05",
+        "published": "2026-09-24T02:53",
         "tier": "低",
         "score": 2,
         "hits": [
-          "首相",
-          "大統領"
+          "貿易",
+          "首相"
         ]
       },
       {
@@ -917,15 +1126,16 @@
         ]
       },
       {
-        "title": "中国、高市首相の旧敵国条項削除要求に反対姿勢を示す「軍国主義が脅威になることを防ぐ」",
-        "link": "https://www.sankei.com/article/20260923-NJ4P3FQV3NPPLPJ7CEYB2DPEFY/",
-        "source": "産経 国際",
-        "category": "国際・政治",
-        "published": "2026-09-23T19:16",
+        "title": "トランプ大統領「軽油の輸出やめようと言った」…禁輸で世界供給減れば日本にも影響の恐れ",
+        "link": "https://www.yomiuri.co.jp/economy/20260923-GYT1T00185/",
+        "source": "読売 経済",
+        "category": "マーケット・経済",
+        "published": "2026-09-23T19:19",
         "tier": "低",
-        "score": 1,
+        "score": 2,
         "hits": [
-          "首相"
+          "輸出",
+          "大統領"
         ]
       },
       {
@@ -941,18 +1151,6 @@
         ]
       },
       {
-        "title": "中国の習近平国家主席がアメリカへ出発　米中首脳会談へ",
-        "link": "https://news.web.nhk/newsweb/na/nd-20260923de51963",
-        "source": "NHK 国際",
-        "category": "国際・政治",
-        "published": "2026-09-23T18:55",
-        "tier": "低",
-        "score": 1,
-        "hits": [
-          "大統領"
-        ]
-      },
-      {
         "title": "高市早苗首相が帰国の途　政府専用機でニューヨーク・ケネディ国際空港出発",
         "link": "https://www.sankei.com/article/20260923-QJTPPER2YBPD5GEACTJUEICWQ4/",
         "source": "産経 政治",
@@ -963,18 +1161,6 @@
         "hits": [
           "政府",
           "首相"
-        ]
-      },
-      {
-        "title": "米韓首脳会談 トランプ氏が北朝鮮との対話の意思改めて示す",
-        "link": "https://news.web.nhk/newsweb/na/nd-20260923de52002",
-        "source": "NHK 国際",
-        "category": "国際・政治",
-        "published": "2026-09-23T16:26",
-        "tier": "低",
-        "score": 1,
-        "hits": [
-          "大統領"
         ]
       },
       {
@@ -1025,648 +1211,71 @@
         "hits": [
           "首相"
         ]
-      },
-      {
-        "title": "韓国大統領、米国に対北朝鮮制裁「緩和」を要請…核・ミサイル開発の停止と交換条件「大きな価値ある」",
-        "link": "https://www.yomiuri.co.jp/world/20260923-GYT1T00064/",
-        "source": "読売 国際",
-        "category": "国際・政治",
-        "published": "2026-09-23T13:20",
-        "tier": "低",
-        "score": 1,
-        "hits": [
-          "大統領"
-        ]
-      },
-      {
-        "title": "英首相が情報攻撃への対策機関を設置へ　国連演説で表明　ロシア念頭、英選挙に「干渉」",
-        "link": "https://www.sankei.com/article/20260923-65KGIYAHN5IV5FBPDLWJIUPNSM/",
-        "source": "産経 国際",
-        "category": "国際・政治",
-        "published": "2026-09-23T12:53",
-        "tier": "低",
-        "score": 1,
-        "hits": [
-          "首相"
-        ]
-      },
-      {
-        "title": "原油下落、一時90ドル割れ　米イラン停戦協議に期待",
-        "link": "https://www.sankei.com/article/20260923-VZDKHNTLWJNKHJ6KVBBHKYGDSY/",
-        "source": "産経 経済",
-        "category": "マーケット・経済",
-        "published": "2026-09-23T12:00",
-        "tier": "低",
-        "score": 2,
-        "hits": [
-          "原油"
-        ]
-      },
-      {
-        "title": "韓国大統領、国連演説で北朝鮮の「非核化」使わず　3段階の解決主張、南北対話再開に意欲",
-        "link": "https://www.sankei.com/article/20260923-7OH36O325RMT7K2LXRTRTUPIVU/",
-        "source": "産経 国際",
-        "category": "国際・政治",
-        "published": "2026-09-23T12:00",
-        "tier": "低",
-        "score": 1,
-        "hits": [
-          "大統領"
-        ]
-      },
-      {
-        "title": "高市首相、国連でICC「一貫して支持」表明　赤根所長ら米制裁、政府は水面下で交渉継続",
-        "link": "https://www.sankei.com/article/20260923-FR34CFSGJFC23IJ6JX5IUNSCPY/",
-        "source": "産経 政治",
-        "category": "国際・政治",
-        "published": "2026-09-23T11:41",
-        "tier": "低",
-        "score": 2,
-        "hits": [
-          "政府",
-          "首相"
-        ]
-      },
-      {
-        "title": "「たくさんのイシュー話したいので」高市首相、トランプ氏に新内閣の顔ぶれ「ご安心あれ」",
-        "link": "https://www.sankei.com/article/20260923-3YC537MH6VAZ5AEYNDM5RDWAHU/",
-        "source": "産経 政治",
-        "category": "国際・政治",
-        "published": "2026-09-23T11:06",
-        "tier": "低",
-        "score": 1,
-        "hits": [
-          "首相"
-        ]
-      },
-      {
-        "title": "［フカヨミ］変わる企業統治指針＜下＞ＲＯＥと成長投資を両立…脱「株主還元偏重」促す",
-        "link": "https://www.yomiuri.co.jp/economy/20260922-GYT1T00301/",
-        "source": "読売 経済",
-        "category": "マーケット・経済",
-        "published": "2026-09-23T10:00",
-        "tier": "低",
-        "score": 2,
-        "hits": [
-          "企業",
-          "投資"
-        ]
-      },
-      {
-        "title": "米AI2社が新型モデル　開発減速表明後初の発表、料金安く…中国モデルとの競争激化",
-        "link": "https://www.sankei.com/article/20260923-UQQMQJPV7ZL2NINVB4LQGDDU6U/",
-        "source": "産経 経済",
-        "category": "マーケット・経済",
-        "published": "2026-09-23T08:50",
-        "tier": "低",
-        "score": 2,
-        "hits": [
-          "AI"
-        ]
-      },
-      {
-        "title": "ディーゼル燃料禁輸を検討　トランプ米大統領、中間選挙を前に記録的高値で国内優先の姿勢",
-        "link": "https://www.sankei.com/article/20260923-VOXNQYOJTZPGHDFAXZXYMDYY7I/",
-        "source": "産経 経済",
-        "category": "マーケット・経済",
-        "published": "2026-09-23T08:19",
-        "tier": "低",
-        "score": 1,
-        "hits": [
-          "大統領"
-        ]
-      },
-      {
-        "title": "AI利用の子供に悪影響の恐れ　元グーグル幹部が自殺や精神障害、批判的思考力低下を警告",
-        "link": "https://www.sankei.com/article/20260923-HK2AATRW6FNY7LIFRLTXQX6Y2A/",
-        "source": "産経 経済",
-        "category": "マーケット・経済",
-        "published": "2026-09-23T07:53",
-        "tier": "低",
-        "score": 2,
-        "hits": [
-          "AI"
-        ]
-      },
-      {
-        "title": "トランプ大統領 軽油の輸出禁止措置“政権内部に求めてきた”",
-        "link": "https://news.web.nhk/newsweb/na/nd-20260923de51939",
-        "source": "NHK 経済",
-        "category": "マーケット・経済",
-        "published": "2026-09-23T07:32",
-        "tier": "低",
-        "score": 2,
-        "hits": [
-          "輸出",
-          "大統領"
-        ]
       }
     ],
     "by_category": {
-      "主要・速報": [
+      "マーケット・経済": [
         {
-          "title": "NY円相場、続落　1ドル=158円30〜40銭　米長期金利の上昇が重荷",
-          "link": "https://www.nikkei.com/article/DGXZQOFL233020T20C26A9000000/",
-          "source": "日経 速報",
-          "category": "主要・速報",
-          "published": "2026-09-24T07:04",
+          "title": "株価 値上がり 連休中の米ハイテク関連銘柄の上昇背景に",
+          "link": "https://news.web.nhk/newsweb/na/nd-20260924de52130",
+          "source": "NHK 経済",
+          "category": "マーケット・経済",
+          "published": "2026-09-24T12:01",
           "tier": "高",
-          "score": 9,
-          "hits": [
-            "長期金利",
-            "金利",
-            "相場"
-          ]
-        },
-        {
-          "title": "シカゴ日本株先物概況・23日　日経平均先物は1045円安の6万5925円",
-          "link": "https://www.nikkei.com/article/DGXZQOFL2402K0U6A920C2000000/",
-          "source": "日経 速報",
-          "category": "主要・速報",
-          "published": "2026-09-24T06:34",
-          "tier": "高",
-          "score": 6,
-          "hits": [
-            "円安",
-            "日経平均"
-          ]
-        },
-        {
-          "title": "日経平均先物、大取の夜間取引で上昇　840円高の6万5940円",
-          "link": "https://www.nikkei.com/article/DGXZQOFL2402F0U6A920C2000000/",
-          "source": "日経 速報",
-          "category": "主要・速報",
-          "published": "2026-09-24T06:13",
-          "tier": "高",
-          "score": 6,
-          "hits": [
-            "円高",
-            "日経平均"
-          ]
-        },
-        {
-          "title": "円急落158円台、レートチェック前水準に　米長期金利5.1%に上昇",
-          "link": "https://www.nikkei.com/article/DGXZQOGN232KE0T20C26A9000000/",
-          "source": "日経 速報",
-          "category": "主要・速報",
-          "published": "2026-09-24T05:58",
-          "tier": "高",
-          "score": 6,
-          "hits": [
-            "長期金利",
-            "金利"
-          ]
-        },
-        {
-          "title": "中国 習近平主席がアメリカに到着 米中首脳会談へ",
-          "link": "https://news.web.nhk/newsweb/na/nd-20260924de52079",
-          "source": "NHK 主要",
-          "category": "主要・速報",
-          "published": "2026-09-24T07:08",
-          "tier": "中",
-          "score": 5,
-          "hits": [
-            "AI",
-            "経済",
-            "貿易",
-            "大統領"
-          ]
-        },
-        {
-          "title": "NY株ハイライト　米金利急騰、リスク資産に打撃　原油高で一段安も",
-          "link": "https://www.nikkei.com/article/DGXZQOFL232PF0T20C26A9000000/",
-          "source": "日経 速報",
-          "category": "主要・速報",
-          "published": "2026-09-24T07:05",
-          "tier": "中",
-          "score": 5,
-          "hits": [
-            "金利",
-            "原油"
-          ]
-        },
-        {
-          "title": "米中晩さん会、GMやNVIDIAトップ出席　中国企業は参加せずと米報道",
-          "link": "https://www.nikkei.com/article/DGXZQOGN232XC0T20C26A9000000/",
-          "source": "日経 速報",
-          "category": "主要・速報",
-          "published": "2026-09-24T06:29",
-          "tier": "中",
-          "score": 5,
-          "hits": [
-            "NVIDIA",
-            "企業"
-          ]
-        },
-        {
-          "title": "NY債券、長期債大幅続落　10年債利回り5.11%　米インフレ懸念で一時07年以来高水準",
-          "link": "https://www.nikkei.com/article/DGXZQOFL233010T20C26A9000000/",
-          "source": "日経 速報",
-          "category": "主要・速報",
-          "published": "2026-09-24T06:16",
-          "tier": "中",
-          "score": 3,
-          "hits": [
-            "インフレ"
-          ]
-        },
-        {
-          "title": "メタのAI「ミューズ」登場、旅行予約や金融株が急落　顧客離れを懸念",
-          "link": "https://www.nikkei.com/article/DGXZQOFD2339C0T20C26A9000000/",
-          "source": "日経 速報",
-          "category": "主要・速報",
-          "published": "2026-09-24T06:05",
-          "tier": "中",
-          "score": 3,
-          "hits": [
-            "AI",
-            "金融"
-          ]
-        },
-        {
-          "title": "ジャングリア沖縄 親会社が173億円余の赤字",
-          "link": "https://news.web.nhk/newsweb/na/nd-20260923de52050",
-          "source": "NHK 主要",
-          "category": "主要・速報",
-          "published": "2026-09-24T05:47",
-          "tier": "中",
-          "score": 4,
-          "hits": [
-            "決算",
-            "経済"
-          ]
-        },
-        {
-          "title": "国連安保理がAI会合、OpenAIとアンソロピックCEO｢安全基準で協力を｣",
-          "link": "https://www.nikkei.com/article/DGXZQOGN232Z30T20C26A9000000/",
-          "source": "日経 速報",
-          "category": "主要・速報",
-          "published": "2026-09-24T06:08",
-          "tier": "低",
-          "score": 2,
-          "hits": [
-            "AI"
-          ]
-        },
-        {
-          "title": "シールで落とし物を返却 新たな仕組み開発 警視庁などと連携へ",
-          "link": "https://news.web.nhk/newsweb/na/nd-20260923de52064",
-          "source": "NHK 主要",
-          "category": "主要・速報",
-          "published": "2026-09-24T05:56",
-          "tier": "低",
-          "score": 1,
-          "hits": [
-            "企業"
-          ]
-        }
-      ],
-      "企業・ビジネス": [
-        {
-          "title": "〈幹部直撃〉セールスフォースが出した｢SaaS終末論｣への答え…アンソロピック､エヌビディアと相次ぐ提携の舞台裏 | ビジネス | 東洋経済オンライン",
-          "link": "https://toyokeizai.net/articles/-/958585?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-          "source": "東洋経済",
-          "category": "企業・ビジネス",
-          "published": "2026-09-24T06:00",
-          "tier": "高",
-          "score": 9,
+          "score": 7,
           "hits": [
             "株価",
-            "決算",
-            "提携",
-            "経済"
-          ]
-        },
-        {
-          "title": "〈半導体分野でも存在感〉ヤマ発はAI特需を起爆剤にどこまで成長するか？ ロボティクス事業｢第3の柱｣への期待と課題 | ビジネス | 東洋経済オンライン",
-          "link": "https://toyokeizai.net/articles/-/958496?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-          "source": "東洋経済",
-          "category": "企業・ビジネス",
-          "published": "2026-09-24T06:00",
-          "tier": "高",
-          "score": 8,
-          "hits": [
             "半導体",
-            "AI",
-            "経済",
-            "企業",
             "市場"
           ]
         },
         {
-          "title": "生成AIは「コロナ禍」に似ている…その先に生まれる、まだ名前もない「新しい習慣」 - 概念シフト",
-          "link": "https://diamond.jp/articles/-/399372",
-          "source": "ダイヤモンド",
-          "category": "企業・ビジネス",
-          "published": "2026-09-24T06:45",
-          "tier": "中",
-          "score": 4,
+          "title": "円相場 1ドル＝157円台後半 連休中は円安が進む",
+          "link": "https://news.web.nhk/newsweb/na/nd-20260924de52121",
+          "source": "NHK 経済",
+          "category": "マーケット・経済",
+          "published": "2026-09-24T11:56",
+          "tier": "高",
+          "score": 14,
           "hits": [
-            "AI",
-            "生成AI"
-          ]
-        },
-        {
-          "title": "【92歳 現役投資家が教える】株初心者が無意識に陥る「落とし穴」ワースト2 - 「株ノート」で60歳から1億円",
-          "link": "https://diamond.jp/articles/-/395143",
-          "source": "ダイヤモンド",
-          "category": "企業・ビジネス",
-          "published": "2026-09-24T06:25",
-          "tier": "中",
-          "score": 4,
-          "hits": [
+            "日銀",
+            "為替",
+            "円安",
             "相場",
-            "投資"
-          ]
-        },
-        {
-          "title": "｢唐王朝は存在しない｣荒唐無稽な歴史議論に中国共産党が本気で激怒…当局が｢歴史の解釈権｣を掌握したい3つの理由 | 政治・経済・投資 | 東洋経済オンライン",
-          "link": "https://toyokeizai.net/articles/-/958488?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-          "source": "東洋経済",
-          "category": "企業・ビジネス",
-          "published": "2026-09-24T06:00",
-          "tier": "中",
-          "score": 4,
-          "hits": [
-            "AI",
-            "経済",
-            "投資"
-          ]
-        },
-        {
-          "title": "中国半導体の1〜6月純利益7.2倍　AI活況、製造装置などに波及",
-          "link": "https://www.nikkei.com/article/DGXZQOGM174J40X10C26A9000000/",
-          "source": "日経 ビジネス",
-          "category": "企業・ビジネス",
-          "published": "2026-09-24T05:00",
-          "tier": "中",
-          "score": 5,
-          "hits": [
-            "半導体",
-            "AI"
-          ]
-        },
-        {
-          "title": "アキッパ、「泥臭い営業」強みにこぎつけた上場　M&Aで規模拡大へ",
-          "link": "https://www.nikkei.com/article/DGXZQOUF144AM0U6A910C2000000/",
-          "source": "日経 ビジネス",
-          "category": "企業・ビジネス",
-          "published": "2026-09-24T05:00",
-          "tier": "中",
-          "score": 4,
-          "hits": [
-            "M&A",
-            "上場"
-          ]
-        },
-        {
-          "title": "AI覇権争いは米中とも｢開発にブレーキをかける余裕なし｣…米中首脳の利害は一致 | 政治・経済・投資 | 東洋経済オンライン",
-          "link": "https://toyokeizai.net/articles/-/958903?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-          "source": "東洋経済",
-          "category": "企業・ビジネス",
-          "published": "2026-09-23T22:01",
-          "tier": "中",
-          "score": 4,
-          "hits": [
-            "AI",
-            "経済",
-            "投資"
-          ]
-        },
-        {
-          "title": "｢65歳で辞めるなんて言わないで！｣企業の抱える偽らざる本音…会社は社員に何歳まで働いてほしいと思っているのか？ | キャリア・教育 | 東洋経済オンライン",
-          "link": "https://toyokeizai.net/articles/-/958517?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-          "source": "東洋経済",
-          "category": "企業・ビジネス",
-          "published": "2026-09-24T07:00",
-          "tier": "低",
-          "score": 2,
-          "hits": [
-            "経済",
-            "企業"
-          ]
-        },
-        {
-          "title": "AIに仕事を奪われるより怖い？ 毎日使う人の中で静かに進んでいる「ある変化」 - 「うまく言葉にできない」がなくなる　言語化大全",
-          "link": "https://diamond.jp/articles/-/399428",
-          "source": "ダイヤモンド",
-          "category": "企業・ビジネス",
-          "published": "2026-09-24T06:50",
-          "tier": "低",
-          "score": 2,
-          "hits": [
-            "AI"
-          ]
-        },
-        {
-          "title": "｢なぜあの人の頼みは皆引き受けるのか｣　仕事はできるのに｢雑談ゼロ｣｢飲み会不参加｣の彼が社内調整で詰んだ\"致命的な誤算\" | ライフ | 東洋経済オンライン",
-          "link": "https://toyokeizai.net/articles/-/958612?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-          "source": "東洋経済",
-          "category": "企業・ビジネス",
-          "published": "2026-09-24T06:30",
-          "tier": "低",
-          "score": 1,
-          "hits": [
-            "経済"
-          ]
-        },
-        {
-          "title": "業界2位の日本製紙の時価総額が3位のレンゴーと4位の大王より下となった製紙の構造要因…｢脱製紙｣での生き残りの成否 | ビジネス | 東洋経済オンライン",
-          "link": "https://toyokeizai.net/articles/-/958295?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-          "source": "東洋経済",
-          "category": "企業・ビジネス",
-          "published": "2026-09-24T06:00",
-          "tier": "低",
-          "score": 2,
-          "hits": [
-            "経済",
-            "市場"
-          ]
-        },
-        {
-          "title": "｢人を変えて守るセキュリティはうまくいかない｣､元国連CISOが壮絶な経験を経て辿り着いた組織防衛の解 | ビジネス | 東洋経済オンライン",
-          "link": "https://toyokeizai.net/articles/-/958188?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-          "source": "東洋経済",
-          "category": "企業・ビジネス",
-          "published": "2026-09-24T06:00",
-          "tier": "低",
-          "score": 1,
-          "hits": [
-            "経済"
-          ]
-        },
-        {
-          "title": "発達障害のある学生｢10年で約4倍増｣…大学で露呈する深刻なSOS､筑波大学の\"駆け込み寺\"で行っている支援の中身 | キャリア・教育 | 東洋経済オンライン",
-          "link": "https://toyokeizai.net/articles/-/958151?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-          "source": "東洋経済",
-          "category": "企業・ビジネス",
-          "published": "2026-09-24T06:00",
-          "tier": "低",
-          "score": 1,
-          "hits": [
-            "経済"
-          ]
-        },
-        {
-          "title": "OKIが長い構造改革から脱却､森社長が語る｢再成長｣への道筋…｢社員に成長目指す意欲がなかった｣内向き組織への処方箋 | ビジネス | 東洋経済オンライン",
-          "link": "https://toyokeizai.net/articles/-/957998?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-          "source": "東洋経済",
-          "category": "企業・ビジネス",
-          "published": "2026-09-24T06:00",
-          "tier": "低",
-          "score": 2,
-          "hits": [
-            "経済",
-            "企業"
-          ]
-        },
-        {
-          "title": "《ゆっくりコロリ》2000人を看取った在宅緩和ケア医が語る\"理想の最期\"…自宅で穏やかに天寿を全うするための｢3要点｣ | ライフ | 東洋経済オンライン",
-          "link": "https://toyokeizai.net/articles/-/958786?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-          "source": "東洋経済",
-          "category": "企業・ビジネス",
-          "published": "2026-09-24T05:31",
-          "tier": "低",
-          "score": 1,
-          "hits": [
-            "経済"
-          ]
-        },
-        {
-          "title": "健康で長生きするほど《｢ピンピンコロリ｣は99％失敗する》？　2000人を看取った在宅緩和ケア医が明かす\"死に際の真実\" | ライフ | 東洋経済オンライン",
-          "link": "https://toyokeizai.net/articles/-/958783?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-          "source": "東洋経済",
-          "category": "企業・ビジネス",
-          "published": "2026-09-24T05:30",
-          "tier": "低",
-          "score": 1,
-          "hits": [
-            "経済"
-          ]
-        },
-        {
-          "title": "文系･理系の学生が選んだ｢就職人気企業ランキング｣……就活生1万3000人が投票した結果 | ライフ | 東洋経済オンライン",
-          "link": "https://toyokeizai.net/articles/-/958883?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-          "source": "東洋経済",
-          "category": "企業・ビジネス",
-          "published": "2026-09-24T05:00",
-          "tier": "低",
-          "score": 2,
-          "hits": [
-            "経済",
-            "企業"
-          ]
-        },
-        {
-          "title": "京急最古参､1500形｢真っ赤な電車｣が変えた常識　初採用の仕様あれば最後になった｢伝統｣も | ビジネス | 東洋経済オンライン",
-          "link": "https://toyokeizai.net/articles/-/957778?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-          "source": "東洋経済",
-          "category": "企業・ビジネス",
-          "published": "2026-09-24T04:30",
-          "tier": "低",
-          "score": 1,
-          "hits": [
-            "経済"
-          ]
-        }
-      ],
-      "テクノロジー": [
-        {
-          "title": "光電融合、スケールアップ領域へ　GPU間を光チップレットでつなぐ",
-          "link": "https://xtech.nikkei.com/atcl/nxt/column/18/03627/090200044/",
-          "source": "日経クロステック",
-          "category": "テクノロジー",
-          "published": "2026-09-24T05:00",
-          "tier": "高",
-          "score": 11,
-          "hits": [
-            "NVIDIA",
-            "半導体",
-            "AI",
-            "データセンター"
-          ]
-        },
-        {
-          "title": "NVIDIA、HBMの省電力化技術　クラウド大手のAI半導体囲い込み",
-          "link": "https://xtech.nikkei.com/atcl/nxt/column/18/00001/12021/",
-          "source": "日経クロステック",
-          "category": "テクノロジー",
-          "published": "2026-09-24T05:00",
-          "tier": "高",
-          "score": 11,
-          "hits": [
-            "NVIDIA",
-            "半導体",
-            "AI",
-            "クラウド"
-          ]
-        },
-        {
-          "title": "デジタル化でボトルネック解消　業界特化AIが漫画産業の成長支援",
-          "link": "https://xtech.nikkei.com/atcl/nxt/mag/nc/18/063000556/091700004/",
-          "source": "日経クロステック",
-          "category": "テクノロジー",
-          "published": "2026-09-24T07:00",
-          "tier": "中",
-          "score": 5,
-          "hits": [
-            "AI",
-            "経済",
-            "産業",
-            "金融"
-          ]
-        },
-        {
-          "title": "ホンダ創業者の反逆思考　政府と官僚に歯向かい四輪参入を勝ち取った執念",
-          "link": "https://xtech.nikkei.com/atcl/nxt/column/18/03739/090200015/",
-          "source": "日経クロステック",
-          "category": "テクノロジー",
-          "published": "2026-09-24T05:01",
-          "tier": "中",
-          "score": 3,
-          "hits": [
-            "再編",
+            "市場",
             "政府"
           ]
         },
         {
-          "title": "「プロダクト倫理」を常に検討　企業情報システムも製品である",
-          "link": "https://xtech.nikkei.com/atcl/nxt/mag/nc/18/020900021/091700226/",
-          "source": "日経クロステック",
-          "category": "テクノロジー",
-          "published": "2026-09-24T07:00",
-          "tier": "低",
-          "score": 1,
+          "title": "長期金利 3.055％まで上昇 1996年9月以来の高水準",
+          "link": "https://news.web.nhk/newsweb/na/nd-20260924de52101",
+          "source": "NHK 経済",
+          "category": "マーケット・経済",
+          "published": "2026-09-24T09:49",
+          "tier": "高",
+          "score": 11,
           "hits": [
+            "長期金利",
+            "金利",
+            "国債",
+            "市場",
+            "証券"
+          ]
+        },
+        {
+          "title": "NY株続落し352ドル安　原油高による企業業績悪化懸念で売り注文優勢",
+          "link": "https://www.sankei.com/article/20260924-7QSFGN4775OOFMVU2UCC4P4MQE/",
+          "source": "産経 経済",
+          "category": "マーケット・経済",
+          "published": "2026-09-24T07:23",
+          "tier": "高",
+          "score": 6,
+          "hits": [
+            "業績",
+            "原油",
             "企業"
           ]
         },
-        {
-          "title": "船舶データを営業や経営に生かす商船三井、AIに「反証」できる人材育成",
-          "link": "https://xtech.nikkei.com/atcl/nxt/column/18/01159/091000086/",
-          "source": "日経クロステック",
-          "category": "テクノロジー",
-          "published": "2026-09-24T05:00",
-          "tier": "低",
-          "score": 2,
-          "hits": [
-            "AI"
-          ]
-        },
-        {
-          "title": "イーロン・マスクの反逆思考「頭がおかしいから世界を変えられる」",
-          "link": "https://xtech.nikkei.com/atcl/nxt/column/18/03739/090200014/",
-          "source": "日経クロステック",
-          "category": "テクノロジー",
-          "published": "2026-09-24T05:00",
-          "tier": "低",
-          "score": 2,
-          "hits": [
-            "再編"
-          ]
-        }
-      ],
-      "マーケット・経済": [
         {
           "title": "NY市場 1ドル158円台 3週間ぶり円安 米長期金利19年ぶり高水準",
           "link": "https://news.web.nhk/newsweb/na/nd-20260924de52083",
@@ -1701,18 +1310,68 @@
           ]
         },
         {
-          "title": "地方の景色と経済を変えるAI・半導体ブーム　裾野広がる投資対象と関連銘柄の〝目利き〟",
-          "link": "https://www.sankei.com/article/20260923-ELRMTK7J5ROP5D7VYBIICJT5R4/",
+          "title": "きょうのおはBiz 9月24日(木) 消費税減税とセットの新制度とは",
+          "link": "https://news.web.nhk/newsweb/na/nd-20260924de52108",
+          "source": "NHK 経済",
+          "category": "マーケット・経済",
+          "published": "2026-09-24T12:09",
+          "tier": "中",
+          "score": 3,
+          "hits": [
+            "経済",
+            "企業",
+            "税"
+          ]
+        },
+        {
+          "title": "米国「AI規制で繁栄なし」、中国「国際的なAI統治に貢献」　国連安保理で対照的な姿勢",
+          "link": "https://www.sankei.com/article/20260924-46NXHJ23KNKQJEMLR4GXOI343I/",
           "source": "産経 経済",
           "category": "マーケット・経済",
-          "published": "2026-09-23T08:00",
-          "tier": "高",
-          "score": 7,
+          "published": "2026-09-24T10:18",
+          "tier": "中",
+          "score": 3,
           "hits": [
-            "半導体",
             "AI",
-            "経済",
+            "規制"
+          ]
+        },
+        {
+          "title": "米マクドが1兆3000億円投資へ　フランチャイズ加盟店のAI導入支援、運営を効率化",
+          "link": "https://www.sankei.com/article/20260924-DGX7LMPW4RILHCVPLSVIHPLH7M/",
+          "source": "産経 経済",
+          "category": "マーケット・経済",
+          "published": "2026-09-24T08:54",
+          "tier": "中",
+          "score": 3,
+          "hits": [
+            "AI",
             "投資"
+          ]
+        },
+        {
+          "title": "OECD 物価上昇率予測 来年3.6％に引き上げ エネルギー高騰受け",
+          "link": "https://news.web.nhk/newsweb/na/nd-20260924de52090",
+          "source": "NHK 経済",
+          "category": "マーケット・経済",
+          "published": "2026-09-24T08:50",
+          "tier": "中",
+          "score": 4,
+          "hits": [
+            "物価",
+            "経済"
+          ]
+        },
+        {
+          "title": "NY円下落、158円台　米利上げ観測で円売りドル買いが優勢",
+          "link": "https://www.sankei.com/article/20260924-HCSAGQPWV5NGLADFTG5QULRLBU/",
+          "source": "産経 経済",
+          "category": "マーケット・経済",
+          "published": "2026-09-24T08:14",
+          "tier": "中",
+          "score": 3,
+          "hits": [
+            "利上げ"
           ]
         },
         {
@@ -1779,6 +1438,30 @@
           ]
         },
         {
+          "title": "オープンAIとウクライナ、サイバー民間防衛で協力　ロシアから年間6000件の攻撃",
+          "link": "https://www.sankei.com/article/20260924-PRMPYIAKBNP3VHZ5RLZK5VR5NA/",
+          "source": "産経 経済",
+          "category": "マーケット・経済",
+          "published": "2026-09-24T10:41",
+          "tier": "低",
+          "score": 2,
+          "hits": [
+            "AI"
+          ]
+        },
+        {
+          "title": "G20入り目指すポーランド　ＧＤＰ1兆ドル超え…米国が首脳会議招待　日本企業進出相次ぐ",
+          "link": "https://www.yomiuri.co.jp/economy/20260924-GYT1T00137/",
+          "source": "読売 経済",
+          "category": "マーケット・経済",
+          "published": "2026-09-24T07:23",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "企業"
+          ]
+        },
+        {
           "title": "パートの給与変動、社会保険料への反映にズレ　経済団体が是正要望",
           "link": "https://www.nikkei.com/article/DGXZQOUA2838D0Y6A820C2000000/",
           "source": "日経 政治・経済",
@@ -1792,77 +1475,276 @@
           ]
         },
         {
-          "title": "原油下落、一時90ドル割れ　米イラン停戦協議に期待",
-          "link": "https://www.sankei.com/article/20260923-VZDKHNTLWJNKHJ6KVBBHKYGDSY/",
-          "source": "産経 経済",
-          "category": "マーケット・経済",
-          "published": "2026-09-23T12:00",
-          "tier": "低",
-          "score": 2,
-          "hits": [
-            "原油"
-          ]
-        },
-        {
-          "title": "［フカヨミ］変わる企業統治指針＜下＞ＲＯＥと成長投資を両立…脱「株主還元偏重」促す",
-          "link": "https://www.yomiuri.co.jp/economy/20260922-GYT1T00301/",
+          "title": "トランプ大統領「軽油の輸出やめようと言った」…禁輸で世界供給減れば日本にも影響の恐れ",
+          "link": "https://www.yomiuri.co.jp/economy/20260923-GYT1T00185/",
           "source": "読売 経済",
           "category": "マーケット・経済",
-          "published": "2026-09-23T10:00",
-          "tier": "低",
-          "score": 2,
-          "hits": [
-            "企業",
-            "投資"
-          ]
-        },
-        {
-          "title": "米AI2社が新型モデル　開発減速表明後初の発表、料金安く…中国モデルとの競争激化",
-          "link": "https://www.sankei.com/article/20260923-UQQMQJPV7ZL2NINVB4LQGDDU6U/",
-          "source": "産経 経済",
-          "category": "マーケット・経済",
-          "published": "2026-09-23T08:50",
-          "tier": "低",
-          "score": 2,
-          "hits": [
-            "AI"
-          ]
-        },
-        {
-          "title": "ディーゼル燃料禁輸を検討　トランプ米大統領、中間選挙を前に記録的高値で国内優先の姿勢",
-          "link": "https://www.sankei.com/article/20260923-VOXNQYOJTZPGHDFAXZXYMDYY7I/",
-          "source": "産経 経済",
-          "category": "マーケット・経済",
-          "published": "2026-09-23T08:19",
-          "tier": "低",
-          "score": 1,
-          "hits": [
-            "大統領"
-          ]
-        },
-        {
-          "title": "AI利用の子供に悪影響の恐れ　元グーグル幹部が自殺や精神障害、批判的思考力低下を警告",
-          "link": "https://www.sankei.com/article/20260923-HK2AATRW6FNY7LIFRLTXQX6Y2A/",
-          "source": "産経 経済",
-          "category": "マーケット・経済",
-          "published": "2026-09-23T07:53",
-          "tier": "低",
-          "score": 2,
-          "hits": [
-            "AI"
-          ]
-        },
-        {
-          "title": "トランプ大統領 軽油の輸出禁止措置“政権内部に求めてきた”",
-          "link": "https://news.web.nhk/newsweb/na/nd-20260923de51939",
-          "source": "NHK 経済",
-          "category": "マーケット・経済",
-          "published": "2026-09-23T07:32",
+          "published": "2026-09-23T19:19",
           "tier": "低",
           "score": 2,
           "hits": [
             "輸出",
             "大統領"
+          ]
+        }
+      ],
+      "主要・速報": [
+        {
+          "title": "ソフトバンクG株価一時7.5%高　米AI半導体株高、英アームも上昇",
+          "link": "https://www.nikkei.com/article/DGXZQOFL240KW0U6A920C2000000/",
+          "source": "日経 速報",
+          "category": "主要・速報",
+          "published": "2026-09-24T11:00",
+          "tier": "高",
+          "score": 8,
+          "hits": [
+            "株価",
+            "半導体",
+            "AI"
+          ]
+        },
+        {
+          "title": "オープンAIのAIモデル 豪医療統計関連サイトに不正アクセス",
+          "link": "https://news.web.nhk/newsweb/na/nd-20260924de52128",
+          "source": "NHK 主要",
+          "category": "主要・速報",
+          "published": "2026-09-24T12:05",
+          "tier": "中",
+          "score": 5,
+          "hits": [
+            "AI",
+            "企業",
+            "政府",
+            "首相"
+          ]
+        },
+        {
+          "title": "国連安保理 AI制御不能リスクで企業トップが国際連携訴え",
+          "link": "https://news.web.nhk/newsweb/na/nd-20260924de52118",
+          "source": "NHK 主要",
+          "category": "主要・速報",
+          "published": "2026-09-24T11:42",
+          "tier": "中",
+          "score": 3,
+          "hits": [
+            "AI",
+            "企業"
+          ]
+        },
+        {
+          "title": "単発バイト仲介のタイミー、株価が急伸　ノルウェー銀行が5%超保有",
+          "link": "https://www.nikkei.com/article/DGXZQOFL240PR0U6A920C2000000/",
+          "source": "日経 速報",
+          "category": "主要・速報",
+          "published": "2026-09-24T11:03",
+          "tier": "中",
+          "score": 4,
+          "hits": [
+            "株価",
+            "銀行"
+          ]
+        },
+        {
+          "title": "東海カーボン社長、半導体関連事業の利益「30年度に2〜3倍にする」",
+          "link": "https://www.nikkei.com/article/DGXZQOUB169J50W6A910C2000000/",
+          "source": "日経 速報",
+          "category": "主要・速報",
+          "published": "2026-09-24T11:00",
+          "tier": "中",
+          "score": 3,
+          "hits": [
+            "半導体"
+          ]
+        },
+        {
+          "title": "外為10時　円相場、下げ渋り　一時157円台後半　中値「ドル売り優勢」",
+          "link": "https://www.nikkei.com/article/DGXZQOFL240BI0U6A920C2000000/",
+          "source": "日経 速報",
+          "category": "主要・速報",
+          "published": "2026-09-24T10:29",
+          "tier": "中",
+          "score": 3,
+          "hits": [
+            "相場"
+          ]
+        },
+        {
+          "title": "ジャングリア沖縄 親会社が173億円余の赤字",
+          "link": "https://news.web.nhk/newsweb/na/nd-20260923de52050",
+          "source": "NHK 主要",
+          "category": "主要・速報",
+          "published": "2026-09-24T05:47",
+          "tier": "中",
+          "score": 4,
+          "hits": [
+            "決算",
+            "経済"
+          ]
+        },
+        {
+          "title": "習氏握る3つの対米カード、貿易・イラン・北朝鮮　台湾支援阻む狙い",
+          "link": "https://www.nikkei.com/article/DGXZQOGM167UY0W6A910C2000000/",
+          "source": "日経 速報",
+          "category": "主要・速報",
+          "published": "2026-09-24T11:00",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "貿易"
+          ]
+        },
+        {
+          "title": "東京都心の中古マンション価格、4カ月連続下落　高値維持も鈍る投資",
+          "link": "https://www.nikkei.com/article/DGXZQOUB171HP0X10C26A9000000/",
+          "source": "日経 速報",
+          "category": "主要・速報",
+          "published": "2026-09-24T11:00",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "投資"
+          ]
+        },
+        {
+          "title": "香港株寄り付き　続落　中東情勢を懸念　テックや金融に売り",
+          "link": "https://www.nikkei.com/article/DGXZQOFL240RW0U6A920C2000000/",
+          "source": "日経 速報",
+          "category": "主要・速報",
+          "published": "2026-09-24T10:39",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "金融"
+          ]
+        },
+        {
+          "title": "メタ、眼鏡に独自AI「ミューズ」搭載　販売1000万台超えへ",
+          "link": "https://www.nikkei.com/article/DGXZQOGN232VG0T20C26A9000000/",
+          "source": "日経 速報",
+          "category": "主要・速報",
+          "published": "2026-09-24T10:30",
+          "tier": "低",
+          "score": 2,
+          "hits": [
+            "AI"
+          ]
+        }
+      ],
+      "テクノロジー": [
+        {
+          "title": "光電融合、スケールアップ領域へ　GPU間を光チップレットでつなぐ",
+          "link": "https://xtech.nikkei.com/atcl/nxt/column/18/03627/090200044/",
+          "source": "日経クロステック",
+          "category": "テクノロジー",
+          "published": "2026-09-24T05:00",
+          "tier": "高",
+          "score": 11,
+          "hits": [
+            "NVIDIA",
+            "半導体",
+            "AI",
+            "データセンター"
+          ]
+        },
+        {
+          "title": "デジタル化でボトルネック解消　業界特化AIが漫画産業の成長支援",
+          "link": "https://xtech.nikkei.com/atcl/nxt/mag/nc/18/063000556/091700004/",
+          "source": "日経クロステック",
+          "category": "テクノロジー",
+          "published": "2026-09-24T07:00",
+          "tier": "中",
+          "score": 5,
+          "hits": [
+            "AI",
+            "経済",
+            "産業",
+            "金融"
+          ]
+        },
+        {
+          "title": "ホンダ創業者の反逆思考　政府と官僚に歯向かい四輪参入を勝ち取った執念",
+          "link": "https://xtech.nikkei.com/atcl/nxt/column/18/03739/090200015/",
+          "source": "日経クロステック",
+          "category": "テクノロジー",
+          "published": "2026-09-24T05:01",
+          "tier": "中",
+          "score": 3,
+          "hits": [
+            "再編",
+            "政府"
+          ]
+        },
+        {
+          "title": "「プロダクト倫理」を常に検討　企業情報システムも製品である",
+          "link": "https://xtech.nikkei.com/atcl/nxt/mag/nc/18/020900021/091700226/",
+          "source": "日経クロステック",
+          "category": "テクノロジー",
+          "published": "2026-09-24T07:00",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "企業"
+          ]
+        },
+        {
+          "title": "イーロン・マスクの反逆思考「頭がおかしいから世界を変えられる」",
+          "link": "https://xtech.nikkei.com/atcl/nxt/column/18/03739/090200014/",
+          "source": "日経クロステック",
+          "category": "テクノロジー",
+          "published": "2026-09-24T05:00",
+          "tier": "低",
+          "score": 2,
+          "hits": [
+            "再編"
+          ]
+        },
+        {
+          "title": "船舶データを営業や経営に生かす商船三井、AIに「反証」できる人材育成",
+          "link": "https://xtech.nikkei.com/atcl/nxt/column/18/01159/091000086/",
+          "source": "日経クロステック",
+          "category": "テクノロジー",
+          "published": "2026-09-24T05:00",
+          "tier": "低",
+          "score": 2,
+          "hits": [
+            "AI"
+          ]
+        },
+        {
+          "title": "三菱マテリアルとセブン銀行のIT幹部が回答、レガシー刷新やDXのポイント",
+          "link": "https://xtech.nikkei.com/atcl/nxt/column/18/03745/091700015/",
+          "source": "日経クロステック",
+          "category": "テクノロジー",
+          "published": "2026-09-24T05:00",
+          "tier": "低",
+          "score": 2,
+          "hits": [
+            "企業",
+            "銀行"
+          ]
+        },
+        {
+          "title": "AIエージェントと組むとプロジェクトマネジャーの頭は疲れるが心は健やかになる",
+          "link": "https://xtech.nikkei.com/atcl/nxt/column/18/00166/091600208/",
+          "source": "日経クロステック",
+          "category": "テクノロジー",
+          "published": "2026-09-24T05:00",
+          "tier": "低",
+          "score": 2,
+          "hits": [
+            "AI"
+          ]
+        },
+        {
+          "title": "折り畳みスマホを手に画面のアスペクト比を改めて考える",
+          "link": "https://xtech.nikkei.com/atcl/nxt/column/18/00138/091602107/",
+          "source": "日経クロステック",
+          "category": "テクノロジー",
+          "published": "2026-09-24T05:00",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "税"
           ]
         }
       ],
@@ -1882,6 +1764,33 @@
           ]
         },
         {
+          "title": "中国 習近平主席がアメリカに到着 米中首脳会談へ",
+          "link": "https://news.web.nhk/newsweb/na/nd-20260924de52079",
+          "source": "NHK 国際",
+          "category": "国際・政治",
+          "published": "2026-09-24T11:50",
+          "tier": "中",
+          "score": 5,
+          "hits": [
+            "AI",
+            "経済",
+            "貿易",
+            "大統領"
+          ]
+        },
+        {
+          "title": "物価高騰対策で奈良・広陵町は全世帯に「指定ごみ袋」無料引換券配布へ",
+          "link": "https://www.sankei.com/article/20260924-OFCEL63LZJJK3C6LKQ36RNBCEU/",
+          "source": "産経 政治",
+          "category": "国際・政治",
+          "published": "2026-09-24T10:00",
+          "tier": "中",
+          "score": 3,
+          "hits": [
+            "物価"
+          ]
+        },
+        {
           "title": "グリーンランド　「領有」懸念解消　欧州安堵…関税など　米と火種残る",
           "link": "https://www.yomiuri.co.jp/world/20260924-GYT1T00076/",
           "source": "読売 国際",
@@ -1895,17 +1804,101 @@
           ]
         },
         {
-          "title": "高市首相 国連総会出席や日米首脳会談終え帰国の途",
-          "link": "https://news.web.nhk/newsweb/na/nd-20260923de52031",
+          "title": "北朝鮮 拉致被害者の家族がアメリカで解決に向けた協力訴える",
+          "link": "https://news.web.nhk/newsweb/na/nd-20260924de52125",
           "source": "NHK 国際",
           "category": "国際・政治",
-          "published": "2026-09-23T19:35",
-          "tier": "中",
-          "score": 3,
+          "published": "2026-09-24T12:04",
+          "tier": "低",
+          "score": 2,
           "hits": [
             "政府",
-            "首相",
             "大統領"
+          ]
+        },
+        {
+          "title": "高市早苗首相が日米首脳会談を終え帰国　10月召集の臨時国会に向け準備",
+          "link": "https://www.sankei.com/article/20260924-NROB7LMEBNO2FDJ5WGAETSEK74/",
+          "source": "産経 政治",
+          "category": "国際・政治",
+          "published": "2026-09-24T09:41",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "首相"
+          ]
+        },
+        {
+          "title": "ゼレンスキー大統領 国連総会でロシアの資金源断つこと訴える",
+          "link": "https://news.web.nhk/newsweb/na/nd-20260924de52093",
+          "source": "NHK 国際",
+          "category": "国際・政治",
+          "published": "2026-09-24T09:31",
+          "tier": "低",
+          "score": 2,
+          "hits": [
+            "貿易",
+            "大統領"
+          ]
+        },
+        {
+          "title": "「自衛の戦い恐れない」イラン大統領が対米抗戦の構え、対話の用意も表明　国連総会演説",
+          "link": "https://www.sankei.com/article/20260924-BYGXTLDWTFI53IW4XRFBNRP3WY/",
+          "source": "産経 国際",
+          "category": "国際・政治",
+          "published": "2026-09-24T08:17",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "大統領"
+          ]
+        },
+        {
+          "title": "特殊詐欺被害防止に向け10月から総力戦　奈良県と県警、金融機関が「非常事態宣言」",
+          "link": "https://www.sankei.com/article/20260924-4HWVOEYSJNIBNMP6YIYGQIZQDU/",
+          "source": "産経 政治",
+          "category": "国際・政治",
+          "published": "2026-09-24T08:00",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "金融"
+          ]
+        },
+        {
+          "title": "アルゼンチンのミレイ大統領、国連でフォークランド諸島の領有権を主張　英国に協議を要求",
+          "link": "https://www.sankei.com/article/20260924-FXSL2ICM4JNRHBOUXL5TX3UUWQ/",
+          "source": "産経 国際",
+          "category": "国際・政治",
+          "published": "2026-09-24T07:59",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "大統領"
+          ]
+        },
+        {
+          "title": "ゼレンスキー氏「早ければ来年にもAIが戦況決める」　国連総会で警鐘、和平の必要性強調",
+          "link": "https://www.sankei.com/article/20260924-AYXK52DQ4ROJHARJOYRDMUHQWE/",
+          "source": "産経 国際",
+          "category": "国際・政治",
+          "published": "2026-09-24T07:45",
+          "tier": "低",
+          "score": 2,
+          "hits": [
+            "AI"
+          ]
+        },
+        {
+          "title": "習近平氏がワシントン到着、トランプ氏が歓迎式典　米中閣僚は貿易「休戦」延長など再協議",
+          "link": "https://www.sankei.com/article/20260924-UJBQ52SA2BKUTKZ52LYWOV3XVE/",
+          "source": "産経 国際",
+          "category": "国際・政治",
+          "published": "2026-09-24T07:23",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "貿易"
           ]
         },
         {
@@ -1921,11 +1914,11 @@
           ]
         },
         {
-          "title": "米中　貿易や台湾議論へ…今年２回目　２４日に首脳会談",
+          "title": "トランプ氏と習近平氏、きょうワシントンで首脳会談…「米中貿易戦争」「ＡＩ」「台湾問題」など議論へ",
           "link": "https://www.yomiuri.co.jp/world/20260924-GYT1T00109/",
           "source": "読売 国際",
           "category": "国際・政治",
-          "published": "2026-09-24T05:00",
+          "published": "2026-09-24T06:50",
           "tier": "低",
           "score": 1,
           "hits": [
@@ -1945,18 +1938,6 @@
           ]
         },
         {
-          "title": "ＩＣＣへ「一貫した支持」　首相「法の支配　維持貢献」…国連演説",
-          "link": "https://www.yomiuri.co.jp/politics/20260924-GYT1T00112/",
-          "source": "読売 政治",
-          "category": "国際・政治",
-          "published": "2026-09-24T05:00",
-          "tier": "低",
-          "score": 1,
-          "hits": [
-            "首相"
-          ]
-        },
-        {
           "title": "消費税減税など成立意欲　臨時国会…首相、ＮＹで記者会見",
           "link": "https://www.yomiuri.co.jp/politics/20260924-GYT1T00050/",
           "source": "読売 政治",
@@ -1972,18 +1953,6 @@
         {
           "title": "高市首相の一日",
           "link": "https://www.yomiuri.co.jp/politics/20260924-GYT1T00054/",
-          "source": "読売 政治",
-          "category": "国際・政治",
-          "published": "2026-09-24T05:00",
-          "tier": "低",
-          "score": 1,
-          "hits": [
-            "首相"
-          ]
-        },
-        {
-          "title": "首相　ＮＹで積極外交　ゼレンスキー氏と初会談　多国間連携",
-          "link": "https://www.yomiuri.co.jp/politics/20260923-GYT1T00277/",
           "source": "読売 政治",
           "category": "国際・政治",
           "published": "2026-09-24T05:00",
@@ -2018,28 +1987,16 @@
           ]
         },
         {
-          "title": "イラン大統領、国連で「われわれこそテロの被害者」米国など非難　米代表は退席",
-          "link": "https://www.sankei.com/article/20260924-XNMNVIOKHJLEFFX3UPC5BRXNF4/",
-          "source": "産経 国際",
+          "title": "米国・ベッセント財務長官と中国・何立峰副首相、ワシントンで貿易戦争の「休戦」など協議か",
+          "link": "https://www.yomiuri.co.jp/world/20260924-GYT1T00124/",
+          "source": "読売 国際",
           "category": "国際・政治",
-          "published": "2026-09-24T00:22",
-          "tier": "低",
-          "score": 1,
-          "hits": [
-            "大統領"
-          ]
-        },
-        {
-          "title": "高市首相 トランプ大統領 国連総会で演説 日米首脳会談も",
-          "link": "https://news.web.nhk/newsweb/na/nd-20260923de52038",
-          "source": "NHK 国際",
-          "category": "国際・政治",
-          "published": "2026-09-23T22:05",
+          "published": "2026-09-24T02:53",
           "tier": "低",
           "score": 2,
           "hits": [
-            "首相",
-            "大統領"
+            "貿易",
+            "首相"
           ]
         },
         {
@@ -2056,18 +2013,6 @@
           ]
         },
         {
-          "title": "中国、高市首相の旧敵国条項削除要求に反対姿勢を示す「軍国主義が脅威になることを防ぐ」",
-          "link": "https://www.sankei.com/article/20260923-NJ4P3FQV3NPPLPJ7CEYB2DPEFY/",
-          "source": "産経 国際",
-          "category": "国際・政治",
-          "published": "2026-09-23T19:16",
-          "tier": "低",
-          "score": 1,
-          "hits": [
-            "首相"
-          ]
-        },
-        {
           "title": "高市首相「日米同盟の強さを世界に示す」米中会談2日前の日米会談、対中連携で示せた収穫",
           "link": "https://www.sankei.com/article/20260923-3E66HVDWYJINJBQRFZHYKZ5XXA/",
           "source": "産経 政治",
@@ -2077,18 +2022,6 @@
           "score": 1,
           "hits": [
             "首相"
-          ]
-        },
-        {
-          "title": "中国の習近平国家主席がアメリカへ出発　米中首脳会談へ",
-          "link": "https://news.web.nhk/newsweb/na/nd-20260923de51963",
-          "source": "NHK 国際",
-          "category": "国際・政治",
-          "published": "2026-09-23T18:55",
-          "tier": "低",
-          "score": 1,
-          "hits": [
-            "大統領"
           ]
         },
         {
@@ -2102,18 +2035,6 @@
           "hits": [
             "政府",
             "首相"
-          ]
-        },
-        {
-          "title": "米韓首脳会談 トランプ氏が北朝鮮との対話の意思改めて示す",
-          "link": "https://news.web.nhk/newsweb/na/nd-20260923de52002",
-          "source": "NHK 国際",
-          "category": "国際・政治",
-          "published": "2026-09-23T16:26",
-          "tier": "低",
-          "score": 1,
-          "hits": [
-            "大統領"
           ]
         },
         {
@@ -2164,66 +2085,247 @@
           "hits": [
             "首相"
           ]
-        },
+        }
+      ],
+      "企業・ビジネス": [
         {
-          "title": "韓国大統領、米国に対北朝鮮制裁「緩和」を要請…核・ミサイル開発の停止と交換条件「大きな価値ある」",
-          "link": "https://www.yomiuri.co.jp/world/20260923-GYT1T00064/",
-          "source": "読売 国際",
-          "category": "国際・政治",
-          "published": "2026-09-23T13:20",
-          "tier": "低",
-          "score": 1,
+          "title": "ホンダが米国にHV新工場　オハイオ州で最終調整、4000億円規模投資",
+          "link": "https://www.nikkei.com/article/DGXZQOUC266ZU0W6A820C2000000/",
+          "source": "日経 ビジネス",
+          "category": "企業・ビジネス",
+          "published": "2026-09-24T11:43",
+          "tier": "中",
+          "score": 3,
           "hits": [
-            "大統領"
+            "新工場",
+            "投資"
           ]
         },
         {
-          "title": "英首相が情報攻撃への対策機関を設置へ　国連演説で表明　ロシア念頭、英選挙に「干渉」",
-          "link": "https://www.sankei.com/article/20260923-65KGIYAHN5IV5FBPDLWJIUPNSM/",
-          "source": "産経 国際",
-          "category": "国際・政治",
-          "published": "2026-09-23T12:53",
-          "tier": "低",
-          "score": 1,
+          "title": "米中が｢貿易休戦｣を1月10日まで2カ月延長することで合意…トランプ氏は習氏をアンドルーズ統合基地で異例の出迎え | 政治・経済・投資 | 東洋経済オンライン",
+          "link": "https://toyokeizai.net/articles/-/958937?utm_source=rss&utm_medium=http&utm_campaign=link_back",
+          "source": "東洋経済",
+          "category": "企業・ビジネス",
+          "published": "2026-09-24T09:10",
+          "tier": "中",
+          "score": 5,
           "hits": [
-            "首相"
+            "統合",
+            "経済",
+            "投資",
+            "貿易"
           ]
         },
         {
-          "title": "韓国大統領、国連演説で北朝鮮の「非核化」使わず　3段階の解決主張、南北対話再開に意欲",
-          "link": "https://www.sankei.com/article/20260923-7OH36O325RMT7K2LXRTRTUPIVU/",
-          "source": "産経 国際",
-          "category": "国際・政治",
-          "published": "2026-09-23T12:00",
-          "tier": "低",
-          "score": 1,
+          "title": "「BYDラッコ、いや驚きました」世界首位のBEVメーカーが本気で造った軽自動車の仕上がりを正直レビュー - フェルディナント・ヤマグチの走りながら考える",
+          "link": "https://diamond.jp/articles/-/399567",
+          "source": "ダイヤモンド",
+          "category": "企業・ビジネス",
+          "published": "2026-09-24T08:25",
+          "tier": "中",
+          "score": 3,
           "hits": [
-            "大統領"
+            "EV",
+            "市場"
           ]
         },
         {
-          "title": "高市首相、国連でICC「一貫して支持」表明　赤根所長ら米制裁、政府は水面下で交渉継続",
-          "link": "https://www.sankei.com/article/20260923-FR34CFSGJFC23IJ6JX5IUNSCPY/",
-          "source": "産経 政治",
-          "category": "国際・政治",
-          "published": "2026-09-23T11:41",
+          "title": "AI大手3社幹部､国連安保理で警鐘　｢うまく管理できなければ､AIは人類全体への脅威になる｣ | 政治・経済・投資 | 東洋経済オンライン",
+          "link": "https://toyokeizai.net/articles/-/958931?utm_source=rss&utm_medium=http&utm_campaign=link_back",
+          "source": "東洋経済",
+          "category": "企業・ビジネス",
+          "published": "2026-09-24T08:00",
+          "tier": "中",
+          "score": 5,
+          "hits": [
+            "AI",
+            "経済",
+            "企業",
+            "投資"
+          ]
+        },
+        {
+          "title": "公認会計士が「斬新な試み」と絶賛。図解で決算書が「ひと目でわかる」一冊とは？ - サンキー図で「お金の流れ」が1秒でわかる　見るだけ決算書",
+          "link": "https://diamond.jp/articles/-/399617",
+          "source": "ダイヤモンド",
+          "category": "企業・ビジネス",
+          "published": "2026-09-24T08:00",
+          "tier": "中",
+          "score": 4,
+          "hits": [
+            "決算",
+            "企業"
+          ]
+        },
+        {
+          "title": "米中晩さん会、GMやNVIDIAトップ出席　中国企業は参加せずと米報道",
+          "link": "https://www.nikkei.com/article/DGXZQOGN232XC0T20C26A9000000/",
+          "source": "日経 ビジネス",
+          "category": "企業・ビジネス",
+          "published": "2026-09-24T06:29",
+          "tier": "中",
+          "score": 5,
+          "hits": [
+            "NVIDIA",
+            "企業"
+          ]
+        },
+        {
+          "title": "メタのAI「ミューズ」登場、旅行予約や金融株が急落　顧客離れを懸念",
+          "link": "https://www.nikkei.com/article/DGXZQOFD2339C0T20C26A9000000/",
+          "source": "日経 ビジネス",
+          "category": "企業・ビジネス",
+          "published": "2026-09-24T06:05",
+          "tier": "中",
+          "score": 3,
+          "hits": [
+            "AI",
+            "金融"
+          ]
+        },
+        {
+          "title": "こんなに愛してるのに､なぜ嫌われる…？TikTokで50万人超に愛された《飼い主大嫌い系ハムスター》との切なすぎる日常 | ライフ | 東洋経済オンライン",
+          "link": "https://toyokeizai.net/articles/-/958060?utm_source=rss&utm_medium=http&utm_campaign=link_back",
+          "source": "東洋経済",
+          "category": "企業・ビジネス",
+          "published": "2026-09-24T12:00",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "経済"
+          ]
+        },
+        {
+          "title": "過去50年に世界中の文化を個人主義に向かわせているものと､集団主義が人々を不幸せにする理由 | ライフ | 東洋経済オンライン",
+          "link": "https://toyokeizai.net/articles/-/943816?utm_source=rss&utm_medium=http&utm_campaign=link_back",
+          "source": "東洋経済",
+          "category": "企業・ビジネス",
+          "published": "2026-09-24T11:00",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "経済"
+          ]
+        },
+        {
+          "title": "｢批判は\"統計\"で処理できる！｣—何をやってもうまくいく人が実践する｢最強の思考習慣｣〜Testosterone×中野優作 | ライフ | 東洋経済オンライン",
+          "link": "https://toyokeizai.net/articles/-/956649?utm_source=rss&utm_medium=http&utm_campaign=link_back",
+          "source": "東洋経済",
+          "category": "企業・ビジネス",
+          "published": "2026-09-24T10:30",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "経済"
+          ]
+        },
+        {
+          "title": "カリフォルニアがクルマ好き一色に､世界的イベント｢モントレー･カー･ウィーク｣で日本車が熱狂の中心になった理由 | ライフ | 東洋経済オンライン",
+          "link": "https://toyokeizai.net/articles/-/958558?utm_source=rss&utm_medium=http&utm_campaign=link_back",
+          "source": "東洋経済",
+          "category": "企業・ビジネス",
+          "published": "2026-09-24T10:00",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "経済"
+          ]
+        },
+        {
+          "title": "｢うちの子､反抗期がない｣と思っていたら不登校に…発達障害･グレーゾーンの子に起きている\"新しい反抗期\" | キャリア・教育 | 東洋経済オンライン",
+          "link": "https://toyokeizai.net/articles/-/956384?utm_source=rss&utm_medium=http&utm_campaign=link_back",
+          "source": "東洋経済",
+          "category": "企業・ビジネス",
+          "published": "2026-09-24T09:30",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "経済"
+          ]
+        },
+        {
+          "title": "しんのすけをあえて封印で賛否両論！｢クレヨンしんちゃん｣脚本担当で話題の芸人･蓮見翔とは何者？ | ライフ | 東洋経済オンライン",
+          "link": "https://toyokeizai.net/articles/-/958892?utm_source=rss&utm_medium=http&utm_campaign=link_back",
+          "source": "東洋経済",
+          "category": "企業・ビジネス",
+          "published": "2026-09-24T09:00",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "経済"
+          ]
+        },
+        {
+          "title": "｢1番になれるものがない｣は不利ではない《上位30%に入れるものが3つ》あればいい……MBA卒業生5000人調査が示した希望 | ライフ | 東洋経済オンライン",
+          "link": "https://toyokeizai.net/articles/-/956995?utm_source=rss&utm_medium=http&utm_campaign=link_back",
+          "source": "東洋経済",
+          "category": "企業・ビジネス",
+          "published": "2026-09-24T08:30",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "経済"
+          ]
+        },
+        {
+          "title": "お相手は｢大卒以上｣｢ビジネスの才能があれば話は別｣　\"人を見る目がある\"と自負する人事部･アラフィフ女性の迷走婚活 | ライフ | 東洋経済オンライン",
+          "link": "https://toyokeizai.net/articles/-/958602?utm_source=rss&utm_medium=http&utm_campaign=link_back",
+          "source": "東洋経済",
+          "category": "企業・ビジネス",
+          "published": "2026-09-24T08:00",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "経済"
+          ]
+        },
+        {
+          "title": "30代から「誰にも相談されなくなる人」の特徴・ワースト1 - 自分の言葉で話せるようになりましょう。",
+          "link": "https://diamond.jp/articles/-/399621",
+          "source": "ダイヤモンド",
+          "category": "企業・ビジネス",
+          "published": "2026-09-24T07:45",
           "tier": "低",
           "score": 2,
           "hits": [
-            "政府",
-            "首相"
+            "上場"
           ]
         },
         {
-          "title": "「たくさんのイシュー話したいので」高市首相、トランプ氏に新内閣の顔ぶれ「ご安心あれ」",
-          "link": "https://www.sankei.com/article/20260923-3YC537MH6VAZ5AEYNDM5RDWAHU/",
-          "source": "産経 政治",
-          "category": "国際・政治",
-          "published": "2026-09-23T11:06",
+          "title": "｢1日1万歩より優れている｣\"ボケ予防と転倒防止\"に毎日1分の片足立ち→｢骨に与える負荷｣｢バランス制御能力｣がポイント | ライフ | 東洋経済オンライン",
+          "link": "https://toyokeizai.net/articles/-/957794?utm_source=rss&utm_medium=http&utm_campaign=link_back",
+          "source": "東洋経済",
+          "category": "企業・ビジネス",
+          "published": "2026-09-24T07:30",
           "tier": "低",
           "score": 1,
           "hits": [
-            "首相"
+            "経済"
+          ]
+        },
+        {
+          "title": "｢65歳で辞めるなんて言わないで！｣企業の抱える偽らざる本音…会社は社員に何歳まで働いてほしいと思っているのか？ | キャリア・教育 | 東洋経済オンライン",
+          "link": "https://toyokeizai.net/articles/-/958517?utm_source=rss&utm_medium=http&utm_campaign=link_back",
+          "source": "東洋経済",
+          "category": "企業・ビジネス",
+          "published": "2026-09-24T07:00",
+          "tier": "低",
+          "score": 2,
+          "hits": [
+            "経済",
+            "企業"
+          ]
+        },
+        {
+          "title": "｢なぜあの人の頼みは皆引き受けるのか｣　仕事はできるのに｢雑談ゼロ｣｢飲み会不参加｣の彼が社内調整で詰んだ\"致命的な誤算\" | ライフ | 東洋経済オンライン",
+          "link": "https://toyokeizai.net/articles/-/958612?utm_source=rss&utm_medium=http&utm_campaign=link_back",
+          "source": "東洋経済",
+          "category": "企業・ビジネス",
+          "published": "2026-09-24T06:30",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "経済"
           ]
         }
       ]
@@ -2231,87 +2333,78 @@
     "by_tier": {
       "高": [
         {
-          "title": "NY円相場、続落　1ドル=158円30〜40銭　米長期金利の上昇が重荷",
-          "link": "https://www.nikkei.com/article/DGXZQOFL233020T20C26A9000000/",
-          "source": "日経 速報",
-          "category": "主要・速報",
-          "published": "2026-09-24T07:04",
+          "title": "株価 値上がり 連休中の米ハイテク関連銘柄の上昇背景に",
+          "link": "https://news.web.nhk/newsweb/na/nd-20260924de52130",
+          "source": "NHK 経済",
+          "category": "マーケット・経済",
+          "published": "2026-09-24T12:01",
           "tier": "高",
-          "score": 9,
-          "hits": [
-            "長期金利",
-            "金利",
-            "相場"
-          ]
-        },
-        {
-          "title": "シカゴ日本株先物概況・23日　日経平均先物は1045円安の6万5925円",
-          "link": "https://www.nikkei.com/article/DGXZQOFL2402K0U6A920C2000000/",
-          "source": "日経 速報",
-          "category": "主要・速報",
-          "published": "2026-09-24T06:34",
-          "tier": "高",
-          "score": 6,
-          "hits": [
-            "円安",
-            "日経平均"
-          ]
-        },
-        {
-          "title": "日経平均先物、大取の夜間取引で上昇　840円高の6万5940円",
-          "link": "https://www.nikkei.com/article/DGXZQOFL2402F0U6A920C2000000/",
-          "source": "日経 速報",
-          "category": "主要・速報",
-          "published": "2026-09-24T06:13",
-          "tier": "高",
-          "score": 6,
-          "hits": [
-            "円高",
-            "日経平均"
-          ]
-        },
-        {
-          "title": "〈幹部直撃〉セールスフォースが出した｢SaaS終末論｣への答え…アンソロピック､エヌビディアと相次ぐ提携の舞台裏 | ビジネス | 東洋経済オンライン",
-          "link": "https://toyokeizai.net/articles/-/958585?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-          "source": "東洋経済",
-          "category": "企業・ビジネス",
-          "published": "2026-09-24T06:00",
-          "tier": "高",
-          "score": 9,
+          "score": 7,
           "hits": [
             "株価",
-            "決算",
-            "提携",
-            "経済"
-          ]
-        },
-        {
-          "title": "〈半導体分野でも存在感〉ヤマ発はAI特需を起爆剤にどこまで成長するか？ ロボティクス事業｢第3の柱｣への期待と課題 | ビジネス | 東洋経済オンライン",
-          "link": "https://toyokeizai.net/articles/-/958496?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-          "source": "東洋経済",
-          "category": "企業・ビジネス",
-          "published": "2026-09-24T06:00",
-          "tier": "高",
-          "score": 8,
-          "hits": [
             "半導体",
-            "AI",
-            "経済",
-            "企業",
             "市場"
           ]
         },
         {
-          "title": "円急落158円台、レートチェック前水準に　米長期金利5.1%に上昇",
-          "link": "https://www.nikkei.com/article/DGXZQOGN232KE0T20C26A9000000/",
+          "title": "円相場 1ドル＝157円台後半 連休中は円安が進む",
+          "link": "https://news.web.nhk/newsweb/na/nd-20260924de52121",
+          "source": "NHK 経済",
+          "category": "マーケット・経済",
+          "published": "2026-09-24T11:56",
+          "tier": "高",
+          "score": 14,
+          "hits": [
+            "日銀",
+            "為替",
+            "円安",
+            "相場",
+            "市場",
+            "政府"
+          ]
+        },
+        {
+          "title": "ソフトバンクG株価一時7.5%高　米AI半導体株高、英アームも上昇",
+          "link": "https://www.nikkei.com/article/DGXZQOFL240KW0U6A920C2000000/",
           "source": "日経 速報",
           "category": "主要・速報",
-          "published": "2026-09-24T05:58",
+          "published": "2026-09-24T11:00",
+          "tier": "高",
+          "score": 8,
+          "hits": [
+            "株価",
+            "半導体",
+            "AI"
+          ]
+        },
+        {
+          "title": "長期金利 3.055％まで上昇 1996年9月以来の高水準",
+          "link": "https://news.web.nhk/newsweb/na/nd-20260924de52101",
+          "source": "NHK 経済",
+          "category": "マーケット・経済",
+          "published": "2026-09-24T09:49",
+          "tier": "高",
+          "score": 11,
+          "hits": [
+            "長期金利",
+            "金利",
+            "国債",
+            "市場",
+            "証券"
+          ]
+        },
+        {
+          "title": "NY株続落し352ドル安　原油高による企業業績悪化懸念で売り注文優勢",
+          "link": "https://www.sankei.com/article/20260924-7QSFGN4775OOFMVU2UCC4P4MQE/",
+          "source": "産経 経済",
+          "category": "マーケット・経済",
+          "published": "2026-09-24T07:23",
           "tier": "高",
           "score": 6,
           "hits": [
-            "長期金利",
-            "金利"
+            "業績",
+            "原油",
+            "企業"
           ]
         },
         {
@@ -2327,21 +2420,6 @@
             "半導体",
             "AI",
             "データセンター"
-          ]
-        },
-        {
-          "title": "NVIDIA、HBMの省電力化技術　クラウド大手のAI半導体囲い込み",
-          "link": "https://xtech.nikkei.com/atcl/nxt/column/18/00001/12021/",
-          "source": "日経クロステック",
-          "category": "テクノロジー",
-          "published": "2026-09-24T05:00",
-          "tier": "高",
-          "score": 11,
-          "hits": [
-            "NVIDIA",
-            "半導体",
-            "AI",
-            "クラウド"
           ]
         },
         {
@@ -2390,30 +2468,44 @@
             "市場",
             "証券"
           ]
-        },
-        {
-          "title": "地方の景色と経済を変えるAI・半導体ブーム　裾野広がる投資対象と関連銘柄の〝目利き〟",
-          "link": "https://www.sankei.com/article/20260923-ELRMTK7J5ROP5D7VYBIICJT5R4/",
-          "source": "産経 経済",
-          "category": "マーケット・経済",
-          "published": "2026-09-23T08:00",
-          "tier": "高",
-          "score": 7,
-          "hits": [
-            "半導体",
-            "AI",
-            "経済",
-            "投資"
-          ]
         }
       ],
       "中": [
         {
-          "title": "中国 習近平主席がアメリカに到着 米中首脳会談へ",
-          "link": "https://news.web.nhk/newsweb/na/nd-20260924de52079",
+          "title": "きょうのおはBiz 9月24日(木) 消費税減税とセットの新制度とは",
+          "link": "https://news.web.nhk/newsweb/na/nd-20260924de52108",
+          "source": "NHK 経済",
+          "category": "マーケット・経済",
+          "published": "2026-09-24T12:09",
+          "tier": "中",
+          "score": 3,
+          "hits": [
+            "経済",
+            "企業",
+            "税"
+          ]
+        },
+        {
+          "title": "オープンAIのAIモデル 豪医療統計関連サイトに不正アクセス",
+          "link": "https://news.web.nhk/newsweb/na/nd-20260924de52128",
           "source": "NHK 主要",
           "category": "主要・速報",
-          "published": "2026-09-24T07:08",
+          "published": "2026-09-24T12:05",
+          "tier": "中",
+          "score": 5,
+          "hits": [
+            "AI",
+            "企業",
+            "政府",
+            "首相"
+          ]
+        },
+        {
+          "title": "中国 習近平主席がアメリカに到着 米中首脳会談へ",
+          "link": "https://news.web.nhk/newsweb/na/nd-20260924de52079",
+          "source": "NHK 国際",
+          "category": "国際・政治",
+          "published": "2026-09-24T11:50",
           "tier": "中",
           "score": 5,
           "hits": [
@@ -2424,16 +2516,185 @@
           ]
         },
         {
-          "title": "NY株ハイライト　米金利急騰、リスク資産に打撃　原油高で一段安も",
-          "link": "https://www.nikkei.com/article/DGXZQOFL232PF0T20C26A9000000/",
+          "title": "ホンダが米国にHV新工場　オハイオ州で最終調整、4000億円規模投資",
+          "link": "https://www.nikkei.com/article/DGXZQOUC266ZU0W6A820C2000000/",
+          "source": "日経 ビジネス",
+          "category": "企業・ビジネス",
+          "published": "2026-09-24T11:43",
+          "tier": "中",
+          "score": 3,
+          "hits": [
+            "新工場",
+            "投資"
+          ]
+        },
+        {
+          "title": "国連安保理 AI制御不能リスクで企業トップが国際連携訴え",
+          "link": "https://news.web.nhk/newsweb/na/nd-20260924de52118",
+          "source": "NHK 主要",
+          "category": "主要・速報",
+          "published": "2026-09-24T11:42",
+          "tier": "中",
+          "score": 3,
+          "hits": [
+            "AI",
+            "企業"
+          ]
+        },
+        {
+          "title": "単発バイト仲介のタイミー、株価が急伸　ノルウェー銀行が5%超保有",
+          "link": "https://www.nikkei.com/article/DGXZQOFL240PR0U6A920C2000000/",
           "source": "日経 速報",
           "category": "主要・速報",
-          "published": "2026-09-24T07:05",
+          "published": "2026-09-24T11:03",
+          "tier": "中",
+          "score": 4,
+          "hits": [
+            "株価",
+            "銀行"
+          ]
+        },
+        {
+          "title": "東海カーボン社長、半導体関連事業の利益「30年度に2〜3倍にする」",
+          "link": "https://www.nikkei.com/article/DGXZQOUB169J50W6A910C2000000/",
+          "source": "日経 速報",
+          "category": "主要・速報",
+          "published": "2026-09-24T11:00",
+          "tier": "中",
+          "score": 3,
+          "hits": [
+            "半導体"
+          ]
+        },
+        {
+          "title": "外為10時　円相場、下げ渋り　一時157円台後半　中値「ドル売り優勢」",
+          "link": "https://www.nikkei.com/article/DGXZQOFL240BI0U6A920C2000000/",
+          "source": "日経 速報",
+          "category": "主要・速報",
+          "published": "2026-09-24T10:29",
+          "tier": "中",
+          "score": 3,
+          "hits": [
+            "相場"
+          ]
+        },
+        {
+          "title": "米国「AI規制で繁栄なし」、中国「国際的なAI統治に貢献」　国連安保理で対照的な姿勢",
+          "link": "https://www.sankei.com/article/20260924-46NXHJ23KNKQJEMLR4GXOI343I/",
+          "source": "産経 経済",
+          "category": "マーケット・経済",
+          "published": "2026-09-24T10:18",
+          "tier": "中",
+          "score": 3,
+          "hits": [
+            "AI",
+            "規制"
+          ]
+        },
+        {
+          "title": "物価高騰対策で奈良・広陵町は全世帯に「指定ごみ袋」無料引換券配布へ",
+          "link": "https://www.sankei.com/article/20260924-OFCEL63LZJJK3C6LKQ36RNBCEU/",
+          "source": "産経 政治",
+          "category": "国際・政治",
+          "published": "2026-09-24T10:00",
+          "tier": "中",
+          "score": 3,
+          "hits": [
+            "物価"
+          ]
+        },
+        {
+          "title": "米中が｢貿易休戦｣を1月10日まで2カ月延長することで合意…トランプ氏は習氏をアンドルーズ統合基地で異例の出迎え | 政治・経済・投資 | 東洋経済オンライン",
+          "link": "https://toyokeizai.net/articles/-/958937?utm_source=rss&utm_medium=http&utm_campaign=link_back",
+          "source": "東洋経済",
+          "category": "企業・ビジネス",
+          "published": "2026-09-24T09:10",
           "tier": "中",
           "score": 5,
           "hits": [
-            "金利",
-            "原油"
+            "統合",
+            "経済",
+            "投資",
+            "貿易"
+          ]
+        },
+        {
+          "title": "米マクドが1兆3000億円投資へ　フランチャイズ加盟店のAI導入支援、運営を効率化",
+          "link": "https://www.sankei.com/article/20260924-DGX7LMPW4RILHCVPLSVIHPLH7M/",
+          "source": "産経 経済",
+          "category": "マーケット・経済",
+          "published": "2026-09-24T08:54",
+          "tier": "中",
+          "score": 3,
+          "hits": [
+            "AI",
+            "投資"
+          ]
+        },
+        {
+          "title": "OECD 物価上昇率予測 来年3.6％に引き上げ エネルギー高騰受け",
+          "link": "https://news.web.nhk/newsweb/na/nd-20260924de52090",
+          "source": "NHK 経済",
+          "category": "マーケット・経済",
+          "published": "2026-09-24T08:50",
+          "tier": "中",
+          "score": 4,
+          "hits": [
+            "物価",
+            "経済"
+          ]
+        },
+        {
+          "title": "「BYDラッコ、いや驚きました」世界首位のBEVメーカーが本気で造った軽自動車の仕上がりを正直レビュー - フェルディナント・ヤマグチの走りながら考える",
+          "link": "https://diamond.jp/articles/-/399567",
+          "source": "ダイヤモンド",
+          "category": "企業・ビジネス",
+          "published": "2026-09-24T08:25",
+          "tier": "中",
+          "score": 3,
+          "hits": [
+            "EV",
+            "市場"
+          ]
+        },
+        {
+          "title": "NY円下落、158円台　米利上げ観測で円売りドル買いが優勢",
+          "link": "https://www.sankei.com/article/20260924-HCSAGQPWV5NGLADFTG5QULRLBU/",
+          "source": "産経 経済",
+          "category": "マーケット・経済",
+          "published": "2026-09-24T08:14",
+          "tier": "中",
+          "score": 3,
+          "hits": [
+            "利上げ"
+          ]
+        },
+        {
+          "title": "AI大手3社幹部､国連安保理で警鐘　｢うまく管理できなければ､AIは人類全体への脅威になる｣ | 政治・経済・投資 | 東洋経済オンライン",
+          "link": "https://toyokeizai.net/articles/-/958931?utm_source=rss&utm_medium=http&utm_campaign=link_back",
+          "source": "東洋経済",
+          "category": "企業・ビジネス",
+          "published": "2026-09-24T08:00",
+          "tier": "中",
+          "score": 5,
+          "hits": [
+            "AI",
+            "経済",
+            "企業",
+            "投資"
+          ]
+        },
+        {
+          "title": "公認会計士が「斬新な試み」と絶賛。図解で決算書が「ひと目でわかる」一冊とは？ - サンキー図で「お金の流れ」が1秒でわかる　見るだけ決算書",
+          "link": "https://diamond.jp/articles/-/399617",
+          "source": "ダイヤモンド",
+          "category": "企業・ビジネス",
+          "published": "2026-09-24T08:00",
+          "tier": "中",
+          "score": 4,
+          "hits": [
+            "決算",
+            "企業"
           ]
         },
         {
@@ -2452,23 +2713,10 @@
           ]
         },
         {
-          "title": "生成AIは「コロナ禍」に似ている…その先に生まれる、まだ名前もない「新しい習慣」 - 概念シフト",
-          "link": "https://diamond.jp/articles/-/399372",
-          "source": "ダイヤモンド",
-          "category": "企業・ビジネス",
-          "published": "2026-09-24T06:45",
-          "tier": "中",
-          "score": 4,
-          "hits": [
-            "AI",
-            "生成AI"
-          ]
-        },
-        {
           "title": "米中晩さん会、GMやNVIDIAトップ出席　中国企業は参加せずと米報道",
           "link": "https://www.nikkei.com/article/DGXZQOGN232XC0T20C26A9000000/",
-          "source": "日経 速報",
-          "category": "主要・速報",
+          "source": "日経 ビジネス",
+          "category": "企業・ビジネス",
           "published": "2026-09-24T06:29",
           "tier": "中",
           "score": 5,
@@ -2478,55 +2726,16 @@
           ]
         },
         {
-          "title": "【92歳 現役投資家が教える】株初心者が無意識に陥る「落とし穴」ワースト2 - 「株ノート」で60歳から1億円",
-          "link": "https://diamond.jp/articles/-/395143",
-          "source": "ダイヤモンド",
-          "category": "企業・ビジネス",
-          "published": "2026-09-24T06:25",
-          "tier": "中",
-          "score": 4,
-          "hits": [
-            "相場",
-            "投資"
-          ]
-        },
-        {
-          "title": "NY債券、長期債大幅続落　10年債利回り5.11%　米インフレ懸念で一時07年以来高水準",
-          "link": "https://www.nikkei.com/article/DGXZQOFL233010T20C26A9000000/",
-          "source": "日経 速報",
-          "category": "主要・速報",
-          "published": "2026-09-24T06:16",
-          "tier": "中",
-          "score": 3,
-          "hits": [
-            "インフレ"
-          ]
-        },
-        {
           "title": "メタのAI「ミューズ」登場、旅行予約や金融株が急落　顧客離れを懸念",
           "link": "https://www.nikkei.com/article/DGXZQOFD2339C0T20C26A9000000/",
-          "source": "日経 速報",
-          "category": "主要・速報",
+          "source": "日経 ビジネス",
+          "category": "企業・ビジネス",
           "published": "2026-09-24T06:05",
           "tier": "中",
           "score": 3,
           "hits": [
             "AI",
             "金融"
-          ]
-        },
-        {
-          "title": "｢唐王朝は存在しない｣荒唐無稽な歴史議論に中国共産党が本気で激怒…当局が｢歴史の解釈権｣を掌握したい3つの理由 | 政治・経済・投資 | 東洋経済オンライン",
-          "link": "https://toyokeizai.net/articles/-/958488?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-          "source": "東洋経済",
-          "category": "企業・ビジネス",
-          "published": "2026-09-24T06:00",
-          "tier": "中",
-          "score": 4,
-          "hits": [
-            "AI",
-            "経済",
-            "投資"
           ]
         },
         {
@@ -2553,32 +2762,6 @@
           "hits": [
             "再編",
             "政府"
-          ]
-        },
-        {
-          "title": "中国半導体の1〜6月純利益7.2倍　AI活況、製造装置などに波及",
-          "link": "https://www.nikkei.com/article/DGXZQOGM174J40X10C26A9000000/",
-          "source": "日経 ビジネス",
-          "category": "企業・ビジネス",
-          "published": "2026-09-24T05:00",
-          "tier": "中",
-          "score": 5,
-          "hits": [
-            "半導体",
-            "AI"
-          ]
-        },
-        {
-          "title": "アキッパ、「泥臭い営業」強みにこぎつけた上場　M&Aで規模拡大へ",
-          "link": "https://www.nikkei.com/article/DGXZQOUF144AM0U6A910C2000000/",
-          "source": "日経 ビジネス",
-          "category": "企業・ビジネス",
-          "published": "2026-09-24T05:00",
-          "tier": "中",
-          "score": 4,
-          "hits": [
-            "M&A",
-            "上場"
           ]
         },
         {
@@ -2630,34 +2813,6 @@
           "hits": [
             "AI",
             "投資"
-          ]
-        },
-        {
-          "title": "AI覇権争いは米中とも｢開発にブレーキをかける余裕なし｣…米中首脳の利害は一致 | 政治・経済・投資 | 東洋経済オンライン",
-          "link": "https://toyokeizai.net/articles/-/958903?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-          "source": "東洋経済",
-          "category": "企業・ビジネス",
-          "published": "2026-09-23T22:01",
-          "tier": "中",
-          "score": 4,
-          "hits": [
-            "AI",
-            "経済",
-            "投資"
-          ]
-        },
-        {
-          "title": "高市首相 国連総会出席や日米首脳会談終え帰国の途",
-          "link": "https://news.web.nhk/newsweb/na/nd-20260923de52031",
-          "source": "NHK 国際",
-          "category": "国際・政治",
-          "published": "2026-09-23T19:35",
-          "tier": "中",
-          "score": 3,
-          "hits": [
-            "政府",
-            "首相",
-            "大統領"
           ]
         },
         {
@@ -2688,6 +2843,296 @@
       ],
       "低": [
         {
+          "title": "北朝鮮 拉致被害者の家族がアメリカで解決に向けた協力訴える",
+          "link": "https://news.web.nhk/newsweb/na/nd-20260924de52125",
+          "source": "NHK 国際",
+          "category": "国際・政治",
+          "published": "2026-09-24T12:04",
+          "tier": "低",
+          "score": 2,
+          "hits": [
+            "政府",
+            "大統領"
+          ]
+        },
+        {
+          "title": "こんなに愛してるのに､なぜ嫌われる…？TikTokで50万人超に愛された《飼い主大嫌い系ハムスター》との切なすぎる日常 | ライフ | 東洋経済オンライン",
+          "link": "https://toyokeizai.net/articles/-/958060?utm_source=rss&utm_medium=http&utm_campaign=link_back",
+          "source": "東洋経済",
+          "category": "企業・ビジネス",
+          "published": "2026-09-24T12:00",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "経済"
+          ]
+        },
+        {
+          "title": "習氏握る3つの対米カード、貿易・イラン・北朝鮮　台湾支援阻む狙い",
+          "link": "https://www.nikkei.com/article/DGXZQOGM167UY0W6A910C2000000/",
+          "source": "日経 速報",
+          "category": "主要・速報",
+          "published": "2026-09-24T11:00",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "貿易"
+          ]
+        },
+        {
+          "title": "東京都心の中古マンション価格、4カ月連続下落　高値維持も鈍る投資",
+          "link": "https://www.nikkei.com/article/DGXZQOUB171HP0X10C26A9000000/",
+          "source": "日経 速報",
+          "category": "主要・速報",
+          "published": "2026-09-24T11:00",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "投資"
+          ]
+        },
+        {
+          "title": "過去50年に世界中の文化を個人主義に向かわせているものと､集団主義が人々を不幸せにする理由 | ライフ | 東洋経済オンライン",
+          "link": "https://toyokeizai.net/articles/-/943816?utm_source=rss&utm_medium=http&utm_campaign=link_back",
+          "source": "東洋経済",
+          "category": "企業・ビジネス",
+          "published": "2026-09-24T11:00",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "経済"
+          ]
+        },
+        {
+          "title": "オープンAIとウクライナ、サイバー民間防衛で協力　ロシアから年間6000件の攻撃",
+          "link": "https://www.sankei.com/article/20260924-PRMPYIAKBNP3VHZ5RLZK5VR5NA/",
+          "source": "産経 経済",
+          "category": "マーケット・経済",
+          "published": "2026-09-24T10:41",
+          "tier": "低",
+          "score": 2,
+          "hits": [
+            "AI"
+          ]
+        },
+        {
+          "title": "香港株寄り付き　続落　中東情勢を懸念　テックや金融に売り",
+          "link": "https://www.nikkei.com/article/DGXZQOFL240RW0U6A920C2000000/",
+          "source": "日経 速報",
+          "category": "主要・速報",
+          "published": "2026-09-24T10:39",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "金融"
+          ]
+        },
+        {
+          "title": "メタ、眼鏡に独自AI「ミューズ」搭載　販売1000万台超えへ",
+          "link": "https://www.nikkei.com/article/DGXZQOGN232VG0T20C26A9000000/",
+          "source": "日経 速報",
+          "category": "主要・速報",
+          "published": "2026-09-24T10:30",
+          "tier": "低",
+          "score": 2,
+          "hits": [
+            "AI"
+          ]
+        },
+        {
+          "title": "｢批判は\"統計\"で処理できる！｣—何をやってもうまくいく人が実践する｢最強の思考習慣｣〜Testosterone×中野優作 | ライフ | 東洋経済オンライン",
+          "link": "https://toyokeizai.net/articles/-/956649?utm_source=rss&utm_medium=http&utm_campaign=link_back",
+          "source": "東洋経済",
+          "category": "企業・ビジネス",
+          "published": "2026-09-24T10:30",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "経済"
+          ]
+        },
+        {
+          "title": "カリフォルニアがクルマ好き一色に､世界的イベント｢モントレー･カー･ウィーク｣で日本車が熱狂の中心になった理由 | ライフ | 東洋経済オンライン",
+          "link": "https://toyokeizai.net/articles/-/958558?utm_source=rss&utm_medium=http&utm_campaign=link_back",
+          "source": "東洋経済",
+          "category": "企業・ビジネス",
+          "published": "2026-09-24T10:00",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "経済"
+          ]
+        },
+        {
+          "title": "高市早苗首相が日米首脳会談を終え帰国　10月召集の臨時国会に向け準備",
+          "link": "https://www.sankei.com/article/20260924-NROB7LMEBNO2FDJ5WGAETSEK74/",
+          "source": "産経 政治",
+          "category": "国際・政治",
+          "published": "2026-09-24T09:41",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "首相"
+          ]
+        },
+        {
+          "title": "ゼレンスキー大統領 国連総会でロシアの資金源断つこと訴える",
+          "link": "https://news.web.nhk/newsweb/na/nd-20260924de52093",
+          "source": "NHK 国際",
+          "category": "国際・政治",
+          "published": "2026-09-24T09:31",
+          "tier": "低",
+          "score": 2,
+          "hits": [
+            "貿易",
+            "大統領"
+          ]
+        },
+        {
+          "title": "｢うちの子､反抗期がない｣と思っていたら不登校に…発達障害･グレーゾーンの子に起きている\"新しい反抗期\" | キャリア・教育 | 東洋経済オンライン",
+          "link": "https://toyokeizai.net/articles/-/956384?utm_source=rss&utm_medium=http&utm_campaign=link_back",
+          "source": "東洋経済",
+          "category": "企業・ビジネス",
+          "published": "2026-09-24T09:30",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "経済"
+          ]
+        },
+        {
+          "title": "しんのすけをあえて封印で賛否両論！｢クレヨンしんちゃん｣脚本担当で話題の芸人･蓮見翔とは何者？ | ライフ | 東洋経済オンライン",
+          "link": "https://toyokeizai.net/articles/-/958892?utm_source=rss&utm_medium=http&utm_campaign=link_back",
+          "source": "東洋経済",
+          "category": "企業・ビジネス",
+          "published": "2026-09-24T09:00",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "経済"
+          ]
+        },
+        {
+          "title": "｢1番になれるものがない｣は不利ではない《上位30%に入れるものが3つ》あればいい……MBA卒業生5000人調査が示した希望 | ライフ | 東洋経済オンライン",
+          "link": "https://toyokeizai.net/articles/-/956995?utm_source=rss&utm_medium=http&utm_campaign=link_back",
+          "source": "東洋経済",
+          "category": "企業・ビジネス",
+          "published": "2026-09-24T08:30",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "経済"
+          ]
+        },
+        {
+          "title": "「自衛の戦い恐れない」イラン大統領が対米抗戦の構え、対話の用意も表明　国連総会演説",
+          "link": "https://www.sankei.com/article/20260924-BYGXTLDWTFI53IW4XRFBNRP3WY/",
+          "source": "産経 国際",
+          "category": "国際・政治",
+          "published": "2026-09-24T08:17",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "大統領"
+          ]
+        },
+        {
+          "title": "お相手は｢大卒以上｣｢ビジネスの才能があれば話は別｣　\"人を見る目がある\"と自負する人事部･アラフィフ女性の迷走婚活 | ライフ | 東洋経済オンライン",
+          "link": "https://toyokeizai.net/articles/-/958602?utm_source=rss&utm_medium=http&utm_campaign=link_back",
+          "source": "東洋経済",
+          "category": "企業・ビジネス",
+          "published": "2026-09-24T08:00",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "経済"
+          ]
+        },
+        {
+          "title": "特殊詐欺被害防止に向け10月から総力戦　奈良県と県警、金融機関が「非常事態宣言」",
+          "link": "https://www.sankei.com/article/20260924-4HWVOEYSJNIBNMP6YIYGQIZQDU/",
+          "source": "産経 政治",
+          "category": "国際・政治",
+          "published": "2026-09-24T08:00",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "金融"
+          ]
+        },
+        {
+          "title": "アルゼンチンのミレイ大統領、国連でフォークランド諸島の領有権を主張　英国に協議を要求",
+          "link": "https://www.sankei.com/article/20260924-FXSL2ICM4JNRHBOUXL5TX3UUWQ/",
+          "source": "産経 国際",
+          "category": "国際・政治",
+          "published": "2026-09-24T07:59",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "大統領"
+          ]
+        },
+        {
+          "title": "30代から「誰にも相談されなくなる人」の特徴・ワースト1 - 自分の言葉で話せるようになりましょう。",
+          "link": "https://diamond.jp/articles/-/399621",
+          "source": "ダイヤモンド",
+          "category": "企業・ビジネス",
+          "published": "2026-09-24T07:45",
+          "tier": "低",
+          "score": 2,
+          "hits": [
+            "上場"
+          ]
+        },
+        {
+          "title": "ゼレンスキー氏「早ければ来年にもAIが戦況決める」　国連総会で警鐘、和平の必要性強調",
+          "link": "https://www.sankei.com/article/20260924-AYXK52DQ4ROJHARJOYRDMUHQWE/",
+          "source": "産経 国際",
+          "category": "国際・政治",
+          "published": "2026-09-24T07:45",
+          "tier": "低",
+          "score": 2,
+          "hits": [
+            "AI"
+          ]
+        },
+        {
+          "title": "｢1日1万歩より優れている｣\"ボケ予防と転倒防止\"に毎日1分の片足立ち→｢骨に与える負荷｣｢バランス制御能力｣がポイント | ライフ | 東洋経済オンライン",
+          "link": "https://toyokeizai.net/articles/-/957794?utm_source=rss&utm_medium=http&utm_campaign=link_back",
+          "source": "東洋経済",
+          "category": "企業・ビジネス",
+          "published": "2026-09-24T07:30",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "経済"
+          ]
+        },
+        {
+          "title": "G20入り目指すポーランド　ＧＤＰ1兆ドル超え…米国が首脳会議招待　日本企業進出相次ぐ",
+          "link": "https://www.yomiuri.co.jp/economy/20260924-GYT1T00137/",
+          "source": "読売 経済",
+          "category": "マーケット・経済",
+          "published": "2026-09-24T07:23",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "企業"
+          ]
+        },
+        {
+          "title": "習近平氏がワシントン到着、トランプ氏が歓迎式典　米中閣僚は貿易「休戦」延長など再協議",
+          "link": "https://www.sankei.com/article/20260924-UJBQ52SA2BKUTKZ52LYWOV3XVE/",
+          "source": "産経 国際",
+          "category": "国際・政治",
+          "published": "2026-09-24T07:23",
+          "tier": "低",
+          "score": 1,
+          "hits": [
+            "貿易"
+          ]
+        },
+        {
           "title": "茂木外相 米中首脳会談直前の日米首脳会談 意義は非常に大きい",
           "link": "https://news.web.nhk/newsweb/na/nd-20260924de52088",
           "source": "NHK 国際",
@@ -2725,15 +3170,15 @@
           ]
         },
         {
-          "title": "AIに仕事を奪われるより怖い？ 毎日使う人の中で静かに進んでいる「ある変化」 - 「うまく言葉にできない」がなくなる　言語化大全",
-          "link": "https://diamond.jp/articles/-/399428",
-          "source": "ダイヤモンド",
-          "category": "企業・ビジネス",
+          "title": "トランプ氏と習近平氏、きょうワシントンで首脳会談…「米中貿易戦争」「ＡＩ」「台湾問題」など議論へ",
+          "link": "https://www.yomiuri.co.jp/world/20260924-GYT1T00109/",
+          "source": "読売 国際",
+          "category": "国際・政治",
           "published": "2026-09-24T06:50",
           "tier": "低",
-          "score": 2,
+          "score": 1,
           "hits": [
-            "AI"
+            "貿易"
           ]
         },
         {
@@ -2742,104 +3187,6 @@
           "source": "東洋経済",
           "category": "企業・ビジネス",
           "published": "2026-09-24T06:30",
-          "tier": "低",
-          "score": 1,
-          "hits": [
-            "経済"
-          ]
-        },
-        {
-          "title": "国連安保理がAI会合、OpenAIとアンソロピックCEO｢安全基準で協力を｣",
-          "link": "https://www.nikkei.com/article/DGXZQOGN232Z30T20C26A9000000/",
-          "source": "日経 速報",
-          "category": "主要・速報",
-          "published": "2026-09-24T06:08",
-          "tier": "低",
-          "score": 2,
-          "hits": [
-            "AI"
-          ]
-        },
-        {
-          "title": "業界2位の日本製紙の時価総額が3位のレンゴーと4位の大王より下となった製紙の構造要因…｢脱製紙｣での生き残りの成否 | ビジネス | 東洋経済オンライン",
-          "link": "https://toyokeizai.net/articles/-/958295?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-          "source": "東洋経済",
-          "category": "企業・ビジネス",
-          "published": "2026-09-24T06:00",
-          "tier": "低",
-          "score": 2,
-          "hits": [
-            "経済",
-            "市場"
-          ]
-        },
-        {
-          "title": "｢人を変えて守るセキュリティはうまくいかない｣､元国連CISOが壮絶な経験を経て辿り着いた組織防衛の解 | ビジネス | 東洋経済オンライン",
-          "link": "https://toyokeizai.net/articles/-/958188?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-          "source": "東洋経済",
-          "category": "企業・ビジネス",
-          "published": "2026-09-24T06:00",
-          "tier": "低",
-          "score": 1,
-          "hits": [
-            "経済"
-          ]
-        },
-        {
-          "title": "発達障害のある学生｢10年で約4倍増｣…大学で露呈する深刻なSOS､筑波大学の\"駆け込み寺\"で行っている支援の中身 | キャリア・教育 | 東洋経済オンライン",
-          "link": "https://toyokeizai.net/articles/-/958151?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-          "source": "東洋経済",
-          "category": "企業・ビジネス",
-          "published": "2026-09-24T06:00",
-          "tier": "低",
-          "score": 1,
-          "hits": [
-            "経済"
-          ]
-        },
-        {
-          "title": "OKIが長い構造改革から脱却､森社長が語る｢再成長｣への道筋…｢社員に成長目指す意欲がなかった｣内向き組織への処方箋 | ビジネス | 東洋経済オンライン",
-          "link": "https://toyokeizai.net/articles/-/957998?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-          "source": "東洋経済",
-          "category": "企業・ビジネス",
-          "published": "2026-09-24T06:00",
-          "tier": "低",
-          "score": 2,
-          "hits": [
-            "経済",
-            "企業"
-          ]
-        },
-        {
-          "title": "シールで落とし物を返却 新たな仕組み開発 警視庁などと連携へ",
-          "link": "https://news.web.nhk/newsweb/na/nd-20260923de52064",
-          "source": "NHK 主要",
-          "category": "主要・速報",
-          "published": "2026-09-24T05:56",
-          "tier": "低",
-          "score": 1,
-          "hits": [
-            "企業"
-          ]
-        },
-        {
-          "title": "《ゆっくりコロリ》2000人を看取った在宅緩和ケア医が語る\"理想の最期\"…自宅で穏やかに天寿を全うするための｢3要点｣ | ライフ | 東洋経済オンライン",
-          "link": "https://toyokeizai.net/articles/-/958786?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-          "source": "東洋経済",
-          "category": "企業・ビジネス",
-          "published": "2026-09-24T05:31",
-          "tier": "低",
-          "score": 1,
-          "hits": [
-            "経済"
-          ]
-        },
-        {
-          "title": "健康で長生きするほど《｢ピンピンコロリ｣は99％失敗する》？　2000人を看取った在宅緩和ケア医が明かす\"死に際の真実\" | ライフ | 東洋経済オンライン",
-          "link": "https://toyokeizai.net/articles/-/958783?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-          "source": "東洋経済",
-          "category": "企業・ビジネス",
-          "published": "2026-09-24T05:30",
           "tier": "低",
           "score": 1,
           "hits": [
@@ -2860,16 +3207,15 @@
           ]
         },
         {
-          "title": "文系･理系の学生が選んだ｢就職人気企業ランキング｣……就活生1万3000人が投票した結果 | ライフ | 東洋経済オンライン",
-          "link": "https://toyokeizai.net/articles/-/958883?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-          "source": "東洋経済",
-          "category": "企業・ビジネス",
+          "title": "イーロン・マスクの反逆思考「頭がおかしいから世界を変えられる」",
+          "link": "https://xtech.nikkei.com/atcl/nxt/column/18/03739/090200014/",
+          "source": "日経クロステック",
+          "category": "テクノロジー",
           "published": "2026-09-24T05:00",
           "tier": "低",
           "score": 2,
           "hits": [
-            "経済",
-            "企業"
+            "再編"
           ]
         },
         {
@@ -2885,27 +3231,40 @@
           ]
         },
         {
-          "title": "イーロン・マスクの反逆思考「頭がおかしいから世界を変えられる」",
-          "link": "https://xtech.nikkei.com/atcl/nxt/column/18/03739/090200014/",
+          "title": "三菱マテリアルとセブン銀行のIT幹部が回答、レガシー刷新やDXのポイント",
+          "link": "https://xtech.nikkei.com/atcl/nxt/column/18/03745/091700015/",
           "source": "日経クロステック",
           "category": "テクノロジー",
           "published": "2026-09-24T05:00",
           "tier": "低",
           "score": 2,
           "hits": [
-            "再編"
+            "企業",
+            "銀行"
           ]
         },
         {
-          "title": "米中　貿易や台湾議論へ…今年２回目　２４日に首脳会談",
-          "link": "https://www.yomiuri.co.jp/world/20260924-GYT1T00109/",
-          "source": "読売 国際",
-          "category": "国際・政治",
+          "title": "AIエージェントと組むとプロジェクトマネジャーの頭は疲れるが心は健やかになる",
+          "link": "https://xtech.nikkei.com/atcl/nxt/column/18/00166/091600208/",
+          "source": "日経クロステック",
+          "category": "テクノロジー",
+          "published": "2026-09-24T05:00",
+          "tier": "低",
+          "score": 2,
+          "hits": [
+            "AI"
+          ]
+        },
+        {
+          "title": "折り畳みスマホを手に画面のアスペクト比を改めて考える",
+          "link": "https://xtech.nikkei.com/atcl/nxt/column/18/00138/091602107/",
+          "source": "日経クロステック",
+          "category": "テクノロジー",
           "published": "2026-09-24T05:00",
           "tier": "低",
           "score": 1,
           "hits": [
-            "貿易"
+            "税"
           ]
         },
         {
@@ -2918,18 +3277,6 @@
           "score": 1,
           "hits": [
             "大統領"
-          ]
-        },
-        {
-          "title": "ＩＣＣへ「一貫した支持」　首相「法の支配　維持貢献」…国連演説",
-          "link": "https://www.yomiuri.co.jp/politics/20260924-GYT1T00112/",
-          "source": "読売 政治",
-          "category": "国際・政治",
-          "published": "2026-09-24T05:00",
-          "tier": "低",
-          "score": 1,
-          "hits": [
-            "首相"
           ]
         },
         {
@@ -2948,18 +3295,6 @@
         {
           "title": "高市首相の一日",
           "link": "https://www.yomiuri.co.jp/politics/20260924-GYT1T00054/",
-          "source": "読売 政治",
-          "category": "国際・政治",
-          "published": "2026-09-24T05:00",
-          "tier": "低",
-          "score": 1,
-          "hits": [
-            "首相"
-          ]
-        },
-        {
-          "title": "首相　ＮＹで積極外交　ゼレンスキー氏と初会談　多国間連携",
-          "link": "https://www.yomiuri.co.jp/politics/20260923-GYT1T00277/",
           "source": "読売 政治",
           "category": "国際・政治",
           "published": "2026-09-24T05:00",
@@ -2994,40 +3329,16 @@
           ]
         },
         {
-          "title": "京急最古参､1500形｢真っ赤な電車｣が変えた常識　初採用の仕様あれば最後になった｢伝統｣も | ビジネス | 東洋経済オンライン",
-          "link": "https://toyokeizai.net/articles/-/957778?utm_source=rss&utm_medium=http&utm_campaign=link_back",
-          "source": "東洋経済",
-          "category": "企業・ビジネス",
-          "published": "2026-09-24T04:30",
-          "tier": "低",
-          "score": 1,
-          "hits": [
-            "経済"
-          ]
-        },
-        {
-          "title": "イラン大統領、国連で「われわれこそテロの被害者」米国など非難　米代表は退席",
-          "link": "https://www.sankei.com/article/20260924-XNMNVIOKHJLEFFX3UPC5BRXNF4/",
-          "source": "産経 国際",
+          "title": "米国・ベッセント財務長官と中国・何立峰副首相、ワシントンで貿易戦争の「休戦」など協議か",
+          "link": "https://www.yomiuri.co.jp/world/20260924-GYT1T00124/",
+          "source": "読売 国際",
           "category": "国際・政治",
-          "published": "2026-09-24T00:22",
-          "tier": "低",
-          "score": 1,
-          "hits": [
-            "大統領"
-          ]
-        },
-        {
-          "title": "高市首相 トランプ大統領 国連総会で演説 日米首脳会談も",
-          "link": "https://news.web.nhk/newsweb/na/nd-20260923de52038",
-          "source": "NHK 国際",
-          "category": "国際・政治",
-          "published": "2026-09-23T22:05",
+          "published": "2026-09-24T02:53",
           "tier": "低",
           "score": 2,
           "hits": [
-            "首相",
-            "大統領"
+            "貿易",
+            "首相"
           ]
         },
         {
@@ -3044,15 +3355,16 @@
           ]
         },
         {
-          "title": "中国、高市首相の旧敵国条項削除要求に反対姿勢を示す「軍国主義が脅威になることを防ぐ」",
-          "link": "https://www.sankei.com/article/20260923-NJ4P3FQV3NPPLPJ7CEYB2DPEFY/",
-          "source": "産経 国際",
-          "category": "国際・政治",
-          "published": "2026-09-23T19:16",
+          "title": "トランプ大統領「軽油の輸出やめようと言った」…禁輸で世界供給減れば日本にも影響の恐れ",
+          "link": "https://www.yomiuri.co.jp/economy/20260923-GYT1T00185/",
+          "source": "読売 経済",
+          "category": "マーケット・経済",
+          "published": "2026-09-23T19:19",
           "tier": "低",
-          "score": 1,
+          "score": 2,
           "hits": [
-            "首相"
+            "輸出",
+            "大統領"
           ]
         },
         {
@@ -3068,18 +3380,6 @@
           ]
         },
         {
-          "title": "中国の習近平国家主席がアメリカへ出発　米中首脳会談へ",
-          "link": "https://news.web.nhk/newsweb/na/nd-20260923de51963",
-          "source": "NHK 国際",
-          "category": "国際・政治",
-          "published": "2026-09-23T18:55",
-          "tier": "低",
-          "score": 1,
-          "hits": [
-            "大統領"
-          ]
-        },
-        {
           "title": "高市早苗首相が帰国の途　政府専用機でニューヨーク・ケネディ国際空港出発",
           "link": "https://www.sankei.com/article/20260923-QJTPPER2YBPD5GEACTJUEICWQ4/",
           "source": "産経 政治",
@@ -3090,18 +3390,6 @@
           "hits": [
             "政府",
             "首相"
-          ]
-        },
-        {
-          "title": "米韓首脳会談 トランプ氏が北朝鮮との対話の意思改めて示す",
-          "link": "https://news.web.nhk/newsweb/na/nd-20260923de52002",
-          "source": "NHK 国際",
-          "category": "国際・政治",
-          "published": "2026-09-23T16:26",
-          "tier": "低",
-          "score": 1,
-          "hits": [
-            "大統領"
           ]
         },
         {
@@ -3152,152 +3440,17 @@
           "hits": [
             "首相"
           ]
-        },
-        {
-          "title": "韓国大統領、米国に対北朝鮮制裁「緩和」を要請…核・ミサイル開発の停止と交換条件「大きな価値ある」",
-          "link": "https://www.yomiuri.co.jp/world/20260923-GYT1T00064/",
-          "source": "読売 国際",
-          "category": "国際・政治",
-          "published": "2026-09-23T13:20",
-          "tier": "低",
-          "score": 1,
-          "hits": [
-            "大統領"
-          ]
-        },
-        {
-          "title": "英首相が情報攻撃への対策機関を設置へ　国連演説で表明　ロシア念頭、英選挙に「干渉」",
-          "link": "https://www.sankei.com/article/20260923-65KGIYAHN5IV5FBPDLWJIUPNSM/",
-          "source": "産経 国際",
-          "category": "国際・政治",
-          "published": "2026-09-23T12:53",
-          "tier": "低",
-          "score": 1,
-          "hits": [
-            "首相"
-          ]
-        },
-        {
-          "title": "原油下落、一時90ドル割れ　米イラン停戦協議に期待",
-          "link": "https://www.sankei.com/article/20260923-VZDKHNTLWJNKHJ6KVBBHKYGDSY/",
-          "source": "産経 経済",
-          "category": "マーケット・経済",
-          "published": "2026-09-23T12:00",
-          "tier": "低",
-          "score": 2,
-          "hits": [
-            "原油"
-          ]
-        },
-        {
-          "title": "韓国大統領、国連演説で北朝鮮の「非核化」使わず　3段階の解決主張、南北対話再開に意欲",
-          "link": "https://www.sankei.com/article/20260923-7OH36O325RMT7K2LXRTRTUPIVU/",
-          "source": "産経 国際",
-          "category": "国際・政治",
-          "published": "2026-09-23T12:00",
-          "tier": "低",
-          "score": 1,
-          "hits": [
-            "大統領"
-          ]
-        },
-        {
-          "title": "高市首相、国連でICC「一貫して支持」表明　赤根所長ら米制裁、政府は水面下で交渉継続",
-          "link": "https://www.sankei.com/article/20260923-FR34CFSGJFC23IJ6JX5IUNSCPY/",
-          "source": "産経 政治",
-          "category": "国際・政治",
-          "published": "2026-09-23T11:41",
-          "tier": "低",
-          "score": 2,
-          "hits": [
-            "政府",
-            "首相"
-          ]
-        },
-        {
-          "title": "「たくさんのイシュー話したいので」高市首相、トランプ氏に新内閣の顔ぶれ「ご安心あれ」",
-          "link": "https://www.sankei.com/article/20260923-3YC537MH6VAZ5AEYNDM5RDWAHU/",
-          "source": "産経 政治",
-          "category": "国際・政治",
-          "published": "2026-09-23T11:06",
-          "tier": "低",
-          "score": 1,
-          "hits": [
-            "首相"
-          ]
-        },
-        {
-          "title": "［フカヨミ］変わる企業統治指針＜下＞ＲＯＥと成長投資を両立…脱「株主還元偏重」促す",
-          "link": "https://www.yomiuri.co.jp/economy/20260922-GYT1T00301/",
-          "source": "読売 経済",
-          "category": "マーケット・経済",
-          "published": "2026-09-23T10:00",
-          "tier": "低",
-          "score": 2,
-          "hits": [
-            "企業",
-            "投資"
-          ]
-        },
-        {
-          "title": "米AI2社が新型モデル　開発減速表明後初の発表、料金安く…中国モデルとの競争激化",
-          "link": "https://www.sankei.com/article/20260923-UQQMQJPV7ZL2NINVB4LQGDDU6U/",
-          "source": "産経 経済",
-          "category": "マーケット・経済",
-          "published": "2026-09-23T08:50",
-          "tier": "低",
-          "score": 2,
-          "hits": [
-            "AI"
-          ]
-        },
-        {
-          "title": "ディーゼル燃料禁輸を検討　トランプ米大統領、中間選挙を前に記録的高値で国内優先の姿勢",
-          "link": "https://www.sankei.com/article/20260923-VOXNQYOJTZPGHDFAXZXYMDYY7I/",
-          "source": "産経 経済",
-          "category": "マーケット・経済",
-          "published": "2026-09-23T08:19",
-          "tier": "低",
-          "score": 1,
-          "hits": [
-            "大統領"
-          ]
-        },
-        {
-          "title": "AI利用の子供に悪影響の恐れ　元グーグル幹部が自殺や精神障害、批判的思考力低下を警告",
-          "link": "https://www.sankei.com/article/20260923-HK2AATRW6FNY7LIFRLTXQX6Y2A/",
-          "source": "産経 経済",
-          "category": "マーケット・経済",
-          "published": "2026-09-23T07:53",
-          "tier": "低",
-          "score": 2,
-          "hits": [
-            "AI"
-          ]
-        },
-        {
-          "title": "トランプ大統領 軽油の輸出禁止措置“政権内部に求めてきた”",
-          "link": "https://news.web.nhk/newsweb/na/nd-20260923de51939",
-          "source": "NHK 経済",
-          "category": "マーケット・経済",
-          "published": "2026-09-23T07:32",
-          "tier": "低",
-          "score": 2,
-          "hits": [
-            "輸出",
-            "大統領"
-          ]
         }
       ]
     },
-    "collected": 160,
-    "dropped": 78,
+    "collected": 161,
+    "dropped": 75,
     "feeds": [
       {
         "label": "日経 速報",
         "category": "主要・速報",
         "status": "ok",
-        "kept": 9
+        "kept": 8
       },
       {
         "label": "NHK 主要",
@@ -3315,7 +3468,7 @@
         "label": "読売 経済",
         "category": "マーケット・経済",
         "status": "ok",
-        "kept": 1
+        "kept": 2
       },
       {
         "label": "産経 経済",
@@ -3327,19 +3480,19 @@
         "label": "NHK 経済",
         "category": "マーケット・経済",
         "status": "ok",
-        "kept": 5
+        "kept": 9
       },
       {
         "label": "日経 ビジネス",
         "category": "企業・ビジネス",
         "status": "ok",
-        "kept": 2
+        "kept": 3
       },
       {
         "label": "東洋経済",
         "category": "企業・ビジネス",
         "status": "ok",
-        "kept": 14
+        "kept": 13
       },
       {
         "label": "ダイヤモンド",
@@ -3351,7 +3504,7 @@
         "label": "日経クロステック",
         "category": "テクノロジー",
         "status": "ok",
-        "kept": 7
+        "kept": 9
       },
       {
         "label": "読売 国際",
@@ -3369,24 +3522,24 @@
         "label": "NHK 国際",
         "category": "国際・政治",
         "status": "ok",
-        "kept": 5
+        "kept": 4
       },
       {
         "label": "読売 政治",
         "category": "国際・政治",
         "status": "ok",
-        "kept": 8
+        "kept": 6
       },
       {
         "label": "産経 政治",
         "category": "国際・政治",
         "status": "ok",
-        "kept": 8
+        "kept": 9
       }
     ],
     "errors": [],
     "window_hours": 24,
-    "total": 82,
+    "total": 86,
     "feeds_ok": 15,
     "feeds_total": 15
   },
