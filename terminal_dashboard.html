@@ -617,6 +617,54 @@
   .imp-src a:hover{color:var(--txt);border-color:var(--ring)}
   @media(max-width:680px){.imp-grid{grid-template-columns:1fr}.imp-card dl{grid-template-columns:1fr;gap:2px 0}.imp-card dt{margin-top:6px}}
 
+  /* ---- THEME v2.1: 余白の整理 ---- */
+  /* 指標カード: auto-fit だと12枚が 11+1 に割れて2段目がほぼ空になる。約数で段を揃える。 */
+  .strip{grid-template-columns:repeat(12,minmax(0,1fr))}
+  @media(max-width:1500px){.strip{grid-template-columns:repeat(6,minmax(0,1fr))}}
+  @media(max-width:900px){.strip{grid-template-columns:repeat(4,minmax(0,1fr))}}
+  @media(max-width:680px){.strip{grid-template-columns:repeat(3,minmax(0,1fr))}}
+  /* スマホ: ヘッダーを固定にすると画面の2割を占有し続けるので流す。指標は3列で4段に収める。 */
+  @media(max-width:680px){
+    .top{position:static;backdrop-filter:none;-webkit-backdrop-filter:none;gap:6px}
+    .brand small{display:none}
+    .top-right{gap:6px 8px}
+    .clock{padding:3px 7px;font-size:10px}
+    .strip{gap:6px}
+    .qc{padding:8px 9px}
+    .qc .lb{font-size:9.5px}
+    .qc .vl{font-size:13px}
+    .qc .ch{font-size:10.5px}
+  }
+  .qc{padding:10px 12px;min-width:0}
+  .qc .vl{font-size:clamp(14px,1.05vw,17px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  /* インパクト: カードが無いときは1行の帯 */
+  #panel-impact.slim{flex-direction:row;align-items:center;flex-wrap:wrap;gap:4px 18px;padding:11px 16px}
+  #panel-impact.slim h2{padding:0;flex:none}
+  #panel-impact.slim h2 .note{display:none}
+  #panel-impact.slim .body{padding:0;flex:1;min-width:240px;overflow:visible}
+  #panel-impact.slim .imp-state{padding:0;font-size:12.5px;font-weight:500;display:flex;flex-wrap:wrap;gap:2px 12px;align-items:baseline}
+  #panel-impact.slim .imp-state span{margin:0}
+  /* ヒートマップ: セクター数に合わせて幅を使い切る */
+  /* 注記(.def)も #heat の子なので grid の auto-fit だと列数に数えられて余りが出る。flex で伸ばす。 */
+  .heat{display:flex;flex-wrap:wrap}
+  .heat .hcell{flex:1 1 210px;min-width:0}
+  .heat .def{flex:0 0 100%;margin-top:2px}
+  @media(max-width:900px){.heat .hcell{flex-basis:150px}}
+  /* 下段: 検出テーブルとニュースを横に並べ、どちらも枠内スクロール（全幅で1,300px超の縦長になっていた） */
+  .stack{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(0,1fr);align-items:stretch}
+  .stack > .panel.full{grid-column:auto}
+  #accum-body,#panel-news .body{max-height:480px;overflow:auto}
+  @media(max-width:1300px){.stack{grid-template-columns:minmax(0,1fr)}}
+  .acc-grid{min-width:760px}
+  .acc-hdr,.acc-r{grid-template-columns:78px minmax(120px,1fr) 84px 76px 64px 64px 66px 64px 78px 14px;gap:8px}
+  .acc-hdr{z-index:1}
+  .news li{align-items:flex-start}
+  /* パネル内の詰め */
+  .panel h2{padding:13px 16px 2px}
+  .panel .body{padding:8px 16px 14px}
+  .wl-item{padding:9px 10px}
+  .chart-box svg{height:clamp(280px,52vh,600px)}
+
   /* ---- 演出 OFF: CSS側のアニメーションも止める（Bキーで切替） ---- */
   html[data-motion="OFF"] *{animation:none!important;transition:none!important}
 
@@ -668,6 +716,10 @@
           <h2>投資信託<span class="note">基準価額のみ・テクニカルなし</span></h2>
           <div class="body" id="funds-body"></div>
         </div>
+        <div class="panel" id="panel-sentiment">
+          <h2>センチメント<span class="note">合成値・定義は本文参照</span></h2>
+          <div class="body" id="sentiment-body"></div>
+        </div>
         <div class="panel" id="panel-portfolio">
           <h2>ポートフォリオ統計<span class="note">保有のみ・本数・単純平均</span></h2>
           <div class="body" id="portfolio-body"></div>
@@ -713,6 +765,11 @@
             <div class="body" id="matrix-body"></div>
           </div>
         </div>
+
+        <div class="panel" id="panel-sector">
+          <h2>セクターヒートマップ<span class="note">前日比・構成銘柄の単純平均</span></h2>
+          <div class="body"><div class="heat" id="heat"></div></div>
+        </div>
       </div>
 
       <div class="col col-right">
@@ -736,10 +793,6 @@
           <div class="body" id="earnings-body"></div>
         </div>
 
-        <div class="panel" id="panel-sentiment">
-          <h2>センチメント<span class="note">合成値・定義は本文参照</span></h2>
-          <div class="body" id="sentiment-body"></div>
-        </div>
       </div>
     </div>
 
@@ -747,11 +800,6 @@
       <div class="panel full" id="panel-accum">
         <h2>買い集め/売り抜け検出<span class="note">出来高スパイク＋終値位置・行をクリックで根拠</span></h2>
         <div class="body" id="accum-body"></div>
-      </div>
-
-      <div class="panel full" id="panel-sector">
-        <h2>セクターヒートマップ<span class="note">前日比・構成銘柄の単純平均</span></h2>
-        <div class="body"><div class="heat" id="heat"></div></div>
       </div>
 
       <div class="panel full" id="panel-news">
@@ -2560,6 +2608,8 @@ function renderImpact(d){
   const el = document.getElementById("impact-body");
   if(!el) return;
   const st = d.impact_status, rows = d.impact_news;
+  // 中身がカードのとき以外は帯表示。見た目だけで、文言と状態の書き分けは下のまま。
+  document.getElementById("panel-impact").classList.toggle("slim", !(st === "ok" && Array.isArray(rows) && rows.length));
   if(st === undefined){
     el.innerHTML = '<div class="imp-state warn">まだ生成されていません（この dashboard.json には判定が含まれていません。「材料なし」ではありません）</div>';
     return;
