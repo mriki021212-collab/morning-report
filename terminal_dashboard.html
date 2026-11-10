@@ -615,6 +615,12 @@
   .imp-src{display:flex;flex-wrap:wrap;gap:5px}
   .imp-src a,.imp-src span{font-size:10.5px;padding:1px 8px;border-radius:999px;border:1px solid var(--line);color:var(--mut);text-decoration:none}
   .imp-src a:hover{color:var(--txt);border-color:var(--ring)}
+  /* 1件だけの日は全幅のカードになる。見出しを左・内訳を右に置いて右側の空きを使う。 */
+  @media(min-width:1081px){
+    .imp-card:only-child{display:grid;grid-template-columns:minmax(260px,.8fr) minmax(0,2.4fr);gap:8px 28px;align-items:start}
+    .imp-card:only-child header{margin-bottom:0}
+    .imp-card:only-child h3{font-size:15px}
+  }
   @media(max-width:680px){.imp-grid{grid-template-columns:1fr}.imp-card dl{grid-template-columns:1fr;gap:2px 0}.imp-card dt{margin-top:6px}}
 
   /* ---- THEME v2.1: 余白の整理 ---- */
