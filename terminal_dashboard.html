@@ -6,12 +6,14 @@
 <title>MORNING STRATEGIST — DASHBOARD</title>
 <style>
   :root{
-    --bg:#0c0f14; --panel:#12161d; --panel2:#0f1319; --line:#232a35; --line-soft:#1a2029;
-    --txt:#d7dde5; --mut:#7a8494; --mut-dim:#4d5563;
-    --accent:#c9a15a; --accent-dim:#8a744a;
-    --up:#3fbf80; --up-dim:#255c3d; --dn:#e2596b; --dn-dim:#6b2530; --flat:#7a8494;
-    --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
-    --sans:"Segoe UI",system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+    --bg:#070a12; --panel:#0f1420; --panel2:#0b0f19; --line:#1f2738; --line-soft:#161d2b;
+    --txt:#e6ebf5; --mut:#8b96ab; --mut-dim:#5a657b;
+    --accent:#8ea2ff; --accent-dim:#3d4a86; --accent2:#5eead4;
+    --up:#34d399; --up-dim:#1c5f4b; --dn:#fb7185; --dn-dim:#7a2f3f; --flat:#8b96ab;
+    --glass:rgba(255,255,255,.035); --ring:rgba(142,162,255,.28);
+    --r-lg:16px; --r-md:11px; --r-sm:7px;
+    --mono:"Cascadia Mono","JetBrains Mono","SFMono-Regular",Consolas,Menlo,monospace;
+    --sans:"Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic UI","Yu Gothic",sans-serif;
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0;background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:13px;line-height:1.5}
@@ -31,8 +33,8 @@
   .brand small{color:var(--mut);font-weight:400;font-size:11px;margin-left:8px;letter-spacing:.02em}
   .top-right{display:flex;align-items:center;gap:14px;font-size:11px;color:var(--mut);flex-wrap:wrap}
   .mood{padding:3px 10px;border-radius:2px;font-weight:600;font-size:11px;border:1px solid}
-  .mood.up{color:var(--up);border-color:var(--up-dim);background:rgba(63,191,128,.08)}
-  .mood.dn{color:var(--dn);border-color:var(--dn-dim);background:rgba(226,89,107,.08)}
+  .mood.up{color:var(--up);border-color:var(--up-dim);background:rgba(52,211,153,.08)}
+  .mood.dn{color:var(--dn);border-color:var(--dn-dim);background:rgba(251,113,133,.08)}
   .mood.na{color:var(--mut);border-color:var(--line)}
 
   /* ---- world clocks ---- */
@@ -68,7 +70,7 @@
   .col:empty{display:none}
 
   /* ---- 鮮度警告バー ---- */
-  .freshbar{border:1px solid var(--dn-dim);background:rgba(226,89,107,.10);color:var(--dn);
+  .freshbar{border:1px solid var(--dn-dim);background:rgba(251,113,133,.10);color:var(--dn);
             padding:6px 10px;margin-bottom:10px;font-size:11.5px;letter-spacing:.02em}
 
   /* ---- 投資信託 ---- */
@@ -104,7 +106,7 @@
   .wl-item{padding:7px 6px;border:1px solid transparent;border-bottom:1px solid var(--line-soft);cursor:pointer}
   .wl-item:last-child{border-bottom:none}
   .wl-item:hover{background:rgba(255,255,255,.03)}
-  .wl-item.sel{border-color:var(--accent-dim);background:rgba(201,161,90,.07)}
+  .wl-item.sel{border-color:var(--accent-dim);background:rgba(142,162,255,.07)}
   .wl-item .r1{display:flex;justify-content:space-between;align-items:baseline;gap:6px}
   .wl-item .nm{font-weight:600;font-size:12.5px}
   .wl-item .code{color:var(--mut);font-size:10px;margin-left:4px}
@@ -217,8 +219,8 @@
   .news li:last-child{border-bottom:none}
   .news .tm{color:var(--mut-dim);font-size:10.5px;white-space:nowrap;padding-top:1px}
   .badge{font-size:9px;padding:1px 5px;border-radius:2px;white-space:nowrap;font-weight:600}
-  .badge.imp4{background:rgba(226,89,107,.18);color:var(--dn)}
-  .badge.imp3{background:rgba(201,161,90,.18);color:var(--accent)}
+  .badge.imp4{background:rgba(251,113,133,.18);color:var(--dn)}
+  .badge.imp3{background:rgba(142,162,255,.18);color:var(--accent)}
   .badge.imp2{background:rgba(122,132,148,.18);color:var(--mut)}
   .badge.imp1{background:transparent;color:var(--mut-dim);border:1px solid var(--line)}
   .news .txt b{color:var(--txt)}
@@ -266,7 +268,7 @@
   .ern-list li.held{padding-left:7px}
   .ern-list li.held::before{content:"";position:absolute;left:0;top:4px;bottom:4px;
                             width:2px;background:var(--accent);border-radius:1px}
-  .ern-list li.today{background:rgba(201,161,90,.07)}
+  .ern-list li.today{background:rgba(142,162,255,.07)}
   .ern-list .dd{color:var(--mut);font-size:10px;min-width:30px;white-space:nowrap}
   .ern-list li.today .dd{color:var(--accent);font-weight:600}
   .ern-list .dt{color:var(--mut-dim);font-size:10px;white-space:nowrap}
@@ -407,8 +409,8 @@
 
   /* ---- M9: CRITICALアラートの呼吸（box-shadowの広がり。レイアウトに影響しないpaint専用プロパティ） ---- */
   @keyframes alertBreathe{
-    0%,100%{box-shadow:0 0 0 0 rgba(226,89,107,.35)}
-    50%{box-shadow:0 0 0 4px rgba(226,89,107,0)}
+    0%,100%{box-shadow:0 0 0 0 rgba(251,113,133,.35)}
+    50%{box-shadow:0 0 0 4px rgba(251,113,133,0)}
   }
   .alert-list li.breathe{animation:alertBreathe 2.5s ease-in-out infinite}
 
@@ -434,6 +436,187 @@
   .xhair-dot{fill:#fff;transition:transform 80ms linear}
   .ma25-line{fill:none;stroke:var(--accent);stroke-width:1.2;opacity:.85}
 
+
+  /* =====================================================================
+     THEME v2 (2026-11) — 見た目だけの層。データの出し方・状態の書き分けには触れていない。
+     既存のクラス名はそのまま。ここより上の規則を上書きする形で定義している。
+     ===================================================================== */
+  html{background:var(--bg)}
+  body{font-size:13.5px;padding:0 20px 32px;min-height:100vh;
+       background:
+         radial-gradient(1100px 520px at 12% -8%, rgba(142,162,255,.13), transparent 62%),
+         radial-gradient(900px 480px at 96% 0%, rgba(94,234,212,.08), transparent 60%),
+         var(--bg);
+       background-attachment:fixed;-webkit-font-smoothing:antialiased}
+  ::selection{background:rgba(142,162,255,.32)}
+  *{scrollbar-width:thin;scrollbar-color:#2a3348 transparent}
+  ::-webkit-scrollbar{width:8px;height:8px}
+  ::-webkit-scrollbar-thumb{background:#2a3348;border-radius:8px}
+  ::-webkit-scrollbar-track{background:transparent}
+  .wrap{max-width:1920px}
+  .def{font-size:10.5px;color:var(--mut-dim);line-height:1.55;margin-top:10px}
+  .empty{font-size:12.5px;padding:14px 4px}
+
+  /* ---- header ---- */
+  .top{position:sticky;top:0;z-index:50;margin:0 -20px 16px;padding:13px 20px;border-bottom:1px solid rgba(255,255,255,.06);
+       background:rgba(7,10,18,.72);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4)}
+  .brand{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:650;letter-spacing:-.01em;color:var(--txt)}
+  .brand .logo{width:26px;height:26px;border-radius:8px;flex:none;
+               background:conic-gradient(from 210deg,#8ea2ff,#5eead4,#8ea2ff);
+               box-shadow:0 0 0 1px rgba(255,255,255,.12) inset,0 6px 18px rgba(142,162,255,.35);position:relative}
+  .brand .logo::after{content:"";position:absolute;inset:7px;border-radius:3px;background:var(--bg);
+                      clip-path:polygon(0 100%,0 62%,34% 30%,58% 54%,100% 8%,100% 100%)}
+  .brand .bt{background:linear-gradient(90deg,#fff,#b9c4ff 55%,#5eead4);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .brand small{font-size:11.5px;color:var(--mut);margin-left:2px;letter-spacing:.02em}
+  .top-right{gap:16px;font-size:11.5px}
+  .clocks{gap:6px}
+  .clock{padding:4px 9px;border-radius:999px;background:var(--glass);border:1px solid rgba(255,255,255,.06);font-size:11px}
+  #stamp{color:var(--mut-dim);font-family:var(--mono);font-size:10.5px}
+  .mood{padding:5px 13px;border-radius:999px;font-size:11.5px;letter-spacing:.02em}
+  .mood.up{background:rgba(52,211,153,.12);box-shadow:0 0 22px rgba(52,211,153,.18)}
+  .mood.dn{background:rgba(251,113,133,.12);box-shadow:0 0 22px rgba(251,113,133,.18)}
+
+  /* ---- quote strip: 罫線グリッドからカード列へ ---- */
+  .strip{grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:8px;background:none;border:none;margin-bottom:16px}
+  .qc{border-radius:var(--r-md);padding:11px 13px;border:1px solid rgba(255,255,255,.055);
+      background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.012));transition:border-color .15s ease,transform .15s ease}
+  .qc:hover{border-color:var(--ring);transform:translateY(-1px)}
+  .qc .lb{font-size:10.5px;letter-spacing:.05em;color:var(--mut)}
+  .qc .vl{font-size:17px;font-weight:650;letter-spacing:-.01em;margin-top:4px}
+  .qc .ch{font-size:11.5px;margin-top:2px}
+  .freshbar{border-radius:var(--r-md);padding:9px 14px;margin-bottom:14px;font-size:12px}
+
+  /* ---- panels ---- */
+  .cols{gap:14px;grid-template-columns:320px minmax(0,1fr) 350px}
+  @media(max-width:1400px){.cols{grid-template-columns:290px minmax(0,1fr) 310px}}
+  @media(max-width:1080px){.cols{grid-template-columns:1fr 1fr}}
+  @media(max-width:680px){.cols{grid-template-columns:1fr} body{padding:0 12px 24px} .top{margin:0 -12px 12px;padding:10px 12px}}
+  .col,.stack,.center-row{gap:14px}
+  .stack{margin-top:14px}
+  .panel{border-radius:var(--r-lg);border:1px solid rgba(255,255,255,.06);overflow:hidden;
+         background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.008)) , var(--panel);
+         box-shadow:0 1px 0 rgba(255,255,255,.04) inset,0 14px 34px -22px rgba(0,0,0,.9)}
+  .panel:hover{border-color:rgba(142,162,255,.22);transform:none}
+  .panel h2{background:none;border-bottom:none;padding:14px 16px 4px;font-size:11.5px;font-weight:650;
+            letter-spacing:.06em;color:var(--txt);text-transform:none;gap:10px;justify-content:flex-start}
+  .panel h2::before{content:"";width:6px;height:6px;border-radius:50%;flex:none;margin-right:-2px;
+                    background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 0 10px rgba(142,162,255,.7)}
+  .panel h2 .note{margin-left:auto;font-size:10px;font-weight:400;color:var(--mut-dim);text-align:right}
+  .panel h2 .news-filters{margin-left:auto}
+  .panel .body{padding:8px 16px 16px}
+  #panel-impact{margin-bottom:14px}
+
+  /* ---- lists / rows ---- */
+  .wl-item{padding:10px 10px;border-radius:var(--r-sm);border:1px solid transparent;border-bottom:1px solid transparent;margin-bottom:2px}
+  .wl-item:hover{background:rgba(255,255,255,.04)}
+  .wl-item.sel{border-color:var(--ring);background:linear-gradient(90deg,rgba(142,162,255,.14),rgba(142,162,255,.03))}
+  .wl-item .nm{font-size:13.5px}
+  .wl-item .code{font-size:10.5px;font-family:var(--mono)}
+  .wl-item .px{font-size:14.5px}
+  .wl-item .r2{font-size:11.5px;margin-top:3px}
+  .wl-item .r3{font-size:10.5px;margin-top:5px;padding-top:5px;border-top:1px dashed rgba(255,255,255,.06)}
+  .wl-item .fresh,.fund-row .fresh{font-size:10px}
+  .wl-item .flag{font-size:10.5px}
+  .wl-accent{width:3px;border-radius:3px;background:linear-gradient(180deg,var(--accent),var(--accent2))}
+  .fund-row{padding:9px 4px}
+  .fund-row .nm{font-size:12.5px}.fund-row .px{font-size:14px}.fund-row .r2{font-size:11px}
+  .pf-bar{font-size:17px;gap:18px}
+  .pf-row{font-size:12px;margin-bottom:5px}
+  .sent-score{font-size:24px;letter-spacing:-.01em}
+  .sent-detail{font-size:11.5px}
+  .sb-hd .nm{font-size:11.5px}.sb-row{font-size:11.5px;padding:2px 0}.sb-row .cd{font-size:10px;width:38px}
+  #sectorbd-body{max-height:220px}
+  .alert-list li{font-size:12px;padding:8px 10px;border-bottom:none;border-radius:var(--r-sm);margin-bottom:4px;background:rgba(255,255,255,.025)}
+  .alert-list li.sev4{background:rgba(251,113,133,.10)}
+  .alert-list li.sev3{background:rgba(142,162,255,.10)}
+  .ev-list li{font-size:11.5px;padding:6px 2px}
+  .ev-list .tz,.ern-tag,.acc-tag{font-size:9.5px;padding:1px 6px;border-radius:999px}
+  .ev-list .imp{font-size:10px}.ev-list .fcp{font-size:10.5px}
+  .ern-list li{font-size:11.5px;padding:7px 4px 7px 0}
+  .ern-list li.held{padding-left:10px}
+  .ern-list li.today{background:rgba(142,162,255,.09);border-radius:var(--r-sm)}
+  .ern-list .dd,.ern-list .dt{font-size:10.5px}.ern-list .cd,.ern-list .pd{font-size:10px}
+  .ai-lines li{font-size:12.5px}
+
+  /* ---- chart ---- */
+  .chart-title{font-size:17px;font-weight:650;letter-spacing:-.01em}
+  .chart-sub{font-size:11.5px}
+  .periods,.toggles,.news-filters{gap:2px;padding:3px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.05)}
+  .periods button,.toggles button,.news-filters button{border:none;background:none;border-radius:999px;padding:4px 11px;font-size:11px;color:var(--mut);transition:background .15s ease,color .15s ease}
+  .periods button:hover:not(:disabled),.toggles button:hover,.news-filters button:hover{color:var(--txt)}
+  .periods button.on,.toggles button.on,.news-filters button.on{background:rgba(142,162,255,.20);color:#fff;box-shadow:0 0 0 1px var(--ring) inset}
+  .chart-box svg{height:clamp(260px,48vh,540px)}
+  .chart-tip{border-radius:var(--r-sm);padding:7px 10px;font-size:11.5px;border:1px solid rgba(255,255,255,.10);
+             background:rgba(11,15,25,.88);backdrop-filter:blur(8px);box-shadow:0 10px 30px -10px #000}
+  .stat-row{gap:8px;margin-top:12px;font-size:11.5px}
+  .stat-row > span{padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.05)}
+  .cmp-box svg{height:216px}
+  .cmp-legend{font-size:11px;gap:12px}
+  .cmp-legend .sw{width:16px;border-top-width:3px;border-radius:2px}
+  .ma25-line{stroke:#fbbf24;stroke-width:1.2;opacity:.7;stroke-dasharray:4 3}
+
+  /* ---- tables ---- */
+  table.mx{font-size:11.5px}
+  table.mx th,table.mx td{padding:6px 8px}
+  table.mx thead th{font-size:10.5px}
+  table.mx tbody tr:hover td{background-color:rgba(255,255,255,.03)}
+  table.mx .kind{font-size:9.5px}
+  .mx-scale{font-size:10px}.mx-scale i{height:10px;width:24px}
+  .mx-scale i:first-of-type{border-radius:3px 0 0 3px}.mx-scale i:last-of-type{border-radius:0 3px 3px 0}
+  .acc-hdr,.acc-r{font-size:11.5px;padding:8px 8px}
+  .acc-hdr{font-size:10.5px;background:var(--panel)}
+  .acc-r{border-radius:var(--r-sm)}
+  .acc-r.core{box-shadow:inset 3px 0 0 var(--accent)}
+  .acc-d{border-radius:var(--r-md);margin:4px 0 8px;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.05);font-size:11.5px}
+  .acc-d h4{font-size:10.5px}.acc-q{font-size:11px}.acc-ohlc{font-size:10.5px}.acc-sub{font-size:10.5px;margin:12px 0 4px}
+
+  /* ---- heatmap / news ---- */
+  .heat{gap:8px}
+  .hcell{border-radius:var(--r-md);padding:11px 13px;border-color:rgba(255,255,255,.06);background:rgba(255,255,255,.02)}
+  .hcell .nm{font-size:11.5px}.hcell .pc{font-size:18px;font-weight:650;letter-spacing:-.01em}.hcell .mem{font-size:10px}
+  .hcell .fill{opacity:.2}
+  .news li{font-size:12.5px;padding:9px 4px;gap:10px;align-items:center}
+  .news .tm{font-size:11px}.news .src{font-size:10.5px}
+  .badge{font-size:9.5px;padding:2px 8px;border-radius:999px;letter-spacing:.03em}
+  .news .new-mark{border-radius:999px;font-size:9.5px;padding:1px 6px}
+
+  /* ---- footer ---- */
+  .foot{border-top:none;font-size:10.5px;margin-top:8px;padding-top:4px;line-height:1.7}
+  .wrap > .foot:first-of-type{margin-top:22px;padding-top:16px;border-top:1px solid rgba(255,255,255,.06)}
+  #motion-chip{padding:2px 8px;border-radius:999px;background:var(--glass);border:1px solid rgba(255,255,255,.06)}
+  #boot-msg{margin:40px auto;max-width:560px;padding:26px 28px;border-radius:var(--r-lg);font-size:13px;
+            border:1px solid rgba(255,255,255,.07);background:var(--panel)}
+  #fetchbar .run{background:linear-gradient(90deg,transparent,var(--accent),var(--accent2),transparent)}
+
+  /* ---- ⑪ 株価インパクトニュース ---- */
+  .imp-state{padding:18px 6px 6px;font-size:14px;font-weight:600;color:var(--mut)}
+  .imp-state span{display:block;font-size:11px;font-weight:400;color:var(--mut-dim);margin-top:4px}
+  .imp-state.warn{color:var(--dn);font-size:12.5px;font-weight:500}
+  .imp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:12px;margin-top:6px}
+  .imp-card{border-radius:var(--r-md);padding:14px 16px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.022);
+            position:relative;overflow:hidden;min-width:0}
+  .imp-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lv)}
+  .imp-card.hi{--lv:#fb7185}.imp-card.mid{--lv:#fb923c}.imp-card.lo{--lv:#fbbf24}
+  .imp-card header{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px}
+  .imp-score{flex:none;min-width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:18px;font-weight:700;
+             color:var(--lv);border:1px solid color-mix(in srgb,var(--lv) 45%,transparent);background:color-mix(in srgb,var(--lv) 12%,transparent)}
+  .imp-card h3{margin:0 0 5px;font-size:13.5px;font-weight:650;line-height:1.4}
+  .imp-kind{display:inline-block;font-size:9.5px;padding:1px 8px;border-radius:999px;border:1px solid var(--line);color:var(--mut);margin-right:5px}
+  .imp-kind.done{color:var(--accent2);border-color:rgba(94,234,212,.35)}
+  .imp-kind.next{color:var(--accent);border-color:var(--ring)}
+  .imp-kind.hold{color:#fbbf24;border-color:rgba(251,191,36,.4)}
+  .imp-card dl{margin:0;display:grid;grid-template-columns:86px minmax(0,1fr);gap:7px 10px;font-size:11.5px}
+  .imp-card dt{color:var(--mut-dim);font-size:10.5px;padding-top:1px}
+  .imp-card dd{margin:0;color:var(--txt);line-height:1.55;overflow-wrap:anywhere}
+  .imp-chips{display:flex;flex-wrap:wrap;gap:5px}
+  .imp-chip{display:inline-flex;align-items:baseline;gap:5px;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,.04);font-size:10.5px}
+  .imp-chip i{font-style:normal;color:var(--mut)} .imp-chip em{font-style:normal;color:var(--mut-dim);font-size:9.5px}
+  .imp-risk{color:var(--mut)} .imp-note{color:var(--mut-dim);font-size:10px}
+  .imp-src{display:flex;flex-wrap:wrap;gap:5px}
+  .imp-src a,.imp-src span{font-size:10.5px;padding:1px 8px;border-radius:999px;border:1px solid var(--line);color:var(--mut);text-decoration:none}
+  .imp-src a:hover{color:var(--txt);border-color:var(--ring)}
+  @media(max-width:680px){.imp-grid{grid-template-columns:1fr}.imp-card dl{grid-template-columns:1fr;gap:2px 0}.imp-card dt{margin-top:6px}}
+
   /* ---- 演出 OFF: CSS側のアニメーションも止める（Bキーで切替） ---- */
   html[data-motion="OFF"] *{animation:none!important;transition:none!important}
 
@@ -452,7 +635,7 @@
 <div id="fetchbar"><div class="run"></div></div>
 <div class="wrap" id="wrap">
   <div class="top">
-    <div class="brand">MORNING STRATEGIST<small>保有株モーニングダッシュボード</small></div>
+    <div class="brand"><span class="logo" aria-hidden="true"></span><span class="bt">Morning Strategist</span><small>保有株モーニングダッシュボード</small></div>
     <div class="top-right">
       <span class="clocks" id="clocks"></span>
       <span id="stamp">—</span>
@@ -465,6 +648,11 @@
   <div id="main" style="display:none">
     <div class="freshbar" id="freshbar" hidden></div>
     <div class="strip" id="strip"></div>
+
+    <div class="panel full" id="panel-impact">
+      <h2>株価インパクトニュース<span class="note">ルール採点・60点以上のみ・最大5件</span></h2>
+      <div class="body" id="impact-body"></div>
+    </div>
 
     <div class="cols">
       <div class="col col-left">
@@ -1230,12 +1418,12 @@ function renderChart(){
   const pts = closes.map((v,i)=>`${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
   const maPts = maValid ? maSlice.map((v,i)=>v==null?null:`${x(i).toFixed(1)},${y(v).toFixed(1)}`).filter(Boolean).join(" ") : "";
   const up = closes[closes.length-1] >= closes[0];
-  const col = up ? "#3fbf80" : "#e2596b";
+  const col = up ? "#34d399" : "#fb7185";
 
   const gridLines = tickVals.map((v,i)=>{
     const yy = y(v);
-    return `<line x1="${padL}" x2="${W-padR}" y1="${yy}" y2="${yy}" stroke="#1a2029" stroke-width="1"/>` +
-      `<text x="${padL-6}" y="${yy+3}" text-anchor="end" font-size="9" fill="#7a8494">${tickLabels[i]}</text>`;
+    return `<line x1="${padL}" x2="${W-padR}" y1="${yy}" y2="${yy}" stroke="rgba(255,255,255,.055)" stroke-width="1"/>` +
+      `<text x="${padL-6}" y="${yy+3}" text-anchor="end" font-size="9" fill="#8b96ab">${tickLabels[i]}</text>`;
   });
 
   // 出来高の棒。色は前日比の向きで分けるが、価格ラインより彩度を落とす
@@ -1245,23 +1433,27 @@ function renderChart(){
     const vmax = Math.max(...vols) || 1;
     const step = (W-padL-padR)/Math.max(1, vols.length);
     const bw = Math.max(0.6, step*0.72);
-    volSvg = `<line x1="${padL}" x2="${W-padR}" y1="${VB}" y2="${VB}" stroke="#1a2029" stroke-width="1"/>`
+    volSvg = `<line x1="${padL}" x2="${W-padR}" y1="${VB}" y2="${VB}" stroke="rgba(255,255,255,.055)" stroke-width="1"/>`
       + vols.map((v,i)=>{
           const hgt = Math.max(0.5, VH * (v/vmax));
           const prev = i>0 ? closes[i-1] : closes[i];
-          const c = closes[i] >= prev ? "#2f6f52" : "#743640";
+          const c = closes[i] >= prev ? "rgba(52,211,153,.38)" : "rgba(251,113,133,.38)";
           return `<rect x="${(x(i)-bw/2).toFixed(1)}" y="${(VB-hgt).toFixed(1)}" width="${bw.toFixed(1)}" height="${hgt.toFixed(1)}" fill="${c}"/>`;
         }).join("")
-      + `<text x="${padL-6}" y="${(VT+8).toFixed(1)}" text-anchor="end" font-size="8.5" fill="#4a5462">${esc(compactNum(vmax))}</text>`
-      + `<text x="${padL-6}" y="${(VB).toFixed(1)}" text-anchor="end" font-size="8.5" fill="#4a5462">0</text>`
-      + `<text x="${W-padR}" y="${(VT-2).toFixed(1)}" text-anchor="end" font-size="8.5" fill="#4a5462">出来高（株・期間内最大を上端）</text>`;
+      + `<text x="${padL-6}" y="${(VT+8).toFixed(1)}" text-anchor="end" font-size="8.5" fill="#5a657b">${esc(compactNum(vmax))}</text>`
+      + `<text x="${padL-6}" y="${(VB).toFixed(1)}" text-anchor="end" font-size="8.5" fill="#5a657b">0</text>`
+      + `<text x="${W-padR}" y="${(VT-2).toFixed(1)}" text-anchor="end" font-size="8.5" fill="#5a657b">出来高（株・期間内最大を上端）</text>`;
   }
 
   box.innerHTML = `<svg viewBox="0 0 ${W} ${totalH}" preserveAspectRatio="none">
       ${gridLines.join("")}
       ${volSvg}
+      <defs><linearGradient id="px-area" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="${col}" stop-opacity=".22"/><stop offset="1" stop-color="${col}" stop-opacity="0"/>
+      </linearGradient></defs>
+      <polygon class="price-area" fill="url(#px-area)" points="${x(0).toFixed(1)},${(Hh-padB).toFixed(1)} ${pts} ${x(closes.length-1).toFixed(1)},${(Hh-padB).toFixed(1)}"/>
       ${maValid ? `<polyline class="ma25-line" points="${maPts}"/>` : ""}
-      <polyline class="price-line" fill="none" stroke="${col}" stroke-width="1.6" points="${pts}"/>
+      <polyline class="price-line" fill="none" stroke="${col}" stroke-width="1.8" stroke-linejoin="round" points="${pts}"/>
       <line class="xhair-line" x1="0" y1="${padT}" x2="0" y2="${vols?VB:Hh-padB}" style="display:none"/>
       <circle class="xhair-dot" r="3" cx="0" cy="0" style="display:none"/>
     </svg><div class="chart-tip" id="chart-tip"></div>`;
@@ -2058,7 +2250,7 @@ function renderSysInfo(d){
    ========================================================================== */
 
 // 保有=実線 / ウォッチ=破線。色は既存トーンの範囲で、彩度を上げない。
-const CMP_COLORS = ["#c9a15a", "#5b9bd5", "#3fbf80", "#b07aa1", "#7a8494"];
+const CMP_COLORS = ["#8ea2ff", "#5eead4", "#fbbf24", "#f472b6", "#94a3b8"];
 const CMP = { scale: "log", off: new Set() };
 
 // マトリクス用: hist の有無に関わらず保有+ウォッチの全銘柄を返す。
@@ -2147,15 +2339,15 @@ function renderCompare(){
 
   const grid = tickVals.map((t,i)=>{
     const yy = padT + (H-padT-padB) * (1-(t-mn)/(mx-mn));
-    return `<line x1="${padL}" x2="${W-padR}" y1="${yy.toFixed(1)}" y2="${yy.toFixed(1)}" stroke="#1a2029"/>`
-         + `<text x="${padL-5}" y="${(yy+3).toFixed(1)}" text-anchor="end" font-size="8.5" fill="#7a8494">${tickLabels[i]}</text>`;
+    return `<line x1="${padL}" x2="${W-padR}" y1="${yy.toFixed(1)}" y2="${yy.toFixed(1)}" stroke="rgba(255,255,255,.055)"/>`
+         + `<text x="${padL-5}" y="${(yy+3).toFixed(1)}" text-anchor="end" font-size="8.5" fill="#8b96ab">${tickLabels[i]}</text>`;
   }).join("");
 
   // 基準線100
   let baseLine = "";
   if(100 >= inv(mn) && 100 <= inv(mx)){
     const yy = y(100);
-    baseLine = `<line x1="${padL}" x2="${W-padR}" y1="${yy.toFixed(1)}" y2="${yy.toFixed(1)}" stroke="#4a5462" stroke-dasharray="3 3"/>`;
+    baseLine = `<line x1="${padL}" x2="${W-padR}" y1="${yy.toFixed(1)}" y2="${yy.toFixed(1)}" stroke="#5a657b" stroke-dasharray="3 3"/>`;
   }
 
   const paths = series.map(sr=>{
@@ -2238,7 +2430,7 @@ function mxCell(v){
   const a = Math.abs(v);
   const lvl = a >= MX_STOPS[2] ? 3 : a >= MX_STOPS[1] ? 2 : a >= MX_STOPS[0] ? 1 : 0;
   const alpha = [0, 0.10, 0.20, 0.32][lvl];
-  const rgb = v >= 0 ? "63,191,128" : "226,89,107";
+  const rgb = v >= 0 ? "52,211,153" : "251,113,133";
   const bg = lvl ? `background:rgba(${rgb},${alpha})` : "";
   return `<td class="${cls(v)}" style="${bg}">${pc(v)}</td>`;
 }
@@ -2286,9 +2478,9 @@ function renderMatrix(){
 
   const scale = `<div class="mx-scale">
       <span>色:</span>
-      <i style="background:rgba(226,89,107,.32)"></i><i style="background:rgba(226,89,107,.20)"></i><i style="background:rgba(226,89,107,.10)"></i>
+      <i style="background:rgba(251,113,133,.32)"></i><i style="background:rgba(251,113,133,.20)"></i><i style="background:rgba(251,113,133,.10)"></i>
       <i style="background:transparent;border:1px solid var(--line)"></i>
-      <i style="background:rgba(63,191,128,.10)"></i><i style="background:rgba(63,191,128,.20)"></i><i style="background:rgba(63,191,128,.32)"></i>
+      <i style="background:rgba(52,211,153,.10)"></i><i style="background:rgba(52,211,153,.20)"></i><i style="background:rgba(52,211,153,.32)"></i>
       <span>-7%以下 / -3% / -1% ｜ 0 ｜ +1% / +3% / +7%以上（0を中心に対称）</span>
     </div>`;
 
@@ -2355,6 +2547,60 @@ function renderSectorBreakdown(d){
   + `取得できなかった銘柄は分母から外している。</div>`;
 }
 
+/* ---- ⑪ 株価インパクトニュース ----
+   dashboard.json の impact_news / impact_status をそのまま出す。ここでは計算も補完もしない。
+   状態は4つを必ず書き分ける:
+     ok      … 該当あり
+     empty   … 取得はできたが60点以上が無い（＝本日は大きな材料なし）
+     failed  … 取得できていない（材料ゼロではない）
+     (キー無し) … この dashboard.json にはまだ判定が入っていない（旧形式・未生成）
+   方向の表現は「上昇要因/下落要因/中立」だけ。投資判断の語は出さない。 */
+function safeUrl(u){ return /^https?:\/\//i.test(u||"") ? u : null; }
+function renderImpact(d){
+  const el = document.getElementById("impact-body");
+  if(!el) return;
+  const st = d.impact_status, rows = d.impact_news;
+  if(st === undefined){
+    el.innerHTML = '<div class="imp-state warn">まだ生成されていません（この dashboard.json には判定が含まれていません。「材料なし」ではありません）</div>';
+    return;
+  }
+  if(st === "failed" || !Array.isArray(rows)){
+    el.innerHTML = '<div class="imp-state warn">取得できていません（全ソースの取得に失敗、または判定の生成に失敗。「材料なし」ではありません）</div>';
+    return;
+  }
+  if(st === "empty" || !rows.length){
+    el.innerHTML = '<div class="imp-state">本日は大きな材料なし<span>60点以上の該当なし（取得は成功）</span></div>';
+    return;
+  }
+  el.innerHTML = '<div class="imp-grid">' + rows.map(it=>{
+    const sc = Number(it.score);
+    const lv = sc>=80 ? "hi" : sc>=70 ? "mid" : "lo";
+    const mr = (it.market_reaction||[]).map(r=>{
+      const v = Number(r.chg_pct);
+      return `<span class="imp-chip"><i>${esc(r.name||r.code)}</i><b class="num ${cls(v)}">${isFinite(v)?pc(v):"—"}</b><em>${esc(r.as_of||"")}</em></span>`;
+    }).join("") || '<span class="na">対応する指標なし</span>';
+    const p = it.prediction;
+    const pred = p
+      ? `<b class="${p.direction==="上昇要因"?"up":p.direction==="下落要因"?"dn":"flat"}">${esc(p.direction)}</b> ${esc(p.reason)}<br><span class="imp-risk">外れるパターン: ${esc(p.risk)}</span><br><span class="imp-note">${esc(p.note||"予測であり保証ではありません")}</span>`
+      : '<span class="na">なし（予測は生成されていません）</span>';
+    const src = (it.sources||[]).map(s=>{
+      const u = safeUrl(s.url);
+      return u ? `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(s.media)}</a>` : `<span>${esc(s.media)}</span>`;
+    }).join("");
+    return `<article class="imp-card ${lv}">
+      <header><span class="imp-score num">${isFinite(sc)?sc:"—"}</span>
+        <div><h3>${esc(it.headline)}</h3>
+        <span class="imp-kind ${it.kind==="反応済み"?"done":"next"}">${esc(it.kind)}</span>${it.affects_holdings?'<span class="imp-kind hold">保有銘柄に関係</span>':""}</div></header>
+      <dl>
+        <dt>事実</dt><dd>${esc(it.fact)}</dd>
+        <dt>市場の反応</dt><dd class="imp-chips">${mr}</dd>
+        <dt>効く業種・銘柄</dt><dd>${(it.affected||[]).length ? (it.affected||[]).map(esc).join("・") : "特定なし（市場全体）"}</dd>
+        <dt>予測</dt><dd>${pred}</dd>
+        <dt>出典</dt><dd class="imp-src">${src || '<span class="na">—</span>'}</dd>
+      </dl></article>`;
+  }).join("") + '</div><div class="def">点数はルール計算。市場の反応は同時間帯の指標の前日比で、因果関係を検証したものではない。投資助言ではない。</div>';
+}
+
 /* ---- top-level paint ---- */
 function renderAll(){
   const d = STATE.data;
@@ -2364,6 +2610,7 @@ function renderAll(){
   if(mood==null){ moodEl.className="mood na"; moodEl.textContent="判定不能"; }
   else { moodEl.className = "mood "+(mood<0?"dn":"up"); moodEl.textContent = mood<0?"リスクオフ ▼":"リスクオン ▲"; }
   renderFreshness(d);
+  renderImpact(d);
   renderWatchlist(d.holds);
   // 非保有ウォッチ。保有パネルとは別枠にして、ポートフォリオ統計には混ぜない。
   showPanel("panel-watchonly", !!(d.watch && d.watch.length));
