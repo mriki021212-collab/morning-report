@@ -671,6 +671,43 @@
   .wl-item{padding:9px 10px}
   .chart-box svg{height:clamp(280px,52vh,600px)}
 
+  /* ---- ⑪ 全候補一覧 ---- */
+  #imp-board:not(:empty){margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.06)}
+  .impb-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:9px}
+  .impb-head b{font-size:12.5px;font-weight:650}
+  .impb-head span{font-size:10.5px;color:var(--mut-dim)}
+  .impb-filters{display:flex;flex-wrap:wrap;gap:8px 14px;margin-bottom:10px}
+  .impb-seg{display:flex;flex-wrap:wrap;gap:4px}
+  .impb-seg button{border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03);color:var(--mut);border-radius:999px;
+                   padding:4px 11px;font-size:11px;cursor:pointer;font-family:var(--sans);transition:background .15s ease,color .15s ease}
+  .impb-seg button i{font-style:normal;font-family:var(--mono);font-size:10px;margin-left:6px;color:var(--mut-dim)}
+  .impb-seg button:hover:not(:disabled){color:var(--txt)}
+  .impb-seg button.on{background:rgba(142,162,255,.20);color:#fff;border-color:var(--ring)}
+  .impb-seg button.on i{color:#cfd6ff}
+  .impb-seg button:disabled{opacity:.32;cursor:default}
+  .impb-list{list-style:none;margin:0;padding:0 4px 0 0;max-height:520px;overflow:auto;
+             display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 12px}
+  @media(max-width:1200px){.impb-list{grid-template-columns:minmax(0,1fr)}}
+  .impb-row{display:flex;align-items:center;gap:11px;padding:8px 11px;border-radius:var(--r-sm);min-width:0;
+            background:rgba(255,255,255,.022);border:1px solid rgba(255,255,255,.045)}
+  .impb-row:hover{border-color:rgba(142,162,255,.25)}
+  .impb-row.hi{--lv:#fb7185}.impb-row.mid{--lv:#fb923c}.impb-row.lo{--lv:#fbbf24}.impb-row.sub{--lv:#64748b}
+  .impb-sc{flex:none;width:36px;height:30px;border-radius:8px;display:grid;place-items:center;font-size:13.5px;font-weight:700;
+           color:var(--lv);background:color-mix(in srgb,var(--lv) 13%,transparent);border:1px solid color-mix(in srgb,var(--lv) 40%,transparent)}
+  .impb-main{flex:1;min-width:0}
+  .impb-ttl{font-size:12.5px;font-weight:600;line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .impb-ttl a{text-decoration:none}.impb-ttl a:hover{text-decoration:underline}
+  .impb-ttl em{font-style:normal;font-size:9.5px;color:var(--mut-dim);margin-left:6px;font-weight:400}
+  .impb-row.sub .impb-ttl{font-weight:500;color:var(--mut)}
+  .impb-meta{display:flex;flex-wrap:wrap;align-items:center;gap:4px 5px;margin-top:4px}
+  .impb-tag{font-size:9.5px;padding:1px 7px;border-radius:999px;background:rgba(255,255,255,.05);color:var(--mut)}
+  .impb-tag.sub{background:none;border:1px dashed var(--line);color:var(--mut-dim)}
+  .impb-src{font-size:10px;color:var(--mut-dim);margin-left:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+  .impb-ind{flex:none;text-align:right;font-size:10px;display:flex;flex-direction:column;gap:1px}
+  .impb-ind i{font-style:normal;color:var(--mut-dim);max-width:92px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .impb-ind b{font-size:12px}
+  @media(max-width:680px){.impb-ttl{white-space:normal}.impb-ind i{max-width:64px}}
+
   /* ---- 演出 OFF: CSS側のアニメーションも止める（Bキーで切替） ---- */
   html[data-motion="OFF"] *{animation:none!important;transition:none!important}
 
@@ -2610,12 +2647,64 @@ function renderSectorBreakdown(d){
      (キー無し) … この dashboard.json にはまだ判定が入っていない（旧形式・未生成）
    方向の表現は「上昇要因/下落要因/中立」だけ。投資判断の語は出さない。 */
 function safeUrl(u){ return /^https?:\/\//i.test(u||"") ? u : null; }
-function renderImpact(d){
-  const el = document.getElementById("impact-body");
+/* 一覧（全候補）。dashboard.json の impact_board をそのまま並べる。点数・部門は Python 側の計算結果で、
+   ここでは絞り込みと並べ替えの表示だけを行う。60点未満は「基準未満（参考）」と必ず明記する。 */
+let IMP_TIER = "all", IMP_TAG = "all";
+const IMP_TIERS = [
+  ["all","すべて",()=>true], ["90","90点以上",s=>s>=90], ["80","80点台",s=>s>=80&&s<90],
+  ["70","70点台",s=>s>=70&&s<80], ["60","60点台",s=>s>=60&&s<70], ["50","50点台",s=>s>=50&&s<60],
+  ["u50","49点以下",s=>s<50],
+];
+function impLv(sc){ return sc>=80 ? "hi" : sc>=70 ? "mid" : sc>=60 ? "lo" : "sub"; }
+function renderImpactBoard(d){
+  const el = document.getElementById("imp-board");
   if(!el) return;
+  const rows = d.impact_board;
+  // 旧形式(キー無し)・取得失敗のときは一覧を出さない（上の状態表示がその理由を述べている）
+  if(!Array.isArray(rows) || d.impact_status === "failed" || d.impact_status === undefined){ el.innerHTML = ""; return; }
+  if(!rows.length){ el.innerHTML = '<div class="impb-head"><b>全候補一覧</b><span>一覧に出せる候補はありません（20点以上の該当なし）</span></div>'; return; }
+  const tagNames = [...new Set(rows.flatMap(r=>r.tags||[]))];
+  const tierFn = (IMP_TIERS.find(t=>t[0]===IMP_TIER)||IMP_TIERS[0])[2];
+  const inTag = r => IMP_TAG==="all" || (r.tags||[]).includes(IMP_TAG);
+  const shown = rows.filter(r=>tierFn(Number(r.score)) && inTag(r));
+  const tierBtns = IMP_TIERS.map(([k,lb,fn])=>{
+    const n = rows.filter(r=>fn(Number(r.score)) && inTag(r)).length;
+    return `<button data-tier="${k}" class="${k===IMP_TIER?"on":""}" ${n?"":"disabled"}>${lb}<i>${n}</i></button>`;
+  }).join("");
+  const tagBtns = [["all","全部門"]].concat(tagNames.map(t=>[t,t])).map(([k,lb])=>{
+    const n = rows.filter(r=>tierFn(Number(r.score)) && (k==="all" || (r.tags||[]).includes(k))).length;
+    return `<button data-tag="${esc(k)}" class="${k===IMP_TAG?"on":""}" ${n?"":"disabled"}>${esc(lb)}<i>${n}</i></button>`;
+  }).join("");
+  const list = shown.map(r=>{
+    const sc = Number(r.score), u = safeUrl(r.url);
+    const ind = r.indicator && isFinite(Number(r.indicator.chg_pct))
+      ? `<span class="impb-ind"><i>${esc(r.indicator.name||"")}</i><b class="num ${cls(Number(r.indicator.chg_pct))}">${pc(Number(r.indicator.chg_pct))}</b></span>` : "";
+    const why = (r.breakdown||[]).map(b=>`${b.rule} ${b.points}`).join(" + ") + (r.capped?"（1ソースのみ・上限50）":"");
+    const media = (r.media||[]).map(esc).join("・") + (r.n_media>(r.media||[]).length ? ` ほか${r.n_media-(r.media||[]).length}` : "");
+    return `<li class="impb-row ${impLv(sc)}" title="${esc(why)}">
+      <span class="impb-sc num">${isFinite(sc)?sc:"—"}</span>
+      <div class="impb-main">
+        <div class="impb-ttl">${u?`<a href="${esc(u)}" target="_blank" rel="noopener">${esc(r.headline)}</a>`:esc(r.headline)}${r.adjusted?'<em>※表記調整</em>':""}</div>
+        <div class="impb-meta"><span class="imp-kind ${r.kind==="反応済み"?"done":"next"}">${esc(r.kind)}</span>${(r.tags||[]).map(t=>`<span class="impb-tag">${esc(t)}</span>`).join("")}${sc<60?'<span class="impb-tag sub">基準未満（参考）</span>':""}<span class="impb-src">${media} · ${esc(r.when||"")}</span></div>
+      </div>${ind}</li>`;
+  }).join("");
+  el.innerHTML = `<div class="impb-head"><b>全候補一覧</b><span>点数順・${rows.length}件。60点未満は表示基準に届かなかった参考情報。行にカーソルで点数の内訳</span></div>
+    <div class="impb-filters"><div class="impb-seg" id="impb-tier">${tierBtns}</div><div class="impb-seg" id="impb-tag">${tagBtns}</div></div>
+    ${shown.length ? `<ul class="impb-list">${list}</ul>` : '<div class="empty">この条件に該当する候補はありません</div>'}`;
+  el.querySelectorAll("#impb-tier button").forEach(b=>b.onclick=()=>{ IMP_TIER=b.dataset.tier; renderImpactBoard(STATE.data); });
+  el.querySelectorAll("#impb-tag button").forEach(b=>b.onclick=()=>{ IMP_TAG=b.dataset.tag; renderImpactBoard(STATE.data); });
+}
+function renderImpact(d){
+  const host = document.getElementById("impact-body");
+  if(!host) return;
+  if(!document.getElementById("imp-top")) host.innerHTML = '<div id="imp-top"></div><div id="imp-board"></div>';
+  renderImpactTop(d, document.getElementById("imp-top"));
+  renderImpactBoard(d);
+}
+function renderImpactTop(d, el){
   const st = d.impact_status, rows = d.impact_news;
   // 中身がカードのとき以外は帯表示。見た目だけで、文言と状態の書き分けは下のまま。
-  document.getElementById("panel-impact").classList.toggle("slim", !(st === "ok" && Array.isArray(rows) && rows.length));
+  document.getElementById("panel-impact").classList.toggle("slim", !(st === "ok" && Array.isArray(rows) && rows.length) && !((d.impact_board||[]).length && st !== "failed" && st !== undefined));
   if(st === undefined){
     el.innerHTML = '<div class="imp-state warn">まだ生成されていません（この dashboard.json には判定が含まれていません。「材料なし」ではありません）</div>';
     return;

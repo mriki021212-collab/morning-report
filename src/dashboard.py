@@ -279,6 +279,8 @@ def build(facts: dict, hist: dict) -> dict:
     # ⑪ 株価インパクトニュース。値(impact_news)と状態(impact_status: ok/empty/failed)を別キーで。
     # 空配列だけでは「材料なし」と「取得失敗」を区別できないため。
     out["impact_news"], out["impact_status"] = impact.dashboard_block(facts.get("impact"))
+    # 一覧用の全候補（60点未満も含む・点数順）。impact_status が failed のときは空のまま。
+    out["impact_board"] = impact.dashboard_board(facts.get("impact"))
 
     if sectors:
         out["sectors"] = sectors

@@ -82,7 +82,8 @@ def all_text(res: dict) -> str:
     md = "\n".join(impact.render_md(res))
     dc = json.dumps(impact.discord_fields(res), ensure_ascii=False)
     db = json.dumps(impact.dashboard_block(res), ensure_ascii=False)
-    return md + dc + db
+    bd = json.dumps(impact.dashboard_board(res), ensure_ascii=False)
+    return md + dc + db + bd
 
 
 # ---------------------------------------------------------------- 1. 過去日の再現

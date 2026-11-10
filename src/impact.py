@@ -746,6 +746,40 @@ def build_item(c: dict, focus: dict, facts: dict) -> dict:
     }
 
 
+CATEGORY_LABELS = {
+    "politics_geo": "政治・地政学", "monetary_macro": "金融政策・指標", "earnings_revision": "決算修正",
+    "scandal": "不祥事・訴訟", "ma_buyback": "M&A・自社株", "scheduled_earnings": "決算予定",
+    "market_wide": "市況",
+}
+
+
+def board_row(c: dict, focus: dict, facts: dict, imp: dict) -> dict:
+    """一覧用の1行。見出し・点数・部門・媒体名・代表URLだけ（本文は持たない）。"""
+    rep = c["rep"]
+    title, adj = sanitize(rep["title"])
+    text = " ".join(x["title"] for x in c["members"])
+    tags = [CATEGORY_LABELS[k] for k in c["cats"] if k in CATEGORY_LABELS]
+    if c["related"] or any(k in text for k in imp.get("semis_keywords", [])):
+        tags.append("保有・半導体")
+    outlets = list(dict.fromkeys(x["media"] for x in c["members"]))
+    k = c["key_indicator"]
+    return {
+        "headline": title if len(title) <= 60 else title[:59] + "…",
+        "adjusted": adj,  # 禁止表現の言い換えをしたか（原文そのままではない印）
+        "score": c["score"], "kind": c["kind"], "tags": tags or ["その他"],
+        "media": outlets[:4], "n_media": len(outlets), "url": rep["link"],
+        "when": _fmt_when(rep["when"]),
+        "capped": c["single_source_capped"],
+        "breakdown": [{"rule": sanitize(r)[0], "points": p} for r, p in c["breakdown"]],
+        "indicator": ({"name": k.get("name"), "chg_pct": k.get("chg_pct"), "as_of": k.get("as_of")}
+                      if k else None),
+    }
+
+
+def dashboard_board(imp: dict | None) -> list:
+    return list((imp or {}).get("board") or [])
+
+
 def build(facts: dict, cfg: dict, earnings: dict | None = None, now: dt.datetime | None = None,
           fetcher=None, sources: list[dict] | None = None, llm_caller=None,
           use_llm: bool = True, after: dt.date | None = None, before: dt.date | None = None) -> dict:
@@ -784,6 +818,9 @@ def build(facts: dict, cfg: dict, earnings: dict | None = None, now: dt.datetime
     picked = [c for c in clusters if c["score"] >= imp["min_score"]][:imp.get("max_items", 5)]
 
     out_items = [build_item(c, focus, facts) for c in picked]
+    # 一覧用: 60点未満も含めた全候補（点数順）。上位5件の選定とは独立で、Discord/.md には出さない。
+    board = [board_row(c, focus, facts, imp) for c in clusters
+             if c["score"] >= imp.get("board_min_score", 20)][:imp.get("board_max_rows", 80)]
 
     conf = llm_config() if use_llm else None
     for it in out_items:
@@ -810,6 +847,7 @@ def build(facts: dict, cfg: dict, earnings: dict | None = None, now: dt.datetime
                         "failed": "取得できていません（全ソース取得失敗）"}[status],
         "window_jst": [start.isoformat(), now.isoformat()],
         "items": out_items,
+        "board": board,
         "n_candidates": len(pool), "n_clusters": len(clusters),
         "near_miss": [{"headline": sanitize(_headline(c["rep"]["title"]))[0], "score": c["score"]}
                       for c in clusters if c["score"] < imp["min_score"]][:5],

@@ -421,6 +421,9 @@ impact:
   enabled: true
   min_score: 60          # これ未満は出さない
   max_items: 5           # 反応済み + これから効く の合計
+  # ダッシュボードの「全候補一覧」。60点未満も含めて点数順に出す（上位5件の選定とは別）。
+  board_min_score: 20    # これ未満の候補は一覧にも出さない
+  board_max_rows: 80
   single_source_cap: 50  # 媒体が1つしか無い話はここで頭打ち
   request_timeout_sec: 10
   llm_budget_sec: 70     # 開始からこの秒数を過ぎたら残りの予測は呼ばない（全体90秒以内のため）
