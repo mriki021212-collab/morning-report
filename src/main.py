@@ -11,6 +11,7 @@ import yaml
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 import accumulation, analogs, collect, dashboard, earnings, econ, fx, jquants, news, notify, render, tdnet  # noqa: E402
+import impact  # noqa: E402
 import postguard  # noqa: E402
 import yahoo_jp  # noqa: E402
 
@@ -311,6 +312,39 @@ def build_facts(cfg: dict, session: str = "morning") -> dict:
     return facts, hist
 
 
+def _impact(cfg: dict, facts: dict, hist: dict, earnings_data, session: str,
+            out: pathlib.Path, today: dt.date) -> dict | None:
+    if not (cfg.get("impact") or {}).get("enabled", False):
+        return None
+    if session == "afternoon":
+        # 後場は対象期間(当日15:30〜)が30分しか無い。朝の判定をそのまま引き継ぎ、引き継いだと明記する。
+        p = out / f"facts_{today:%Y%m%d}.json"
+        try:
+            m = json.loads(p.read_text(encoding="utf-8")).get("impact")
+        except Exception:
+            m = None
+        if m:
+            m = {**m, "carried_from_morning": True,
+                 "note": m.get("note", "") + " ※朝(寄り付き前)の判定を引き継いだもの。"}
+        return m
+    try:
+        res = impact.build(facts, cfg, earnings=earnings_data,
+                           use_llm="--no-llm" not in sys.argv)
+        print(f"impact: {res['status']} {len(res['items'])}件 / 候補{res['n_candidates']} "
+              f"/ ソース失敗{len(res['source_errors'])} / {res['elapsed_sec']}秒")
+    except Exception:
+        print("impact の生成に失敗（レポートは続行）:\n" + traceback.format_exc())
+        return None
+    try:
+        now = dt.datetime.now(JST)
+        filled = impact.fill_next_day(hist, now)
+        added = impact.append_log(res, now)
+        print(f"impact_log: 追記{added}行 / 翌営業日の値を記入{filled}行")
+    except Exception:
+        print("impact_log の記録に失敗（レポートは続行）:\n" + traceback.format_exc())
+    return res
+
+
 def main() -> None:
     cfg = yaml.safe_load((ROOT / "config.yaml").read_text(encoding="utf-8"))
     # 大引け後の「本日の振り返り＋明日の予測」モード。無指定なら従来どおり寄り付き前レポート。
@@ -352,14 +386,21 @@ def main() -> None:
         return
     try:
         facts, hist = build_facts(cfg, session=session)
-        dashboard.write(facts, hist, out)
         # 決算カレンダーはレポート本体とは独立。落ちてもレポートは止めない。
         # ただし握りつぶさず、失敗はログに出して earnings.json の failed に残す。
+        # ⑪ が「これから効く」の決算予定に使うため、dashboard.write より先に回す。
+        e = None
         try:
             e = earnings.write(cfg, out)
             print(f"earnings: {len(e['events'])}件 / 取得不可 {len(e['failed'])}銘柄")
         except Exception:
             print("earnings の生成に失敗（レポートは続行）:\n" + traceback.format_exc())
+
+        # ⑪ 株価インパクトニュース。これも落ちてもレポートは止めない。
+        # 落ちた場合は facts["impact"] = None → 画面/Discord/.md は「取得できていません」になる
+        # （「材料なし」とは別表示）。
+        facts["impact"] = _impact(cfg, facts, hist, e, session, out, today)
+        dashboard.write(facts, hist, out)
 
         # 買い集め検出。これもレポート本体とは独立。落ちてもレポートは止めない。
         # hist は既に取得済みのOHLCV日足なので再取得しない（不足時だけ fetch する）。

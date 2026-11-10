@@ -5,6 +5,8 @@ LLMを使わずに facts.json を読めるレポートに整形する。
 """
 from __future__ import annotations
 
+import impact
+
 
 def _n(v, unit="", d=2):
     if v is None:
@@ -378,6 +380,7 @@ def _rest_of_morning(L: list, facts: dict) -> str:
 
     L += _accumulation_section(facts)
     L += _econ_section(facts)
+    L += impact.render_md(facts.get("impact"))
 
     # 欠損一覧
     L.append(_sec("データ欠損一覧"))

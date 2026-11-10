@@ -5,6 +5,8 @@ import os
 import json
 import requests
 
+import impact
+
 JST = dt.timezone(dt.timedelta(hours=9))
 
 GREEN = 0x2ECC71
@@ -402,12 +404,22 @@ def build_payload(report: str, audit_result: str = "OK", facts: dict | None = No
 
     title = (f"🌇 アフタヌーンレポート {now:%Y/%m/%d (%a) %H:%M} JST"
              if afternoon else f"🗾 モーニングレポート {now:%Y/%m/%d (%a) %H:%M} JST")
+    description = _conclusion(facts, audit_result) if facts else "⚪ **データ取得なし**"
+
+    # ⑪ 株価インパクトニュース（朝のみ）。経済指標の直後に差し込む。
+    # embed 全体の 6000 字上限から既存フィールドの分を引いた残りを予算として渡し、
+    # 超えるときは impact 側が出典URLを省いて「URLは添付.md」と明記する。
+    if facts and not afternoon:
+        used = len(title) + len(description) + 40 + sum(len(f["name"]) + len(f["value"]) for f in fields)
+        imp_fields = impact.discord_fields(facts.get("impact"), budget=max(800, 5800 - used))
+        pos = next((i + 1 for i, f in enumerate(fields) if f["name"].startswith("📅")), len(fields))
+        fields[pos:pos] = imp_fields[:25 - len(fields)]
     return {
         "username": "Morning Strategist",
         "embeds": [{
             "title": title,
             "url": DASHBOARD_URL,
-            "description": _conclusion(facts, audit_result) if facts else "⚪ **データ取得なし**",
+            "description": description,
             "color": color,
             "fields": fields,
             "footer": {"text": "自動生成レポート・投資助言ではありません"},

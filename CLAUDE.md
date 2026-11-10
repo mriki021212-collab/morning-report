@@ -50,7 +50,7 @@ python src/score.py 30            # scores the last 30 out/report_*.md files
 .\.venv\Scripts\python.exe -c "import src.tdnet as t; import json; print(json.dumps(t.fetch(['7974.T','5803.T','6740.T','285A.T']), ensure_ascii=False, indent=1))"
 ```
 
-There is no test suite, linter, or type checker configured in this repo — validate changes by running
+Apart from `tests/test_impact.py` (⑪ only), there is no test suite, linter, or type checker configured in this repo — validate changes by running
 `src/main.py --force --no-llm` and inspecting the generated `out/facts_YYYYMMDD.json` / `out/report_YYYYMMDD.md`.
 
 ## Architecture
@@ -128,6 +128,18 @@ Collector modules (`src/collect.py`, `src/jquants.py`, `src/news.py`, `src/tdnet
   `MIN_CANDIDATES`, `MAX_TOPK_RATIO`) that return the "insufficient history" status instead of a
   low-confidence result; 285A (Kioxia, listed Dec 2024) fails these gates and falls back to
   `peer_proxy_analog` (proxy stocks defined in `config.yaml`) — preserve this fallback when editing.
+
+- **`impact.py`** — ⑪ 株価インパクトニュース. Reuses the ⑥-A/B/C results already in `facts` and adds
+  the official/major/market-wrap feeds listed in `impact.SOURCES` (each one measured and recorded in
+  `docs/impact_sources.md`; re-measure with `python src/impact.py --probe`). Clusters stories, scores them
+  by **rules only** (weights in `config.yaml impact:`), outputs up to 5 items ≥60 to the `.md`, the Discord
+  embed and `dashboard.json` (`impact_news` + `impact_status` = ok/empty/failed). The LLM (optional,
+  OpenAI-compatible, `IMPACT_LLM_BASE_URL`/`IMPACT_LLM_MODEL`/`IMPACT_LLM_API_KEY`, off when unset) only
+  writes the 予測 line, and a prediction is discarded if any number in it is not in the verified input.
+  Output must never contain 買い/売り/推奨/狙い目 — headlines are rewritten and marked ※表記調整.
+  Appends to `data/impact_log.csv` (gitignored on purpose: `run-daily.ps1` does `git reset --hard`,
+  which would wipe a tracked log every morning) and fills the next bar's change on later runs.
+  Tests: `python tests/test_impact.py [--live]` against fixtures in `tests/fixtures/`.
 
 Output modules:
 - **`render.py`** — pure functions from `facts` dict to Markdown. No interpretation/judgment, no API

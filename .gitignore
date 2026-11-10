@@ -41,3 +41,8 @@ secrets.*
 
 # ローカル専用のClaude Code権限設定（マシンごとに異なるため共有しない）
 .claude/settings.local.json
+
+# ⑪ 株価インパクトの精度検証ログ。デスクトップPCに溜めるローカル記録。
+# 追跡すると run-daily.ps1 の `git reset --hard origin/main` が毎朝追記分を消してしまうため、
+# 追跡しない（未追跡ファイルは reset --hard で消えない）。
+data/impact_log.csv

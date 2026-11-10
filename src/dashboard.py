@@ -9,6 +9,8 @@ import datetime as dt
 import json
 import pathlib
 
+import impact
+
 JST = dt.timezone(dt.timedelta(hours=9))
 
 
@@ -274,6 +276,9 @@ def build(facts: dict, hist: dict) -> dict:
     econ_block, econ_status = _econ_block(facts)
     out["econ_calendar"] = econ_block
     out["econ_status"] = econ_status
+    # ⑪ 株価インパクトニュース。値(impact_news)と状態(impact_status: ok/empty/failed)を別キーで。
+    # 空配列だけでは「材料なし」と「取得失敗」を区別できないため。
+    out["impact_news"], out["impact_status"] = impact.dashboard_block(facts.get("impact"))
 
     if sectors:
         out["sectors"] = sectors
